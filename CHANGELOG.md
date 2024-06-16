@@ -7,8 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.1] - 2024-06-16
+
 ### Added
-- JSON communication lines in UML to show data exchange between Client and Server.
+- JSON protocol for Server-Client communication with sequence diagram (#3, #4).
+- Create README.md.
+- Assignment of tasks for each student (#6).
 
 ### Changed
 - Changed Client, Server, and Game from interface to class. 
