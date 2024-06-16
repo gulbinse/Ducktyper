@@ -15,7 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Assignment of tasks for each student (#6).
 
 ### Changed
+- Changed Client, Server, and Game from interface to class. 
 
 ### Removed
+- GameServer class
+- Dependencies with "use" notation from Client interface to Game interface, Server interface, Player
+- extra uml diagram
 
 ### Fixed
