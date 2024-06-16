@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-#0.0.1 - 2024-06-16
+# 0.0.1 - 2024-06-16
 
 ### Added
 - JSON protocol for Server-Client communication
