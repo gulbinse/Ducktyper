@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.1] - 2024-06-16
 
 ### Added
-- JSON protocol for Server-Client communication (#3).
+- JSON protocol for Server-Client communication with sequence diagram (#3, #4).
 - Create README.md.
 - Assignment of tasks for each student (#6).
 
