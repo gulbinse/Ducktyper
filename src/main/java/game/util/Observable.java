@@ -1,22 +1,18 @@
 package game.util;
 
+import game.GameState;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Observable {
-    private List<Observer> observers = new ArrayList<>();
+public interface Observable {
+    void subscribe (Observer obs);
 
-    public void addObserver(Observer observer) {
-        observers.add(observer);
-    }
+    void unsubscribe(Observer obs);
 
-    public void removeObserver(Observer observer) {
-        observers.remove(observer);
-    }
+    void notifyAboutState(GameState newState);
 
-    protected void notifyObservers(Object arg) {
-        for (Observer observer : observers) {
-            observer.update();
-        }
-    }
+    void notifyAboutNewPlayer(String playerName, GameState newState);
+
+    void notifyAboutRemovedPlayer(String playerName, GameState newState);
 }

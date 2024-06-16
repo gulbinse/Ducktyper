@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Packages and the relevant classes based on MVC pattern
 - Observable and Observer in util package
 - build.gradle configuration
+- UI Classes
+- Javadoc
 
 ### Changed
 
