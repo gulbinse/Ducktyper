@@ -53,6 +53,7 @@ javafx {
 checkstyle {
   toolVersion = "10.15.0"
   maxWarnings = 0
+  configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
 }
 
 
