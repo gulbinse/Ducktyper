@@ -12,10 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - JSON protocol for Server-Client communication (#3).
 - Create README.md.
+- UI Classes
+- Javadoc
 
 ### Changed
 - 
 
 ### Removed
+- word file
 
 ### Fixed
