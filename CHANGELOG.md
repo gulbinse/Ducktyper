@@ -16,5 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - GameServer class
 - Dependencies with "use" notation from Client interface to Game interface, Server interface, Player
+- extra uml diagram
 
 ### Fixed
