@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - JSON protocol for Server-Client communication (#3).
 - Create README.md.
+- Assignment of tasks for each student (#6).
 
 ### Changed
 
