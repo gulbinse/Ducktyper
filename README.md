@@ -8,7 +8,7 @@ Java-Version: Java 21
 tbd.
 
 ## JSON protocol for Server-Client communication
-[Protocol](protocol.md)
+[Protocol](project_planning/protocol.md)
 
 ## Developers
 - Alina Pham
