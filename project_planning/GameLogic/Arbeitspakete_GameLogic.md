@@ -17,7 +17,7 @@
 
 ### Arbeitspaket 3 - Hinzufügen von GameState
 
-### Arbeitspaket 4 - basic Implementaion von Player
+### Arbeitspaket 4 - basic Implementation von Player
 
 - einfache Implementierung mit Methoden und Variablen um andere Klassen testen zu können
 
@@ -25,7 +25,7 @@
 
 ### Arbeitspaket 6 - Implementierung typeLetter()
 
-- Verarbeitung eines Textimputs
+- Verarbeitung eines Textinputs
 - Prüfen des eingegebenen Buchstabens
 
 ### Arbeitspaket 7 - Implementierung TextSource
