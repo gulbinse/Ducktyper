@@ -14,8 +14,5 @@ public interface Observer {
      */
     void update(Observable o, Object arg);
 
-    /**
-     * Called when an Observable is updated without arguments.
-     */
     void update();
 }

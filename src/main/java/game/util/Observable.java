@@ -1,40 +1,18 @@
 package game.util;
 
+import game.GameState;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Manages a list of observers and notifies them of changes.
- */
-public class Observable {
-    private List<Observer> observers = new ArrayList<>();
+public interface Observable {
+    void subscribe (Observer obs);
 
-    /**
-     * Adds an observer to the list.
-     *
-     * @param observer the observer to add
-     */
-    public void addObserver(Observer observer) {
-        observers.add(observer);
-    }
+    void unsubscribe(Observer obs);
 
-    /**
-     * Removes an observer from the list.
-     *
-     * @param observer the observer to remove
-     */
-    public void removeObserver(Observer observer) {
-        observers.remove(observer);
-    }
+    void notifyAboutState(GameState newState);
 
-    /**
-     * Notifies all observers of a change.
-     *
-     * @param arg an argument passed to the observers
-     */
-    protected void notifyObservers(Object arg) {
-        for (Observer observer : observers) {
-            observer.update();
-        }
-    }
+    void notifyAboutNewPlayer(String playerName, GameState newState);
+
+    void notifyAboutRemovedPlayer(String playerName, GameState newState);
 }
