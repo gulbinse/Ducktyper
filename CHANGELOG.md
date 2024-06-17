@@ -7,14 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.1] - 2024-06-16
+
 ### Added
-- Packages and the relevant classes based on MVC pattern
-- Observable and Observer in util package
-- build.gradle configuration
+- JSON protocol for Server-Client communication with sequence diagram (#3, #4).
+- Create README.md.
+- Assignment of tasks for each student (#6).
 
 ### Changed
 - 
 
 ### Removed
+- word file
 
 ### Fixed
