@@ -22,15 +22,13 @@ build:
 javadoc:
   stage: required
   script:
-    - gradle :client:javadoc :server:javadoc :communication:javadoc game:javadoc
+    - gradle :client:javadoc :server:javadoc :communication:javadoc :game:javadoc
   artifacts:
     # Store generated JavaDoc on success
     when: on_success
     paths:
       - '**/build/docs/javadoc/'
-    # Each task takes 2 weeks, so storing artifacts for that
-    # time windows should be enough for efficient work + feedback
-    expire_in: 2 weeks
+    expire_in: 4 weeks
 
 code-format:
   stage: optional-quality
@@ -48,9 +46,7 @@ checkstyle:
     when: on_failure
     paths:
       - '**/build/reports/'
-    # Each task takes 2 weeks, so storing artifacts for that
-    # time windows should be enough for efficient work + feedback
-    expire_in: 2 weeks
+    expire_in: 4 weeks
 
 spotbugs:
   stage: optional-quality
@@ -62,7 +58,4 @@ spotbugs:
     when: on_failure
     paths:
       - '**/build/reports/'
-    # Each task takes 2 weeks, so storing artifacts for that
-    # time windows should be enough for efficient work + feedback
-    expire_in: 2 weeks
-
+    expire_in: 4 weeks
