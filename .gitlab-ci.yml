@@ -10,6 +10,59 @@ variables:
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
 
+stages:
+  - build
+  - required
+  - optional-quality
+
 build:
   stage: build
   script: gradle build
+
+javadoc:
+  stage: required
+  script:
+    - gradle :client:javadoc :server:javadoc :communication:javadoc game:javadoc
+  artifacts:
+    # Store generated JavaDoc on success
+    when: on_success
+    paths:
+      - '**/build/docs/javadoc/'
+    # Each task takes 2 weeks, so storing artifacts for that
+    # time windows should be enough for efficient work + feedback
+    expire_in: 2 weeks
+
+code-format:
+  stage: optional-quality
+  needs: ["javadoc"]
+  script: gradle spotlessCheck --continue
+  allow_failure: true
+
+checkstyle:
+  stage: optional-quality
+  needs: ["javadoc"]
+  script: gradle :client:checkstyleMain :server:checkstyleMain :communication:checkstyleMain :game:checkstyleMain
+  allow_failure: true
+  artifacts:
+    # Only store artifacts on failure, for inspection of the error reports
+    when: on_failure
+    paths:
+      - '**/build/reports/'
+    # Each task takes 2 weeks, so storing artifacts for that
+    # time windows should be enough for efficient work + feedback
+    expire_in: 2 weeks
+
+spotbugs:
+  stage: optional-quality
+  needs: ["javadoc"]
+  script: gradle :client:spotbugsMain :server:spotbugsMain :communication:spotbugsMain :game:spotbugsMain
+  allow_failure: true
+  artifacts:
+    # Only store artifacts on failure, for inspection of the error reports
+    when: on_failure
+    paths:
+      - '**/build/reports/'
+    # Each task takes 2 weeks, so storing artifacts for that
+    # time windows should be enough for efficient work + feedback
+    expire_in: 2 weeks
+
