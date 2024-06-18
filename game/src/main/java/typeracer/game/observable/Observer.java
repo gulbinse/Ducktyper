@@ -1,6 +1,6 @@
 package typeracer.game.observable;
 
-import game.observable.Observable;
+import typeracer.game.observable.Observable;
 
 /**
  * Interface for objects that receive updates from an Observable.

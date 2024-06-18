@@ -1,6 +1,6 @@
 package typeracer.game.observable;
 
-import game.GameState;
+import typeracer.game.GameState;
 import java.util.ArrayList;
 import java.util.List;
 

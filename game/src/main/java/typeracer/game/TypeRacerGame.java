@@ -1,7 +1,7 @@
 package typeracer.game;
 
-import game.observable.Observable;
-import game.observable.Observer;
+import typeracer.game.observable.Observable;
+import typeracer.game.observable.Observer;
 
 /**
  * The main class for the game, managing states and providing an interface for the server.

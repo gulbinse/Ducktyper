@@ -1,7 +1,7 @@
 package typeracer.game;
 
-import game.observable.Observable;
-import game.observable.Observer;
+import typeracer.game.observable.Observable;
+import typeracer.game.observable.Observer;
 
 /**
  * Represents a player of the game.
