@@ -28,6 +28,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Client & Server communication messages (#17)
 - ``MoshiAdapter`` class for message conversion
 - Lobby support & ready checks in the protocol (#21)
+- Implementation of the basic Methods in the TypeRacerGame class including:
+    + TypeRacerGame();
+    + start();
+    + addPlayer(Player player);
+    + -boolean validateUsername(String username);
+    + removePlayer(Player player);
+- Implementation of the Observable methods in the TypeRacerGame class:
+    + subscribe(Observer obs);
+    + unsubscribe(Observer obs);
+    + notifyAboutState(GameState newState);
+    + notifyAboutNewPlayer(String playerName, GameState newState)
+    + notifyAboutRemovedPlayer(String playerName, GameState newState)
+    + -updateAll(Consumer<Observer> toCall);
 
 ### Changed
 - IDs instead of usernames in the protocol (#21)
