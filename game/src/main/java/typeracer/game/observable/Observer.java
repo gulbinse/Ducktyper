@@ -1,5 +1,7 @@
 package typeracer.game.observable;
 
+import typeracer.game.GameState;
+
 /** Interface for objects that receive updates from an Observable. */
 public interface Observer {
 
@@ -13,4 +15,10 @@ public interface Observer {
 
   /** Updates something. */
   void update();
+
+  void updateNewPlayer(String playerName, GameState newState);
+
+  void updateState(GameState state);
+
+  void updateRemovedPlayer(String playerName, GameState newState);
 }
