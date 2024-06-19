@@ -23,11 +23,17 @@ public class TypeRacerGame implements Observable {
         state = new GameState();
     }
 
+    /** Starts a new game with a new text. */
     public void start() {
         state = state.nextRound(state.getNextText());
         notifyAboutState(state);
     }
 
+    /**
+     * Adds a player to the game.
+     *
+     * @param player that will be added to the game
+     */
     public void addPlayer(Player player) {
         if (!validateUsername(player.getName())) {
             throw new AssertionError(
@@ -53,6 +59,11 @@ public class TypeRacerGame implements Observable {
         return true;
     }
 
+    /**
+     * Removes a player from the game.
+     *
+     * @param player that will be removed
+     */
     public void removePlayer(Player player) {
         synchronized (this) {
             state = state.removePlayer(player);
@@ -61,6 +72,11 @@ public class TypeRacerGame implements Observable {
         }
     }
 
+    /**
+     * Subscribe a player to the game notifications.
+     *
+     * @param obs the observer to be added
+     */
     @Override
     public void subscribe(Observer obs) {
         if (observers.contains(obs)) {
@@ -69,6 +85,11 @@ public class TypeRacerGame implements Observable {
         observers.add(obs);
     }
 
+    /**
+     * Unsubscribes a player from the game notifications.
+     *
+     * @param obs the observer to be removed
+     */
     @Override
     public void unsubscribe(Observer obs) {
         observers.remove(obs);
@@ -77,6 +98,10 @@ public class TypeRacerGame implements Observable {
         }
     }
 
+    /**
+     * Notifies all subscribed players about a new game state.
+     * @param newState the new GameState
+     */
     @Override
     public void notifyAboutState(GameState newState) {
         updateAll(o -> {
@@ -88,6 +113,12 @@ public class TypeRacerGame implements Observable {
         });
     }
 
+    /**
+     * Notifies all subscribed players that a new player has joined the game.
+     *
+     * @param playerName the name of the player who joined the game
+     * @param newState the new GameState after the player joined
+     */
     @Override
     public void notifyAboutNewPlayer(String playerName, GameState newState) {
         updateAll(o -> {
@@ -99,7 +130,12 @@ public class TypeRacerGame implements Observable {
         });
     }
 
-
+    /**
+     * Notifies all subscribed players that a player has been removed from the game.
+     *
+     * @param playerName the name of the player who has left the game
+     * @param newState the new GameState after the player left
+     */
     @Override
     public void notifyAboutRemovedPlayer(String playerName, GameState newState) {
         updateAll(o -> {
