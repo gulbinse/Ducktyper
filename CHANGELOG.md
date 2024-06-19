@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2024-06-19
+
+### Added
+- Implementation of the basic Methods in the TypeRacerGame class including:
+  + TypeRacerGame();
+  + start();
+  + addPlayer(Player player);
+  + -boolean validateUsername(String username);
+  + removePlayer(Player player);
+- Implementation of the Observable methods in the TypeRacerGame class:
+  + subscribe(Observer obs);
+  + unsubscribe(Observer obs);
+  + notifyAboutState(GameState newState);
+  + notifyAboutNewPlayer(String playerName, GameState newState)
+  + notifyAboutRemovedPlayer(String playerName, GameState newState)
+  + -updateAll(Consumer<Observer> toCall);
+
 ## [0.0.1] - 2024-06-16
 
 ### Added
