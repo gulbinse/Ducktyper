@@ -1,23 +1,23 @@
 package typeracer.client.view;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.ImageIcon;
-import javax.swing.BoxLayout;
-import javax.swing.Box;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 /** Handles the display of the initial prompt. */
@@ -25,42 +25,51 @@ public class InitialPromptUi extends JPanel {
 
   private JTextField usernameField;
   private JButton submitButton;
-  private JFrame mainFrame;
 
   /** The default constructor of this class. */
   public InitialPromptUi(JFrame frame) {
-    this.mainFrame = frame;
     setBackground(new Color(0xF5F5F5));
     setLayout(new BorderLayout());
-
-    try {
-      Image img = ImageIO.read(getClass().getResource("/images/typewriter.jpeg"));
-      mainFrame.setIconImage(img);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    setIconImage(frame);
 
     add(createImagePanel(), BorderLayout.NORTH);
     add(createInputPanel(), BorderLayout.CENTER);
 
-    mainFrame.getContentPane().setBackground(new Color(0xF5F5F5));
+    frame.getContentPane().setBackground(new Color(0xF5F5F5));
   }
 
   /**
-   * Creates a JPanel that displays a centered image from the resources directory.
-   * This panel is used to enhance the GUI with a visual element. If the image fails
-   * to load, an error is printed to the standard error stream.
+   * Sets the icon image of the provided JFrame. This method attempts to load an image from the
+   * specified resource path and set it as the icon image of the JFrame.
+   *
+   * @param frame The JFrame whose icon image is to be set. This frame must not be null.
+   * @throws IOException If there is an issue reading the image file from the resources. The
+   *     exception is caught and printed to the standard error stream.
+   */
+  private void setIconImage(JFrame frame) {
+    try {
+      Image img = ImageIO.read(getClass().getResource("/images/typewriter.jpeg"));
+      frame.setIconImage(img);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Creates a JPanel that displays a centered image from the resources directory. This panel is
+   * used to enhance the GUI with a visual element. If the image fails to load, an error is printed
+   * to the standard error stream.
    *
    * @return JPanel with a centered image, styled to fit the application's theme.
-   * @throws IOException if there is an issue reading the image file, which is caught
-   *         and printed to the standard error stream.
+   * @throws IOException if there is an issue reading the image file, which is caught and printed to
+   *     the standard error stream.
    */
   private JPanel createImagePanel() {
     JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     imagePanel.setBackground(new Color(0xF5F5F5));
     try {
-      ImageIcon icon = new ImageIcon(ImageIO.read(getClass().getResource("/images"
-              + "/typewriter.jpeg")));
+      ImageIcon icon =
+          new ImageIcon(ImageIO.read(getClass().getResource("/images" + "/typewriter.jpeg")));
       JLabel imageLabel = new JLabel(icon);
       imagePanel.add(imageLabel);
     } catch (IOException e) {
@@ -70,9 +79,9 @@ public class InitialPromptUi extends JPanel {
   }
 
   /**
-   * Constructs a JPanel designed for user input with vertically arranged components:
-   * a label, a text field, and a submit button. Each component is spaced for clarity.
-   * The panel is designed for entering a username and submitting it.
+   * Constructs a JPanel designed for user input with vertically arranged components: a label, a
+   * text field, and a submit button. Each component is spaced for clarity. The panel is designed
+   * for entering a username and submitting it.
    *
    * @return JPanel with organized input elements for username submission.
    */
@@ -107,8 +116,8 @@ public class InitialPromptUi extends JPanel {
   }
 
   /**
-   * Handles the action performed when the submit button is clicked.
-   * Retrieves the text from the usernameField and prints it to the console.
+   * Handles the action performed when the submit button is clicked. Retrieves the text from the
+   * usernameField and prints it to the console.
    *
    * @param e The action event triggered by clicking the submit button.
    */
