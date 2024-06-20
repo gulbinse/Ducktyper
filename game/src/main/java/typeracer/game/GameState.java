@@ -18,7 +18,7 @@ public class GameState {
         /** Game is over because all players have finished their text. */
         FINISHED,
         /** Game hasn't started yet because there are not enough players. */
-        WAITINGFORPLAYERS
+        WAITING_FOR_READY
     }
 
     private final GameStatus gameStatus;
@@ -27,31 +27,33 @@ public class GameState {
     private final String currentText;
 
     private final Map<String, Player> players;
-    private final Map<Player, Integer> progress;
 
     /**
      * A constructor which creates a new default gameState.
      *
-     * <p>Initially the GameStatus is set to WAITINGFORPLAYERS and no text is selected.</p>
+     * <p>Initially the GameStatus is set to WAITING_FOR_PLAYERS and no text is selected.</p>
      * @param textSource from which the Texts of the Game should come from
      */
     GameState(TextSource textSource) {
-        this(textSource, "", GameStatus.WAITINGFORPLAYERS, Collections.emptyMap(), Collections.emptyMap());
+        this(textSource, "", GameStatus.WAITING_FOR_READY, Collections.emptyMap());
     }
 
     /**
-     * The default constructor of this class.
+     * Private Constructor for GameState class.
+     *
+     * @param textSource for the Game
+     * @param newText which shall be copied
+     * @param gameStatus of the Game
+     * @param players in the Lobby
      */
     private GameState(
             TextSource textSource,
             String newText,
             GameStatus gameStatus,
-            Map<String, Player> players,
-            Map<Player, Integer> progress) {
+            Map<String, Player> players) {
         this.textSource = textSource;
         currentText = newText;
         this.players = Map.copyOf(players);
-        this.progress = Map.copyOf(progress);
         this.gameStatus = gameStatus;
     }
 
@@ -66,9 +68,7 @@ public class GameState {
         String playerName = player.getName();
         Map<String, Player> updatedPlayers = new HashMap<>(players);
         updatedPlayers.put(playerName, player);
-        Map<Player, Integer> updatedProgress = new HashMap<>(progress);
-        updatedProgress.put(player, player.getProgress());
-        return new GameState(textSource, currentText, gameStatus, updatedPlayers, updatedProgress);
+        return new GameState(textSource, currentText, GameStatus.WAITING_FOR_READY, updatedPlayers);
     }
 
     /**
@@ -81,7 +81,7 @@ public class GameState {
         String playerName = player.getName();
         Map<String, Player> updatedPlayers = new HashMap<>(players);
         updatedPlayers.remove(playerName);
-        return new GameState(textSource, currentText, gameStatus, updatedPlayers, progress);
+        return new GameState(textSource, currentText, gameStatus, updatedPlayers);
     }
 
     /**
@@ -93,7 +93,7 @@ public class GameState {
     //Man könnte auch in TextSource eine Methode implementieren, die den nächsten Text zurück gibt.
     //Dann könnte man statt dem Parameter new Text GameState mit newGamestate(..., textSource.getNextText, ...) initialisieren
     public synchronized GameState nextRound(String newText) {
-        return new GameState(textSource, newText, gameStatus, players, progress);
+        return new GameState(textSource, newText, gameStatus, players);
     }
 
     /**
@@ -103,15 +103,6 @@ public class GameState {
      */
     public List<Player> getPlayers() {
         return List.copyOf(players.values());
-    }
-
-    /**
-     * Returns Map with Player and their corresponding progress.
-     *
-     * @return Map with progress.
-     */
-    public Map<Player, Integer> getProgress() {
-        return Map.copyOf(progress);
     }
 
     /**
