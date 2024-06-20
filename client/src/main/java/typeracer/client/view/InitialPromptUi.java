@@ -23,10 +23,20 @@ import javax.swing.border.EmptyBorder;
 /** Handles the display of the initial prompt. */
 public class InitialPromptUi extends JPanel {
 
+  /** Field for user to enter their username. */
   private JTextField usernameField;
+
+  /** Button for submitting the username. */
   private JButton submitButton;
 
-  /** The default constructor of this class. */
+  /**
+   * Initializes the InitialPromptUi panel for user input on a specified JFrame. This constructor
+   * sets the background color, layout, and configures UI components such as the image and input
+   * panels. It also sets the icon image and background color of the provided JFrame.
+   *
+   * @param frame The JFrame to which this panel is attached. The frame's icon and content pane
+   *     background are configured within this constructor.
+   */
   public InitialPromptUi(JFrame frame) {
     setBackground(new Color(0xF5F5F5));
     setLayout(new BorderLayout());
