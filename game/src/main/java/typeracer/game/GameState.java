@@ -6,13 +6,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Manages the state of the game.
+ * The class stores the current state of the {@link TypeRacerGame} game, including the game status,
+ * the current text, the players, and the progress of each player.
  */
 public class GameState {
 
+    /** Represents the Status of the TypeWriter game. */
     public enum GameStatus {
+        /** Game is still running. */
         ONGOING,
+        /** Game is over because all players have finished their text. */
         FINISHED,
+        /** Game hasn't started yet because there are not enough players. */
         WAITINGFORPLAYERS
     }
 
@@ -27,6 +32,7 @@ public class GameState {
     /**
      * A constructor which creates a new default gameState.
      *
+     * <p>Initially the GameStatus is set to WAITINGFORPLAYERS and no text is selected.</p>
      * @param textSource from which the Texts of the Game should come from
      */
     GameState(TextSource textSource) {
@@ -121,7 +127,7 @@ public class GameState {
      * Returns the Status of the current game.
      *
      * <p>Possible Status is: ONGOING, FINISHED, WAITINGFORPLAYERS </p>
-     * @return currrent Status
+     * @return current Status
      */
     public GameStatus getStatus() {
         return gameStatus;
