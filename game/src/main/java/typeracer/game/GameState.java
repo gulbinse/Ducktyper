@@ -1,9 +1,9 @@
 package typeracer.game;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * The class stores the current state of the {@link TypeRacerGame} game, including the game status,
@@ -11,111 +11,116 @@ import java.util.Set;
  */
 public class GameState {
 
-  /** Represents the Status of the TypeWriter game. */
-  public enum GameStatus {
-    /** Game is still running. */
-    RUNNING,
-    /** Game is over because all players have finished their text. */
-    FINISHED,
-    /** Game hasn't started yet because not every player is ready yet. */
-    WAITING_FOR_READY
-  }
-
-  private GameStatus gameStatus = GameStatus.WAITING_FOR_READY;
-
-  private final String textToType;
-
-  private Map<Integer, Player> players = new HashMap<>(); // Map of IDs to Players
-
-  /**
-   * A constructor which creates a new default GameState.
-   *
-   * <p>Initially the GameStatus is set to {@link GameStatus#WAITING_FOR_READY}.
-   *
-   * @param textSource from which the text of the game should come from
-   */
-  GameState(TextSource textSource) {
-    this.textToType = textSource.getCurrentText();
-  }
-
-  /**
-   * Adds a Player to the game.
-   *
-   * @param id of the player
-   * @param player that is added to the game
-   */
-  public synchronized void addPlayer(int id, Player player) {
-    // TODO: implement a check if there are already maximum number of players in the game
-    players.put(id, player);
-  }
-
-  /**
-   * Removes a Player from the game.
-   *
-   * @param id of the Player that is removed from the game
-   */
-  public synchronized void removePlayer(int id) {
-    players.remove(id);
-  }
-
-  /**
-   * Returns list of players in the current game.
-   *
-   * @return List of players
-   */
-  public List<Player> getPlayers() {
-    return List.copyOf(players.values());
-  }
-
-  /**
-   * Returns the text which is to be typed.
-   *
-   * @return the text to type
-   */
-  public String getTextToType() {
-    return textToType;
-  }
-
-  /**
-   * Returns the status of the current game.
-   *
-   * <p>Possible status are: {@link GameStatus#RUNNING}, {@link GameStatus#FINISHED}, {@link
-   * GameStatus#WAITING_FOR_READY}
-   *
-   * @return current status
-   */
-  public GameStatus getStatus() {
-    return gameStatus;
-  }
-
-  /**
-   * Sets the game status to the specified value.
-   *
-   * @param gameStatus the value to set the game status to
-   */
-  public void setGameStatus(GameStatus gameStatus) {
-    this.gameStatus = gameStatus;
-  }
-
-  /**
-   * Returns a Set of all Player's IDs.
-   *
-   * @return a Set of all Player's IDs
-   */
-  public Set<Integer> getIds() {
-    return Set.copyOf(players.keySet());
-  }
-
-  /**
-   * Returns the player identified by the given ID.
-   *
-   * @param id of the player
-   * @return the player belonging to the given ID
-   */
-  public synchronized Player getPlayerById(int id) {
-    if (!players.containsKey(id)) {
-      throw new NullPointerException("Player with ID " + id + " not contained in list of players.");
+    /** Represents the Status of the TypeWriter game. */
+    public enum GameStatus {
+        /** Game is still running. */
+        ONGOING,
+        /** Game is over because all players have finished their text. */
+        FINISHED,
+        /** Game hasn't started yet because not every player is ready yet. */
+        WAITING_FOR_READY
     }
-    return players.get(id);
-  }
+
+    private final GameStatus gameStatus;
+
+    private final TextSource textSource;
+    private final String currentText;
+
+    private final Map<String, Player> players;
+
+    /**
+     * A constructor which creates a new default gameState.
+     *
+     * <p>Initially the GameStatus is set to {@link GameStatus#WAITING_FOR_READY} and no text is selected.</p>
+     * @param textSource from which the Texts of the Game should come from
+     */
+    GameState(TextSource textSource) {
+        this(textSource, "", GameStatus.WAITING_FOR_READY, Collections.emptyMap());
+    }
+
+    /**
+     * Private Constructor for GameState class.
+     *
+     * @param textSource for the Game
+     * @param newText which shall be copied
+     * @param gameStatus of the Game
+     * @param players in the Lobby
+     */
+    private GameState(
+            TextSource textSource,
+            String newText,
+            GameStatus gameStatus,
+            Map<String, Player> players) {
+        this.textSource = textSource;
+        currentText = newText;
+        this.players = Map.copyOf(players);
+        this.gameStatus = gameStatus;
+    }
+
+    /**
+     * Adds a Player to the game.
+     *
+     * <p>Not implemented yet a check if there are already maximum number of players in the game</p>
+     * @param player that is added to the game
+     * @return the new GameState
+     */
+    public synchronized GameState addPlayer(Player player) {
+        String playerName = player.getName();
+        Map<String, Player> updatedPlayers = new HashMap<>(players);
+        updatedPlayers.put(playerName, player);
+        return new GameState(textSource, currentText, GameStatus.WAITING_FOR_READY, updatedPlayers);
+    }
+
+    /**
+     * Removes a Player from the game.
+     *
+     * @param player that is removed from the game
+     * @return the new GameState
+     */
+    public synchronized GameState removePlayer(Player player) {
+        String playerName = player.getName();
+        Map<String, Player> updatedPlayers = new HashMap<>(players);
+        updatedPlayers.remove(playerName);
+        return new GameState(textSource, currentText, gameStatus, updatedPlayers);
+    }
+
+    /**
+     * Starts a new round.
+     *
+     * @param newText which shall be copied in the next round
+     * @return new GameState with new text
+     */
+    //Man könnte auch in TextSource eine Methode implementieren, die den nächsten Text zurück gibt.
+    //Dann könnte man statt dem Parameter new Text GameState mit newGamestate(..., textSource.getNextText, ...) initialisieren
+    public synchronized GameState nextRound(String newText) {
+        return new GameState(textSource, newText, gameStatus, players);
+    }
+
+    /**
+     * Returns List of players in the current game.
+     *
+     * @return List of players
+     */
+    public List<Player> getPlayers() {
+        return List.copyOf(players.values());
+    }
+
+    /**
+     * Returns the TextSource of the current GameState.
+     *
+     * @return TextSource
+     */
+    public TextSource getTextSource() {
+        return textSource;
+    }
+
+    /**
+     * Returns the Status of the current game.
+     *
+     * <p>Possible Status is: {@link GameStatus#ONGOING}, {@link GameStatus#FINISHED}, {@link GameStatus#WAITING_FOR_READY} </p>
+     * @return current Status
+     */
+    public GameStatus getStatus() {
+        return gameStatus;
+    }
 }
