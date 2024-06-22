@@ -7,6 +7,9 @@ public class IdentifierGenerator {
 
   private final AtomicInteger currentId = new AtomicInteger(0);
 
+  /** The default constructor of this class. */
+  public IdentifierGenerator() {}
+
   /**
    * Generates a new unique ID.
    *

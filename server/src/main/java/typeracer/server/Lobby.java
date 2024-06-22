@@ -17,6 +17,9 @@ public final class Lobby {
 
   private final Collection<ClientHandler> clientHandlers = new ArrayList<>(MAX_LOBBY_SIZE);
 
+  /** The default constructor of this class. */
+  public Lobby() {}
+
   /**
    * Adds a newly connected client to the game as a player.
    *

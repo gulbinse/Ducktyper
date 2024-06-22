@@ -14,6 +14,9 @@ public class Server {
 
   private final IdentifierGenerator identifierGenerator = new IdentifierGenerator();
 
+  /** The default constructor of this class. */
+  public Server() {}
+
   /**
    * Main method for the server.
    *

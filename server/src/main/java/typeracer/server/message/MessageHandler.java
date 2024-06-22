@@ -9,6 +9,9 @@ import typeracer.server.message.handlers.ReadyRequestHandler;
 /** Abstract class for handling messages in a chain of responsibility pattern. */
 public abstract class MessageHandler {
 
+  /** The default constructor of this class. */
+  public MessageHandler() {}
+
   /**
    * Handles the incoming message. Implementations should provide specific handling logic.
    *
