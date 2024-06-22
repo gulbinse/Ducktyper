@@ -117,7 +117,7 @@ public class GameState {
     /**
      * Returns the Status of the current game.
      *
-     * <p>Possible Status is: ONGOING, FINISHED, WAITINGFORPLAYERS </p>
+     * <p>Possible Status is: {@link GameStatus#ONGOING}, {@link GameStatus#FINISHED}, {@link GameStatus#WAITING_FOR_READY} </p>
      * @return current Status
      */
     public GameStatus getStatus() {
