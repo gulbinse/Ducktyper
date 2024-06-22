@@ -1,128 +1,155 @@
 package typeracer.game;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import typeracer.game.observable.Observable;
+import typeracer.game.observable.Observer;
 
-/** The main class for the game, managing states and providing an interface for the server. */
-public class TypeRacerGame {
+import java.io.IOException;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
 
-  private final GameState state;
-  private long gameStartTime;
+/**
+ * The main class for the game, managing states and providing an interface for the server.
+ */
+public class TypeRacerGame implements Observable {
 
-  /**
-   * The default constructor of this class.
-   *
-   * @param textSource the source to receive the text the players have to type from
-   */
-  public TypeRacerGame(TextSource textSource) {
-    state = new GameState(textSource);
-  }
+    private ConcurrentLinkedQueue<Observer> observers = new ConcurrentLinkedQueue<>();
 
-  /** Starts a new game with a new text. */
-  public void start() {
-    if (state.getPlayers().equals(Collections.emptyList())) {
-      throw new AssertionError("There are currently no players in the game");
+    private volatile GameState state;
+
+    /**
+     * The default constructor of this class.
+     */
+    public TypeRacerGame() {
+        state = new GameState();
     }
 
-    for (Player player : state.getPlayers()) {
-      if (!player.isReady()) {
-        throw new AssertionError(
-            "Player " + player.getUsername() + " not yet ready, but start was attempted");
-      }
+    /** Starts a new game with a new text. */
+    public void start() {
+        state = state.nextRound(state.getNextText());
+        notifyAboutState(state);
     }
-    state.setGameStatus(GameState.GameStatus.RUNNING);
-    gameStartTime = System.nanoTime();
-    // TODO: notify Mediator about game start
-  }
 
-  /**
-   * Adds a player to the game.
-   *
-   * @param id of the player
-   * @param username of the player that will be added to the game
-   */
-  public void addPlayer(int id, String username) {
-    if (!isValidUsername(username)) {
-      throw new AssertionError(
-          "An invalid player name reached the game logic. This should be handled before. Name: "
-              + username);
+    /**
+     * Adds a player to the game.
+     *
+     * @param player that will be added to the game
+     */
+    public void addPlayer(Player player) {
+        if (!validateUsername(player.getName())) {
+            throw new AssertionError(
+                    "An invalid player name reached the game logic. This should be handled before. Name: "
+                            + player.getName());
+        }
+        synchronized (this) {
+            state = state.addPlayer(player);
+            subscribe(player);
+            notifyAboutNewPlayer(player.getName(), state);
+        }
     }
-    synchronized (this) {
-      if (state.getIds().contains(id)) {
-        throw new AssertionError("ID " + id + " already contained in player list.");
-      }
-      state.addPlayer(id, new Player(username));
-      // TODO: notify Mediator about added Player
+
+    private boolean validateUsername(String username) {
+        if (username == null || username.isBlank()) {
+            return false;
+        }
+        for (Player p : state.getPlayers()) {
+            if (p.getName().equals(playerName)) {
+                return false;
+            }
+        }
+        return true;
     }
-  }
 
-  private boolean isValidUsername(String username) {
-    if (username == null || username.isBlank()) {
-      return false;
+    /**
+     * Removes a player from the game.
+     *
+     * @param player that will be removed
+     */
+    public void removePlayer(Player player) {
+        synchronized (this) {
+            state = state.removePlayer(player);
+            unsubscribe(player);
+            notifyAboutRemovedPlayer(player.getName(), state);
+        }
     }
-    for (Player p : state.getPlayers()) {
-      if (p.getUsername().equals(username)) {
-        return false;
-      }
+
+    /**
+     * Subscribe a player to the game notifications.
+     *
+     * @param obs the observer to be added
+     */
+    @Override
+    public void subscribe(Observer obs) {
+        if (observers.contains(obs)) {
+            throw new AssertionError("Observer " + obs + " already part of observers");
+        }
+        observers.add(obs);
     }
-    return true;
-  }
 
-  /**
-   * Removes a player from the game.
-   *
-   * @param id of the player that will be removed
-   */
-  public void removePlayer(int id) {
-    synchronized (this) {
-      if (state.getIds().contains(id)) {
-        state.removePlayer(id);
-      } else {
-        throw new AssertionError("ID " + id + " not contained in player list.");
-      }
-      // TODO: notify Mediator about removed Player
+    /**
+     * Unsubscribes a player from the game notifications.
+     *
+     * @param obs the observer to be removed
+     */
+    @Override
+    public void unsubscribe(Observer obs) {
+        observers.remove(obs);
+        if (observers.contains(obs)) {
+            throw new AssertionError("Observer " + obs + " still part of observers");
+        }
     }
-  }
 
-  /**
-   * Makes the given Player type the given letter.
-   *
-   * @param id of the player that types
-   * @param letter the letter that is typed
-   * @return The result of the typing attempt
-   */
-  public Player.TypingResult typeLetter(
-      int id, char letter) { // TODO: Does this have to be synchronized?
-    // TODO: Check if all players have progress of 1 (i.e. finished the game -> set status to
-    // FINISHED)
-    return state.getPlayerById(id).typeLetter(letter, state.getTextToType(), gameStartTime);
-  }
+    /**
+     * Notifies all subscribed players about a new game state.
+     * @param newState the new GameState
+     */
+    @Override
+    public void notifyAboutState(GameState newState) {
+        updateAll(o -> {
+            try {
+                o.updateState(state);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 
-  /**
-   * SHOULD ONLY BE USED FOR TESTING PURPOSES! Returns a list of all players.
-   *
-   * @return a list of all players in the game
-   */
-  List<Player> getPlayerList() {
-    return state.getPlayers();
-  }
+    /**
+     * Notifies all subscribed players that a new player has joined the game.
+     *
+     * @param playerName the name of the player who joined the game
+     * @param newState the new GameState after the player joined
+     */
+    @Override
+    public void notifyAboutNewPlayer(String playerName, GameState newState) {
+        updateAll(o -> {
+            try {
+                o.updateNewPlayer(playerName, newState);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 
-  /**
-   * SHOULD ONLY BE USED FOR TESTING PURPOSES! Returns a set of all players' IDs.
-   *
-   * @return a set of all players' IDs
-   */
-  Set<Integer> getIds() {
-    return state.getIds();
-  }
+    /**
+     * Notifies all subscribed players that a player has been removed from the game.
+     *
+     * @param playerName the name of the player who has left the game
+     * @param newState the new GameState after the player left
+     */
+    @Override
+    public void notifyAboutRemovedPlayer(String playerName, GameState newState) {
+        updateAll(o -> {
+            try {
+                o.updateRemovedPlayer(playerName, newState);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 
-  /**
-   * SHOULD ONLY BE USED FOR TESTING PURPOSES! Returns the current game status.
-   *
-   * @return the current game status
-   */
-  GameState.GameStatus getStatus() {
-    return state.getStatus();
-  }
+    private void updateAll(Consumer<Observer> toCall) {
+        for (Observer o : observers) {
+            toCall.accept(o);
+        }
+    }
 }
