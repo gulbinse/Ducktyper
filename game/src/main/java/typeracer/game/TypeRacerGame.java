@@ -5,7 +5,7 @@ package typeracer.game;
  */
 public class TypeRacerGame {
 
-    private volatile GameState state;
+    private final GameState state;
     private long gameStartTime;
 
     /**
@@ -67,5 +67,9 @@ public class TypeRacerGame {
             state.removePlayer(player);
             // TODO: notify Mediator about removed Player
         }
+    }
+
+    public Player.TypingResult typeLetter(Player player, char letter) {
+        return player.typeLetter(letter, state.getTextSource().getCurrentText(), gameStartTime);
     }
 }

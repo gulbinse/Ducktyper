@@ -26,6 +26,10 @@ public class Player {
     return state.getWPM();
   }
 
+  public boolean isReady() {
+    return state.isReady();
+  }
+
   public void typeLetter(char letter) {
 
   }
