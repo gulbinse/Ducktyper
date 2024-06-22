@@ -17,7 +17,7 @@ public class GameState {
         ONGOING,
         /** Game is over because all players have finished their text. */
         FINISHED,
-        /** Game hasn't started yet because there are not enough players. */
+        /** Game hasn't started yet because not every player is ready yet. */
         WAITING_FOR_READY
     }
 
@@ -31,7 +31,7 @@ public class GameState {
     /**
      * A constructor which creates a new default gameState.
      *
-     * <p>Initially the GameStatus is set to WAITING_FOR_PLAYERS and no text is selected.</p>
+     * <p>Initially the GameStatus is set to {@link GameStatus#WAITING_FOR_READY} and no text is selected.</p>
      * @param textSource from which the Texts of the Game should come from
      */
     GameState(TextSource textSource) {
