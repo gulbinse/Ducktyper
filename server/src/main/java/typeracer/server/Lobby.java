@@ -78,15 +78,6 @@ public final class Lobby {
   }
 
   /**
-   * Checks whether a client can join this lobby.
-   *
-   * @return <code>true</code> if the client can join, <code>false</code> otherwise
-   */
-  public boolean canJoin() {
-    return false;
-  }
-
-  /**
    * Checks whether this lobby is joinable.
    *
    * @return <code>true</code> if the lobby is joinable, <code>false</code> otherwise
