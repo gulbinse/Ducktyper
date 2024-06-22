@@ -4,6 +4,7 @@ package typeracer.game;
 public class PlayerState {
   private double progress = 0; // Ranging from 0.0 to 1.0 according to the protocol
   private double wordsPerMinute = 0;
+  private boolean isReady = false;
 
   /** The default constructor of this class. */
   public PlayerState() {}
@@ -22,5 +23,13 @@ public class PlayerState {
 
   public void setWPM(double wpm) {
     this.wordsPerMinute = wpm;
+  }
+
+  public boolean isReady() {
+    return isReady;
+  }
+
+  public void setReady(boolean ready) {
+    isReady = ready;
   }
 }
