@@ -35,6 +35,10 @@ public class Player implements Observer {
     return state.getWPM();
   }
 
+  public boolean isReady() {
+    return state.isReady();
+  }
+
   public void typeLetter(char letter) {
 
   }
