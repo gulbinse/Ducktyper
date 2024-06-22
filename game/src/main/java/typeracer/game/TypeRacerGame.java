@@ -1,32 +1,31 @@
 package typeracer.game;
 
-import typeracer.game.observable.Observable;
-import typeracer.game.observable.Observer;
-
-import java.io.IOException;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Consumer;
-
 /**
  * The main class for the game, managing states and providing an interface for the server.
  */
-public class TypeRacerGame implements Observable {
-
-    private ConcurrentLinkedQueue<Observer> observers = new ConcurrentLinkedQueue<>();
+public class TypeRacerGame {
 
     private volatile GameState state;
+    private long gameStartTime;
 
     /**
      * The default constructor of this class.
      */
-    public TypeRacerGame() {
-        state = new GameState();
+    public TypeRacerGame(TextSource textSource) {
+        state = new GameState(textSource);
     }
 
     /** Starts a new game with a new text. */
     public void start() {
-        state = state.nextRound(state.getNextText());
-        notifyAboutState(state);
+        // check if all players ready
+        for (Player player : state.getPlayers()) {
+            if (!player.isReady()) {
+                throw new AssertionError("Player " + player.getName() + " not yet ready, but start was attempted");
+            }
+        }
+        state.setStatus(GameState.GameStatus.RUNNING);
+        gameStartTime = System.nanoTime();
+        // TODO: notify Mediator about game start
     }
 
     /**
@@ -41,9 +40,8 @@ public class TypeRacerGame implements Observable {
                             + player.getName());
         }
         synchronized (this) {
-            state = state.addPlayer(player);
-            subscribe(player);
-            notifyAboutNewPlayer(player.getName(), state);
+            state.addPlayer(player);
+            // TODO: notify Mediator about added Player
         }
     }
 
@@ -52,7 +50,7 @@ public class TypeRacerGame implements Observable {
             return false;
         }
         for (Player p : state.getPlayers()) {
-            if (p.getName().equals(playerName)) {
+            if (p.getName().equals(username)) {
                 return false;
             }
         }
@@ -66,90 +64,8 @@ public class TypeRacerGame implements Observable {
      */
     public void removePlayer(Player player) {
         synchronized (this) {
-            state = state.removePlayer(player);
-            unsubscribe(player);
-            notifyAboutRemovedPlayer(player.getName(), state);
-        }
-    }
-
-    /**
-     * Subscribe a player to the game notifications.
-     *
-     * @param obs the observer to be added
-     */
-    @Override
-    public void subscribe(Observer obs) {
-        if (observers.contains(obs)) {
-            throw new AssertionError("Observer " + obs + " already part of observers");
-        }
-        observers.add(obs);
-    }
-
-    /**
-     * Unsubscribes a player from the game notifications.
-     *
-     * @param obs the observer to be removed
-     */
-    @Override
-    public void unsubscribe(Observer obs) {
-        observers.remove(obs);
-        if (observers.contains(obs)) {
-            throw new AssertionError("Observer " + obs + " still part of observers");
-        }
-    }
-
-    /**
-     * Notifies all subscribed players about a new game state.
-     * @param newState the new GameState
-     */
-    @Override
-    public void notifyAboutState(GameState newState) {
-        updateAll(o -> {
-            try {
-                o.updateState(state);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    /**
-     * Notifies all subscribed players that a new player has joined the game.
-     *
-     * @param playerName the name of the player who joined the game
-     * @param newState the new GameState after the player joined
-     */
-    @Override
-    public void notifyAboutNewPlayer(String playerName, GameState newState) {
-        updateAll(o -> {
-            try {
-                o.updateNewPlayer(playerName, newState);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    /**
-     * Notifies all subscribed players that a player has been removed from the game.
-     *
-     * @param playerName the name of the player who has left the game
-     * @param newState the new GameState after the player left
-     */
-    @Override
-    public void notifyAboutRemovedPlayer(String playerName, GameState newState) {
-        updateAll(o -> {
-            try {
-                o.updateRemovedPlayer(playerName, newState);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    private void updateAll(Consumer<Observer> toCall) {
-        for (Observer o : observers) {
-            toCall.accept(o);
+            state.removePlayer(player);
+            // TODO: notify Mediator about removed Player
         }
     }
 }
