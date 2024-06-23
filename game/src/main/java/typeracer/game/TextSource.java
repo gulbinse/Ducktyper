@@ -50,6 +50,11 @@ public class TextSource {
     }
   }
 
+  /**
+   * Returns the current text to use in the game.
+   *
+   * @return the current text
+   */
   public String getCurrentText() {
     return currentText;
   }
