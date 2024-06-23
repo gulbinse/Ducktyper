@@ -27,23 +27,23 @@ public class GameState {
   private Map<String, Player> players;
 
   /**
-   * A constructor which creates a new default gameState.
+   * A constructor which creates a new default GameState.
    *
    * <p>Initially the GameStatus is set to {@link GameStatus#WAITING_FOR_READY} and no text is
    * selected.
    *
-   * @param textSource from which the Texts of the Game should come from
+   * @param textSource from which the text of the game should come from
    */
   GameState(TextSource textSource) {
     this(textSource, GameStatus.WAITING_FOR_READY, Collections.emptyMap());
   }
 
   /**
-   * Private Constructor for GameState class.
+   * Private constructor for the GameState class.
    *
-   * @param textSource for the Game
-   * @param gameStatus of the Game
-   * @param players in the Lobby
+   * @param textSource for the game
+   * @param gameStatus of the game
+   * @param players in the lobby
    */
   private GameState(TextSource textSource, GameStatus gameStatus, Map<String, Player> players) {
     this.textToType = textSource.getCurrentText();
@@ -74,7 +74,7 @@ public class GameState {
   }
 
   /**
-   * Returns List of players in the current game.
+   * Returns list of players in the current game.
    *
    * @return List of players
    */
@@ -83,21 +83,21 @@ public class GameState {
   }
 
   /**
-   * Returns the TextSource of the current GameState.
+   * Returns the text which is to be typed.
    *
-   * @return TextSource
+   * @return the text to type
    */
   public String getTextToType() {
     return textToType;
   }
 
   /**
-   * Returns the Status of the current game.
+   * Returns the status of the current game.
    *
-   * <p>Possible Status is: {@link GameStatus#RUNNING}, {@link GameStatus#FINISHED}, {@link
+   * <p>Possible status are: {@link GameStatus#RUNNING}, {@link GameStatus#FINISHED}, {@link
    * GameStatus#WAITING_FOR_READY}
    *
-   * @return current Status
+   * @return current status
    */
   public GameStatus getStatus() {
     return gameStatus;
