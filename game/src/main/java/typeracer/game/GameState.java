@@ -3,6 +3,7 @@ package typeracer.game;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The class stores the current state of the {@link TypeRacerGame} game, including the game status,
@@ -24,7 +25,7 @@ public class GameState {
 
   private final String textToType;
 
-  private Map<String, Player> players = Collections.emptyMap();
+  private Map<Integer, Player> players = Collections.emptyMap(); // Map of IDs to Players
 
   /**
    * A constructor which creates a new default GameState.
@@ -40,23 +41,21 @@ public class GameState {
   /**
    * Adds a Player to the game.
    *
-   * <p>Not implemented yet a check if there are already maximum number of players in the game
-   *
+   * @param id of the player
    * @param player that is added to the game
    */
-  public synchronized void addPlayer(Player player) {
-    String playerName = player.getUsername();
-    players.put(playerName, player);
+  public synchronized void addPlayer(int id, Player player) {
+    // TODO: implement a check if there are already maximum number of players in the game
+    players.put(id, player);
   }
 
   /**
    * Removes a Player from the game.
    *
-   * @param player that is removed from the game
+   * @param id of the Player that is removed from the game
    */
-  public synchronized void removePlayer(Player player) {
-    String playerName = player.getUsername();
-    players.remove(playerName);
+  public synchronized void removePlayer(int id) {
+    players.remove(id);
   }
 
   /**
@@ -91,5 +90,22 @@ public class GameState {
 
   public void setStatus(GameStatus gameStatus) {
     this.gameStatus = gameStatus;
+  }
+
+  public Set<Integer> getIds() {
+    return Set.copyOf(players.keySet());
+  }
+
+  /**
+   * Returns the player identified by the given ID.
+   *
+   * @param id of the player
+   * @return the player belonging to the given ID
+   */
+  public synchronized Player getPlayerById(int id) {
+    if (!players.containsKey(id)) {
+      throw new NullPointerException("Player with ID " + id + " not contained in list of players.");
+    }
+    return players.get(id);
   }
 }

@@ -24,22 +24,38 @@ public class Player {
     state = new PlayerState();
   }
 
+  /**
+   * Returns this Player's username.
+   *
+   * @return this Player's username
+   */
   public String getUsername() {
     return username;
   }
 
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
+  /**
+   * Returns this Player's current progress.
+   *
+   * @return this Player's current progress
+   */
   public double getProgress() {
     return state.getProgress();
   }
 
+  /**
+   * Returns this Player's current words per minute.
+   *
+   * @return this Player's current words per minute
+   */
   public double getWordsPerMinute() {
     return state.getWordsPerMinute();
   }
 
+  /**
+   * Returns true if this Player is ready, false otherwise.
+   *
+   * @return true if this Player is ready, false otherwise
+   */
   public boolean isReady() {
     return state.isReady();
   }
