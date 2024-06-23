@@ -20,11 +20,11 @@ public class GameState {
     WAITING_FOR_READY
   }
 
-  private GameStatus gameStatus;
+  private GameStatus gameStatus = GameStatus.WAITING_FOR_READY;
 
   private final String textToType;
 
-  private Map<String, Player> players;
+  private Map<String, Player> players = Collections.emptyMap();
 
   /**
    * A constructor which creates a new default GameState.
@@ -35,20 +35,7 @@ public class GameState {
    * @param textSource from which the text of the game should come from
    */
   GameState(TextSource textSource) {
-    this(textSource, GameStatus.WAITING_FOR_READY, Collections.emptyMap());
-  }
-
-  /**
-   * Private constructor for the GameState class.
-   *
-   * @param textSource for the game
-   * @param gameStatus of the game
-   * @param players in the lobby
-   */
-  private GameState(TextSource textSource, GameStatus gameStatus, Map<String, Player> players) {
     this.textToType = textSource.getCurrentText();
-    this.players = Map.copyOf(players);
-    this.gameStatus = gameStatus;
   }
 
   /**
