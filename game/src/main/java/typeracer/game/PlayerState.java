@@ -19,12 +19,12 @@ public class PlayerState {
     this.progress = progress;
   }
 
-  public double getWPM() {
+  public double getWordsPerMinute() {
     return wordsPerMinute;
   }
 
-  public void setWPM(double wpm) {
-    this.wordsPerMinute = wpm;
+  public void setWordsPerMinute(double wordsPerMinute) {
+    this.wordsPerMinute = wordsPerMinute;
   }
 
   public boolean isReady() {
@@ -47,6 +47,10 @@ public class PlayerState {
     return numTypedWords;
   }
 
+  /**
+   * Increases the number of typed words by one. This should generally be the only way the player's
+   * number of typed words is changed.
+   */
   public void incrementNumTypedWords() {
     numTypedWords++;
   }
