@@ -51,7 +51,7 @@ public class PlayerState {
    * Increases the number of typed words by one. This should generally be the only way the player's
    * number of typed words is changed.
    */
-  public void incrementNumTypedWords() {
+  public synchronized void incrementNumTypedWords() {
     numTypedWords++;
   }
 }
