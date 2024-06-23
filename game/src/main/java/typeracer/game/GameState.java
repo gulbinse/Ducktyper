@@ -10,98 +10,100 @@ import java.util.Map;
  */
 public class GameState {
 
-    /** Represents the Status of the TypeWriter game. */
-    public enum GameStatus {
-        /** Game is still running. */
-        RUNNING,
-        /** Game is over because all players have finished their text. */
-        FINISHED,
-        /** Game hasn't started yet because not every player is ready yet. */
-        WAITING_FOR_READY
-    }
+  /** Represents the Status of the TypeWriter game. */
+  public enum GameStatus {
+    /** Game is still running. */
+    RUNNING,
+    /** Game is over because all players have finished their text. */
+    FINISHED,
+    /** Game hasn't started yet because not every player is ready yet. */
+    WAITING_FOR_READY
+  }
 
-    private GameStatus gameStatus;
+  private GameStatus gameStatus;
 
-    private final TextSource textSource;
+  private final String textToType;
 
-    private Map<String, Player> players;
+  private Map<String, Player> players;
 
-    /**
-     * A constructor which creates a new default gameState.
-     *
-     * <p>Initially the GameStatus is set to {@link GameStatus#WAITING_FOR_READY} and no text is selected.</p>
-     * @param textSource from which the Texts of the Game should come from
-     */
-    GameState(TextSource textSource) {
-        this(textSource, GameStatus.WAITING_FOR_READY, Collections.emptyMap());
-    }
+  /**
+   * A constructor which creates a new default gameState.
+   *
+   * <p>Initially the GameStatus is set to {@link GameStatus#WAITING_FOR_READY} and no text is
+   * selected.
+   *
+   * @param textSource from which the Texts of the Game should come from
+   */
+  GameState(TextSource textSource) {
+    this(textSource, GameStatus.WAITING_FOR_READY, Collections.emptyMap());
+  }
 
-    /**
-     * Private Constructor for GameState class.
-     *
-     * @param textSource for the Game
-     * @param gameStatus of the Game
-     * @param players in the Lobby
-     */
-    private GameState(
-            TextSource textSource,
-            GameStatus gameStatus,
-            Map<String, Player> players) {
-        this.textSource = textSource;
-        this.players = Map.copyOf(players);
-        this.gameStatus = gameStatus;
-    }
+  /**
+   * Private Constructor for GameState class.
+   *
+   * @param textSource for the Game
+   * @param gameStatus of the Game
+   * @param players in the Lobby
+   */
+  private GameState(TextSource textSource, GameStatus gameStatus, Map<String, Player> players) {
+    this.textToType = textSource.getCurrentText();
+    this.players = Map.copyOf(players);
+    this.gameStatus = gameStatus;
+  }
 
-    /**
-     * Adds a Player to the game.
-     *
-     * <p>Not implemented yet a check if there are already maximum number of players in the game</p>
-     * @param player that is added to the game
-     */
-    public synchronized void addPlayer(Player player) {
-        String playerName = player.getName();
-        players.put(playerName, player);
-    }
+  /**
+   * Adds a Player to the game.
+   *
+   * <p>Not implemented yet a check if there are already maximum number of players in the game
+   *
+   * @param player that is added to the game
+   */
+  public synchronized void addPlayer(Player player) {
+    String playerName = player.getUsername();
+    players.put(playerName, player);
+  }
 
-    /**
-     * Removes a Player from the game.
-     *
-     * @param player that is removed from the game
-     */
-    public synchronized void removePlayer(Player player) {
-        String playerName = player.getName();
-        players.remove(playerName);
-    }
+  /**
+   * Removes a Player from the game.
+   *
+   * @param player that is removed from the game
+   */
+  public synchronized void removePlayer(Player player) {
+    String playerName = player.getUsername();
+    players.remove(playerName);
+  }
 
-    /**
-     * Returns List of players in the current game.
-     *
-     * @return List of players
-     */
-    public List<Player> getPlayers() {
-        return List.copyOf(players.values());
-    }
+  /**
+   * Returns List of players in the current game.
+   *
+   * @return List of players
+   */
+  public List<Player> getPlayers() {
+    return List.copyOf(players.values());
+  }
 
-    /**
-     * Returns the TextSource of the current GameState.
-     *
-     * @return TextSource
-     */
-    public TextSource getTextSource() {
-        return textSource;
-    }
+  /**
+   * Returns the TextSource of the current GameState.
+   *
+   * @return TextSource
+   */
+  public String getTextToType() {
+    return textToType;
+  }
 
-    /**
-     * Returns the Status of the current game.
-     *
-     * <p>Possible Status is: {@link GameStatus#RUNNING}, {@link GameStatus#FINISHED}, {@link GameStatus#WAITING_FOR_READY} </p>
-     * @return current Status
-     */
-    public GameStatus getStatus() {
-        return gameStatus;
-    }
+  /**
+   * Returns the Status of the current game.
+   *
+   * <p>Possible Status is: {@link GameStatus#RUNNING}, {@link GameStatus#FINISHED}, {@link
+   * GameStatus#WAITING_FOR_READY}
+   *
+   * @return current Status
+   */
+  public GameStatus getStatus() {
+    return gameStatus;
+  }
 
-    public void setStatus(GameStatus status) {
-        gameStatus = status;
-    }
+  public void setStatus(GameStatus gameStatus) {
+    this.gameStatus = gameStatus;
+  }
 }
