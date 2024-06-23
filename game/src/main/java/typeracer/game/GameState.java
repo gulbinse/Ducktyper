@@ -30,8 +30,7 @@ public class GameState {
   /**
    * A constructor which creates a new default GameState.
    *
-   * <p>Initially the GameStatus is set to {@link GameStatus#WAITING_FOR_READY} and no text is
-   * selected.
+   * <p>Initially the GameStatus is set to {@link GameStatus#WAITING_FOR_READY}.
    *
    * @param textSource from which the text of the game should come from
    */
