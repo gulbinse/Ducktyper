@@ -24,7 +24,7 @@ public class TypeRacerGame {
             "Player " + player.getUsername() + " not yet ready, but start was attempted");
       }
     }
-    state.setStatus(GameState.GameStatus.RUNNING);
+    state.setGameStatus(GameState.GameStatus.RUNNING);
     gameStartTime = System.nanoTime();
     // TODO: notify Mediator about game start
   }
