@@ -16,9 +16,26 @@ public interface Observer {
   /** Updates something. */
   void update();
 
-  void updateNewPlayer(String playerName, GameState newState);
+  /**
+   * Called when a new player joins.
+   *
+   * @param id of the new player
+   * @param newGameState the new game state
+   */
+  void updateNewPlayer(int id, GameState newGameState);
 
-  void updateState(GameState state);
+  /**
+   * Called when the game state changes.
+   *
+   * @param newGameState the new game state
+   */
+  void updateState(GameState newGameState);
 
-  void updateRemovedPlayer(String playerName, GameState newState);
+  /**
+   * Called when a player is removed from the game.
+   *
+   * @param id of the removed player
+   * @param newGameState the new game state
+   */
+  void updateRemovedPlayer(int id, GameState newGameState);
 }
