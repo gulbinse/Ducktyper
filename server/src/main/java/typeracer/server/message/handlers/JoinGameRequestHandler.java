@@ -1,14 +1,13 @@
 package typeracer.server.message.handlers;
 
 import typeracer.communication.messages.Message;
-import typeracer.server.Lobby;
 import typeracer.server.message.MessageHandler;
 
 /**
  * Handles JoinGameRequest messages in a chain of responsibility pattern. If the message is not of
  * the specified type, it will be passed to the next handler in the chain, if any.
  */
-public class JoinGameRequestHandler extends MessageHandler {
+public class JoinGameRequestHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
 
@@ -22,7 +21,7 @@ public class JoinGameRequestHandler extends MessageHandler {
   }
 
   @Override
-  public void handleMessage(Message message, Lobby lobby, int id) {}
+  public void handleMessage(Message message, int id) {}
 
   @Override
   public JoinGameRequestHandler setNext(MessageHandler handler) {

@@ -1,8 +1,10 @@
-package typeracer.server;
+package typeracer.server.lobby;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import typeracer.communication.messages.Message;
+import typeracer.server.connection.ClientHandler;
 
 /**
  * This class represents a server-managed game lobby. Each instance of {@link Lobby} is dedicated to
@@ -12,27 +14,39 @@ import typeracer.communication.messages.Message;
  */
 public final class Lobby {
 
-  /** Defines the maximum number of players allowed in a lobby. */
-  public static final int MAX_LOBBY_SIZE = 5;
+  /** Defines the maximum number of players allowed in one lobby. */
+  public static final int MAX_SIZE = 5;
 
-  private final Collection<ClientHandler> clientHandlers = new ArrayList<>(MAX_LOBBY_SIZE);
+  private final Set<ClientHandler> clientHandlers = Collections.synchronizedSet(new HashSet<>());
+  private final boolean isPrivate;
 
-  /** The default constructor of this class. */
-  public Lobby() {}
+  /**
+   * Constructs a new Lobby with the specified arguments.
+   *
+   * @param isPrivate <code>true</code> if the lobby is private, <code>false</code> otherwise
+   */
+  public Lobby(boolean isPrivate) {
+    this.isPrivate = isPrivate;
+  }
+
+  /** Constructs a default Lobby. */
+  public Lobby() {
+    this(false);
+  }
 
   /**
    * Adds a newly connected client to the game as a player.
    *
    * @param playerId the unique id of the player
    */
-  public void addPlayer(int playerId) {}
+  public synchronized void addPlayer(int playerId) {}
 
   /**
    * Removes a recently disconnected client from the game.
    *
    * @param playerId the unique id of the player
    */
-  public void removePlayer(int playerId) {}
+  public synchronized void removePlayer(int playerId) {}
 
   /**
    * Updates the readiness status of a player.
@@ -40,7 +54,7 @@ public final class Lobby {
    * @param playerId the unique id of the player
    * @param ready <code>true</code> if the player is ready, <code>false</code> otherwise
    */
-  public void setReady(int playerId, boolean ready) {}
+  public synchronized void setReady(int playerId, boolean ready) {}
 
   /**
    * Broadcasts a message to all clients connected to this lobby.
@@ -93,5 +107,14 @@ public final class Lobby {
    */
   public boolean isFull() {
     return false;
+  }
+
+  /**
+   * Checks whether this lobby is private.
+   *
+   * @return <code>true</code> if the lobby is private, <code>false</code> otherwise
+   */
+  public boolean isPrivate() {
+    return isPrivate;
   }
 }

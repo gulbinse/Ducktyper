@@ -11,9 +11,9 @@ public class IdentifierGenerator {
   public IdentifierGenerator() {}
 
   /**
-   * Generates a new unique ID.
+   * Generates a new unique and positive ID.
    *
-   * @return a unique ID as an integer
+   * @return a unique ID as a positive integer
    */
   public int generateId() {
     return currentId.incrementAndGet();

@@ -1,8 +1,7 @@
-package typeracer.server;
+package typeracer.server.connection;
 
 import java.net.Socket;
 import typeracer.communication.messages.Message;
-import typeracer.server.message.MessageHandler;
 
 /**
  * This class represents a client connected to the server. It handles incoming and outgoing messages
@@ -10,14 +9,10 @@ import typeracer.server.message.MessageHandler;
  */
 public class ClientHandler implements Runnable {
 
-  private final Lobby lobby;
   private final Socket socket;
   private final int id;
 
-  private final MessageHandler messageHandler = MessageHandler.createChain();
-
-  private ClientHandler(Lobby lobby, Socket socket, int id) {
-    this.lobby = lobby;
+  private ClientHandler(Socket socket, int id) {
     this.socket = socket;
     this.id = id;
   }
@@ -25,13 +20,12 @@ public class ClientHandler implements Runnable {
   /**
    * Creates a new ClientHandler instance with the specified arguments and a unique id.
    *
-   * @param lobby the lobby this ClientHandler belongs to
    * @param socket the socket to which this handler should be bound
    * @param id the unique id of the client/player
    * @return a new ClientHandler instance
    */
-  public static ClientHandler create(Lobby lobby, Socket socket, int id) {
-    return new ClientHandler(lobby, socket, id);
+  public static ClientHandler create(Socket socket, int id) {
+    return new ClientHandler(socket, id);
   }
 
   @Override
