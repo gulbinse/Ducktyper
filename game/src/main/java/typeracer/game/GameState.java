@@ -1,6 +1,7 @@
 package typeracer.game;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +26,7 @@ public class GameState {
 
   private final String textToType;
 
-  private Map<Integer, Player> players = Collections.emptyMap(); // Map of IDs to Players
+  private Map<Integer, Player> players = new HashMap<>(); // Map of IDs to Players
 
   /**
    * A constructor which creates a new default GameState.
