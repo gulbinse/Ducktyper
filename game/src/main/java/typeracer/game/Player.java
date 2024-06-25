@@ -106,4 +106,8 @@ public class Player {
 
     state.setWordsPerMinute(wordsPerMinute);
   }
+
+  public PlayerState getState() {
+    return state;
+  }
 }
