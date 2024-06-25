@@ -74,7 +74,12 @@ public class TypeRacerGame {
    */
   public void removePlayer(int id) {
     synchronized (this) {
-      state.removePlayer(id);
+      if (state.getIds().contains(id)) {
+        state.removePlayer(id);
+      }
+      else {
+        throw new AssertionError("ID " + id + " not contained in player list.");
+      }
       // TODO: notify Mediator about removed Player
     }
   }
