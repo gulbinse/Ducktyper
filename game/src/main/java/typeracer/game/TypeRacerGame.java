@@ -87,4 +87,8 @@ public class TypeRacerGame {
     // FINISHED)
     return state.getPlayerById(id).typeLetter(letter, state.getTextToType(), gameStartTime);
   }
+
+  public GameState getState(){
+    return state;
+  }
 }
