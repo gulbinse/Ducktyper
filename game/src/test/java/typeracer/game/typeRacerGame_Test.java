@@ -31,7 +31,7 @@ class typeRacerGame_Test {
         assertSame(game.typeLetter(1, letter), Player.TypingResult.SUCCESSFUL);
     }
 
-    private void addUserWithInvalidUsername(){
+    private void addUserWithInvalidUsername() {
         Player testPlayer = new Player("Alphakevin");
         game.addPlayer(14, testPlayer);
         assertThrows(AssertionError.class, () -> {
@@ -39,7 +39,7 @@ class typeRacerGame_Test {
         });
     }
 
-    void addUserWithValidUsername(){
+    void addUserWithValidUsername() {
         Player testPlayer = new Player("Betakevin");
         game.addPlayer(25, testPlayer);
     }
@@ -52,7 +52,7 @@ class typeRacerGame_Test {
         });
     }
 
-    void addUserWithNoUsername(){
+    void addUserWithNoUsername() {
         Player testPlayer = new Player(null);
         Player testPlayer2 = new Player("");
         assertThrows(AssertionError.class, () -> {
@@ -63,27 +63,43 @@ class typeRacerGame_Test {
         });
     }
 
-    void removeExistingUserWithCorrectID(){
+    void removeExistingUserWithCorrectID() {
         Player testPlayer = new Player("OmegaKevin");
         game.addPlayer(45, testPlayer);
         game.removePlayer(45);
     }
 
-    void removeUserWithWrongID(){
+    void removeUserWithWrongID() {
         assertThrows(Error.class, () -> {
             game.removePlayer(55);
-        } );
+        });
     }
 
-    void removeAllPlayers(){
-        for (int id : game.getState().getIds()){
+    void removeAllPlayers() {
+        for (int id : game.getState().getIds()) {
             game.removePlayer(id);
         }
     }
 
+    void testStart(){
+        removeAllPlayers();
+        assertThrows(AssertionError.class, () -> {
+            game.start();
+        });
+        Player notReadyPlayer1 = new Player("Kevinovic");
+        game.addPlayer(101, notReadyPlayer1);
+        assertThrows(AssertionError.class, () -> {
+            game.start();
+        });
+        for (Player player : game.getState().getPlayers()){
+            player.getState().setIsReady(true);
+        }
+        game.start();
+    }
+
     @Tag("Typing")
     @ParameterizedTest
-    @ValueSource(chars = {'a', 'B', 'D', 'G', 'M' , 'L', 'k', 'z'})
+    @ValueSource(chars = {'a', 'B', 'D', 'G', 'M', 'L', 'k', 'z'})
     void testWrongLetter_differentLetters(char value) {
         assertWrongLetter(value);
     }
@@ -91,14 +107,14 @@ class typeRacerGame_Test {
     @Tag("Typing")
     @Test
     void testCorrectLetter_byText() {
-        for(char value : textSource.getCurrentText().toCharArray()) {
+        for (char value : textSource.getCurrentText().toCharArray()) {
             assertRightLetter(value);
         }
     }
 
     @Tag("Character Validation")
     @Test
-    void testAddingPlayer(){
+    void testAddingPlayer() {
         addUserWithInvalidUsername();
         addUserWithValidUsername();
         addUserWithInvalidID();
@@ -106,9 +122,14 @@ class typeRacerGame_Test {
     }
 
     @Test
-    void testRemovingPlayer(){
+    void testRemovingPlayer() {
         removeExistingUserWithCorrectID();
         removeUserWithWrongID();
         removeAllPlayers();
+    }
+
+    @Test
+    void testStartGame(){
+        testStart();
     }
 }
