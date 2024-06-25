@@ -1,5 +1,7 @@
 package typeracer.game;
 
+import java.util.Collections;
+
 /** The main class for the game, managing states and providing an interface for the server. */
 public class TypeRacerGame {
 
@@ -17,7 +19,10 @@ public class TypeRacerGame {
 
   /** Starts a new game with a new text. */
   public void start() {
-    // check if all players ready
+    if (state.getPlayers().equals(Collections.emptyList())){
+      throw new AssertionError("There are currently no players in the game");
+    }
+
     for (Player player : state.getPlayers()) {
       if (!player.isReady()) {
         throw new AssertionError(
