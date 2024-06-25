@@ -46,9 +46,10 @@ class typeRacerGame_Test {
 
     void addUserWithInvalidID() {
         Player testPlayer = new Player("Gammakevin");
+        Player testPlayer2 = new Player("Gammakevin1");
         game.addPlayer(35, testPlayer);
         assertThrows(AssertionError.class, () -> {
-            game.addPlayer(35, testPlayer);
+            game.addPlayer(35, testPlayer2);
         });
     }
 
