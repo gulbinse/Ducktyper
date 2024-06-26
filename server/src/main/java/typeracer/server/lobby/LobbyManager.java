@@ -8,14 +8,14 @@ import typeracer.server.utils.IdentifierGenerator;
 /** This class is responsible for managing all lobbies. */
 public final class LobbyManager {
 
-  private static final Map<Integer, Lobby> lobbies = new ConcurrentHashMap<>();
+  private static final Map<Integer, Lobby> lobbyById = new ConcurrentHashMap<>();
   private static final IdentifierGenerator identifierGenerator = new IdentifierGenerator();
 
   /** The default constructor of this class. */
   public LobbyManager() {}
 
   /** Creates a new {@link Lobby} instance and assigns it a unique id. */
-  public synchronized void createNewLobby() {}
+  public synchronized void createNewLobby(boolean private) {}
 
   /**
    * Removes an existing lobby by its id.
