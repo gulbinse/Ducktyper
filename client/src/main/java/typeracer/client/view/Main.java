@@ -1,38 +1,44 @@
 package typeracer.client.view;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-/** Entry point of the application. */
-public class Main {
-
-  /** The default constructor of this class. */
-  public Main() {}
-
-  /**
-   * The entry point of the Typeracer Game application. Ensures that the GUI is created on the Event
-   * Dispatch Thread (EDT) for thread safety.
-   *
-   * @param args The command-line arguments (not used).
-   */
-  public static void main(String[] args) {
-    SwingUtilities.invokeLater(Main::createAndShowGui);
+/** Entry point of the JavaFX application. */
+public class Main extends Application {
+  /** Default constructor for the Main class. Initializes a new instance of Main. */
+  public Main() {
+    // Default constructor
   }
 
   /**
-   * Initializes and displays the main GUI window for the Typeracer Game. Sets up the frame,
-   * initializes the InitialPromptUi panel, and makes the frame visible. The window is set to close
-   * the application upon exiting.
+   * The main() method is ignored in correctly deployed JavaFX application. main() serves only as
+   * fallback in case the application can not be launched through deployment artifacts, e.g., in
+   * IDEs with limited FX support. NetBeans ignores main().
+   *
+   * @param args the command line arguments
    */
-  private static void createAndShowGui() {
-    JFrame frame = new JFrame("Typeracer Game");
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setSize(300, 200);
+  public static void main(String[] args) {
+    launch(args);
+  }
 
-    InitialPromptUi initialPromptUi = new InitialPromptUi(frame);
-    frame.getContentPane().add(initialPromptUi);
+  /**
+   * Starts the primary stage of the application, sets up the user interface.
+   *
+   * @param primaryStage the main stage for this application, onto which the application scene can
+   *     be set.
+   */
+  @Override
+  public void start(Stage primaryStage) {
+    primaryStage.setTitle("Typeracer Game");
 
-    frame.pack();
-    frame.setVisible(true);
+    InitialPromptUi initialPromptUi = new InitialPromptUi(primaryStage);
+    Scene scene = new Scene(initialPromptUi, 400, 450);
+    primaryStage.setScene(scene);
+
+    scene.setFill(StyleManager.BACKGROUND_COLOR);
+    primaryStage.setResizable(true);
+    primaryStage.setOnCloseRequest(event -> System.exit(0));
+    primaryStage.show();
   }
 }

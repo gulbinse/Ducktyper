@@ -5,6 +5,7 @@ plugins {
     // Apply the java Plugin to add support for Java.
     id 'java'
     id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
 
     // Quality stuff
     id 'checkstyle'
@@ -20,6 +21,11 @@ dependencies {
 application {
     // Define the main class for the application.
     mainClass = 'typeracer.client.Client'
+
+    applicationDefaultJvmArgs = [
+            '--module-path', 'D:\\programs\\javafx-sdk-17.0.11\\lib',
+            '--add-modules', 'javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.web'
+    ]
 }
 
 repositories {
@@ -28,13 +34,26 @@ repositories {
 }
 
 dependencies {
+    implementation project(':communication')
+    implementation project(':game')
 
     // Use JUnit Jupiter API for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
     testImplementation 'com.google.truth:truth:1.4.2'
+    implementation 'org.openjfx:javafx-controls:17.0.11'
+    implementation 'org.openjfx:javafx-fxml:17.0.11'
+    implementation 'org.openjfx:javafx-graphics:17.0.11'
+    implementation 'org.openjfx:javafx-base:17.0.11'
+    implementation 'org.openjfx:javafx-media:17.0.11'
+    implementation 'org.openjfx:javafx-web:17.0.11'
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+javafx {
+    version = "17.0.11"
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web' ]
 }
 
 tasks.named("run") { standardInput = System.in }
@@ -48,6 +67,10 @@ tasks.withType(Javadoc) {
 tasks.named("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+    jvmArgs = [
+            '--module-path', 'D:\\programs\\javafx-sdk-17.0.11\\lib',
+            '--add-modules', 'javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.web'
+    ]
 }
 
 checkstyle {
