@@ -1,8 +1,153 @@
 package typeracer.client.view;
 
-/** Handles the display of profile setting. */
-public class ProfileSettingsUi {
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
+import javafx.stage.Stage;
 
-  /** The default constructor of this class. */
-  public ProfileSettingsUi() {}
+/**
+ * Represents the profile settings user interface for the TypeRacer game. This class sets up the GUI
+ * elements that allow the user to change their username, WPM goal, and favorite text, and save or
+ * cancel these changes.
+ */
+public class ProfileSettingsUi extends VBox {
+
+  /** The text field for entering the username. */
+  private TextField usernameField;
+
+  /** The text field for entering the WPM goal. */
+  private TextField wpmGoalField;
+
+  /** The text field for entering the favorite text. */
+  private TextField favoriteTextField;
+
+  /** The button to save the profile settings. */
+  private Button saveButton;
+
+  /** The button to cancel the profile settings changes. */
+  private Button cancelButton;
+
+  /** Constructs a new ProfileSettingsUi and initializes its user interface. */
+  public ProfileSettingsUi() {
+    initializeUi();
+  }
+
+  /**
+   * Initializes the user interface components for the profile settings UI. Sets up the layout,
+   * styling, and button actions.
+   */
+  private void initializeUi() {
+    this.setSpacing(10);
+    this.setAlignment(Pos.TOP_CENTER);
+    this.setPadding(new Insets(20, 20, 20, 20));
+    this.setStyle(
+        "-fx-background-color: " + StyleManager.colorToHex(StyleManager.BACKGROUND_COLOR) + ";");
+
+    usernameField = new TextField();
+    wpmGoalField = new TextField();
+    favoriteTextField = new TextField();
+
+    VBox box = new VBox(10);
+    box.setAlignment(Pos.TOP_CENTER);
+    box.setPadding(new Insets(20, 20, 20, 20));
+    box.setBackground(
+        new Background(new BackgroundFill(StyleManager.GREY_BOX, CornerRadii.EMPTY, Insets.EMPTY)));
+    box.setBorder(
+        new Border(
+            new BorderStroke(
+                Paint.valueOf("black"),
+                BorderStrokeStyle.SOLID,
+                CornerRadii.EMPTY,
+                new BorderWidths(1))));
+
+    box.getChildren().add(createLabeledField("Change username:", usernameField));
+    box.getChildren().add(createLabeledField("WPM goal:", wpmGoalField));
+    box.getChildren().add(createLabeledField("Favorite text:", favoriteTextField));
+    box.getChildren().add(createButtonsPanel());
+
+    this.getChildren().add(box);
+    VBox.setMargin(box, new Insets(10, 100, 70, 100));
+
+    configureButtonActions();
+
+    StyleManager.applyFadeInAnimation(box, 1000);
+    StyleManager.applyButtonHoverAnimation(saveButton, cancelButton);
+  }
+
+  /**
+   * Creates an HBox containing a label and a text field.
+   *
+   * @param labelText The text for the label.
+   * @param textField The text field for user input.
+   * @return A HBox containing the label and text field.
+   */
+  private HBox createLabeledField(String labelText, TextField textField) {
+    HBox hbox = new HBox(10);
+    hbox.setAlignment(Pos.CENTER_LEFT);
+
+    Label label = new Label(labelText);
+    label.setFont(StyleManager.ITALIC_FONT);
+
+    textField.setPrefWidth(200);
+
+    hbox.getChildren().addAll(label, textField);
+
+    return hbox;
+  }
+
+  /**
+   * Creates an HBox containing the save and cancel buttons.
+   *
+   * @return A HBox containing the buttons.
+   */
+  private HBox createButtonsPanel() {
+    HBox hbox = new HBox(25);
+    hbox.setAlignment(Pos.CENTER);
+    hbox.setPadding(new Insets(5, 0, 0, 0));
+
+    saveButton =
+        StyleManager.createStyledButton(
+            "save", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
+    cancelButton =
+        StyleManager.createStyledButton(
+            "cancel", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
+
+    hbox.getChildren().addAll(saveButton, cancelButton);
+
+    return hbox;
+  }
+
+  /** Configures the actions for the save and cancel buttons. */
+  private void configureButtonActions() {
+    saveButton.setOnAction(
+        e -> {
+          saveSettings();
+          StyleManager.switchToMainMenu((Stage) this.getScene().getWindow());
+        });
+    cancelButton.setOnAction(
+        e -> StyleManager.switchToMainMenu((Stage) this.getScene().getWindow()));
+  }
+
+  /** Saves the settings entered by the user. */
+  private void saveSettings() {
+    System.out.println(
+        "Saved: Username - "
+            + usernameField.getText()
+            + ", WPM Goal - "
+            + wpmGoalField.getText()
+            + ", Favorite Text - "
+            + favoriteTextField.getText());
+  }
 }
