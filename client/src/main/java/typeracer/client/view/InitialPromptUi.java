@@ -10,7 +10,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -19,7 +18,7 @@ import javafx.stage.Stage;
  * Represents the initial prompt user interface for the TypeRacer game. This class sets up the GUI
  * elements that prompt the user to enter their username.
  */
-public class InitialPromptUi extends BorderPane {
+public class InitialPromptUi extends VBox {
   /** The text field for entering the username. */
   private TextField usernameField;
 
@@ -35,10 +34,18 @@ public class InitialPromptUi extends BorderPane {
     setBackground(
         new Background(
             new BackgroundFill(StyleManager.BACKGROUND_COLOR, CornerRadii.EMPTY, Insets.EMPTY)));
+
     setIconImage(stage);
-    stage.setResizable(true);
-    this.setTop(createImagePanel());
-    this.setCenter(createInputPanel());
+
+    setSpacing(10);
+    setPadding(new Insets(10));
+    setAlignment(Pos.CENTER);
+
+    VBox imagePanel = createImagePanel();
+    this.getChildren().add(imagePanel);
+
+    VBox inputPanel = createInputPanel();
+    this.getChildren().add(inputPanel);
   }
 
   /**
@@ -60,14 +67,8 @@ public class InitialPromptUi extends BorderPane {
   private VBox createImagePanel() {
     VBox imagePanel = new VBox();
     imagePanel.setAlignment(Pos.CENTER);
-    imagePanel.setBackground(
-        new Background(
-            new BackgroundFill(StyleManager.BACKGROUND_COLOR, CornerRadii.EMPTY, Insets.EMPTY)));
     Image image = new Image(getClass().getResourceAsStream("/images/typewriter.jpeg"));
     ImageView imageView = new ImageView(image);
-
-    StyleManager.applyFadeInAnimation(imageView, 1500);
-
     imagePanel.getChildren().add(imageView);
     return imagePanel;
   }
