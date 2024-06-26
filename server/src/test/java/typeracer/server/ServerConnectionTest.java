@@ -109,7 +109,7 @@ public class ServerConnectionTest {
       throws IOException, InterruptedException {
     String joinRequest = "{\"messageType\":\"JoinGameRequest\",\"playerName\":\"" + USER1 + "\"}";
     String readyRequest = "{\"messageType\":\"ReadyRequest\",\"ready\":true}";
-    String characterRequest = "{\"messageType\":\"CharacterRequest\",\"character\":\"a\"}";
+    String characterRequest = "{\"messageType\":\"CharacterRequest\",\"character\":'a'}";
     MockInputStream networkIn =
         getNetworkIn(
             joinRequest
