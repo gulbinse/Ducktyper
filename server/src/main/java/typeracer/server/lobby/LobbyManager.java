@@ -14,8 +14,12 @@ public final class LobbyManager {
   /** The default constructor of this class. */
   public LobbyManager() {}
 
-  /** Creates a new {@link Lobby} instance and assigns it a unique id. */
-  public synchronized void createNewLobby(boolean private) {}
+  /**
+   * Creates a new {@link Lobby} instance and assigns it a unique id.
+   *
+   * @param isPrivate <code>true</code> if the lobby should be private, <code>false</code> otherwise
+   */
+  public synchronized void createNewLobby(boolean isPrivate) {}
 
   /**
    * Removes an existing lobby by its id.
