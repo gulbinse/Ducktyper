@@ -8,7 +8,7 @@ import typeracer.server.utils.IdentifierGenerator;
 /** This class is responsible for managing clients connecting to the server. */
 public final class ConnectionManager {
 
-  private static final Map<Integer, ClientHandler> clientHandlers = new HashMap<>();
+  private static final Map<Integer, ClientHandler> clientHandlerById = new HashMap<>();
   private static final IdentifierGenerator identifierGenerator = new IdentifierGenerator();
 
   /** The default constructor of this class. */
