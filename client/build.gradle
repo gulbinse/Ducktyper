@@ -5,7 +5,7 @@ plugins {
     // Apply the java Plugin to add support for Java.
     id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.10'
+    id("org.openjfx.javafxplugin") version "0.1.0"
 
     // Quality stuff
     id 'checkstyle'
@@ -23,7 +23,6 @@ application {
     mainClass = 'typeracer.client.Client'
 
     applicationDefaultJvmArgs = [
-            '--module-path', 'D:\\programs\\javafx-sdk-17.0.11\\lib',
             '--add-modules', 'javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.web'
     ]
 }
@@ -52,8 +51,15 @@ dependencies {
 }
 
 javafx {
-    version = "17.0.11"
-    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.web' ]
+    version = "21.0.3"
+    modules(
+            "javafx.base",
+            "javafx.swing",
+            "javafx.graphics",
+            "javafx.controls",
+            "javafx.fxml",
+            "javafx.media",
+            "javafx.web")
 }
 
 tasks.named("run") { standardInput = System.in }
@@ -68,7 +74,6 @@ tasks.named("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
     jvmArgs = [
-            '--module-path', 'D:\\programs\\javafx-sdk-17.0.11\\lib',
             '--add-modules', 'javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.web'
     ]
 }
