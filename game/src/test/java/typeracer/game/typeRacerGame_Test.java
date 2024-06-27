@@ -1,11 +1,18 @@
 package typeracer.game;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Collections;
+import java.util.stream.Stream;
+
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -14,8 +21,8 @@ class typeRacerGame_Test {
     static Player dummyPlayer;
     static TextSource textSource;
 
-    @BeforeAll
-    static void setUpBeforeAll() throws Exception {
+    @BeforeEach
+    void setUpBeforeAll() throws Exception {
         textSource = new TextSource();
         textSource.setDefaultText();
         game = new TypeRacerGame(textSource);
@@ -29,6 +36,12 @@ class typeRacerGame_Test {
 
     private void assertRightLetter(char letter) {
         assertSame(game.typeLetter(1, letter), Player.TypingResult.SUCCESSFUL);
+    }
+
+    private void typingWithInvalidID(char letter) {
+        assertThrows(NullPointerException.class, () -> {
+            game.typeLetter(Collections.max(game.getState().getIds()) + 1, letter);
+        });
     }
 
     private void addUserWithInvalidUsername() {
@@ -100,9 +113,13 @@ class typeRacerGame_Test {
 
     @Tag("Typing")
     @ParameterizedTest
-    @ValueSource(chars = {'a', 'B', 'D', 'G', 'M', 'L', 'k', 'z'})
+    @MethodSource("charProvider")
     void testWrongLetter_differentLetters(char value) {
         assertWrongLetter(value);
+    }
+
+    static Stream<Character> charProvider() {
+        return Stream.of('a', 'B', 'D', 'G', 'M', 'L', 'k', 'z', '\u00DF', '1', '\u00E4');
     }
 
     @Tag("Typing")
@@ -113,7 +130,15 @@ class typeRacerGame_Test {
         }
     }
 
-    @Tag("Character Validation")
+    @Tag("Typing")
+    @Test
+    void testTypingWithInvalidPlayerID(){
+        for (char value : textSource.getCurrentText().toCharArray()) {
+            typingWithInvalidID(value);
+        }
+    }
+
+    @Tag("Charactervalidation")
     @Test
     void testAddingPlayer() {
         addUserWithInvalidUsername();
