@@ -10,11 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2024-06-23
 
 ### Added
-- ``MessageHandler`` classes for character, join and ready requests
+- ``MessageHandler`` classes for character, join and ready requests, using *Chain of Responsibility*
 - ID Generator
 - Skeleton for ``Server`` class (#16)
-- ``ClientHandler`` class
-- ``Lobby`` class using the mediator design pattern
+- Lobby system & connection classes using the mediator design pattern
 
 ### Removed
 - ``GameController`` class
