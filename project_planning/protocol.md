@@ -13,6 +13,16 @@ The message that asks for joining the game.
 ```
 - `String <NAME>`: the client's (player's) name
 
+### JoinLobbyRequest
+The message that asks for joining the lobby.
+```json
+{
+    "messageType":"JoinLobbyRequest",
+    "lobbyId":<ID>
+}
+```
+- `int <ID>`: the id of the lobby
+
 ### ReadyRequest
 The message notifying the server that the client's (player's) readiness status has changed.
 ```json
@@ -47,15 +57,29 @@ The message notifying the client whether its JoinGameRequest has been accepted.
 - `String <STATUS>`: one of `"ACCEPTED"` or `"DENIED"`
 - `String <REASON>`: specifies the reason for a denied connection, null otherwise
 
+### JoinLobbyResponse
+The message notifying the client whether its JoinLobbyRequest has been accepted.
+```json
+{
+    "messageType":"JoinLobbyResponse",
+    "joinStatus":<STATUS>,
+    "reason":<REASON>
+}
+```
+- `String <STATUS>`: one of `"ACCEPTED"` or `"DENIED"`
+- `String <REASON>`: specifies the reason for a denied connection, null otherwise
+
 ### ReadyResponse
 The message notifying the client whether its ReadyRequest has been accepted.
 ```json
 {
     "messageType":"ReadyResponse",
-    "readyStatus":<STATUS>
+    "readyStatus":<STATUS>,
+    "reason":<REASON>
 }
 ```
 - `String <STATUS>`: one of `"ACCEPTED"` or `"DENIED"`
+- `String <REASON>`: specifies the reason for a denied request, null otherwise
 
 ### CharacterResponse
 The message notifying the client whether its typed character was correct.
