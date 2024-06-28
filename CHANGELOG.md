@@ -11,9 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - ``MessageHandler`` classes for character, join and ready requests, using *Chain of Responsibility*
-- ID Generator
+- ID generator
 - Skeleton for ``Server`` class (#16)
 - Lobby system & connection classes using the mediator design pattern
+- Basic server tests (#20)
 
 ### Removed
 - ``GameController`` class
@@ -22,16 +23,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - JSON protocol for Server-Client communication with sequence diagram (#3, #4).
-- ``README.md``.
-- Assignment of tasks for each student (#6).
-- UML diagram.
-- Information about the GUI (#2).
-- Information about the game logic (#11).
-- Packages and the relevant classes based on MVC pattern.
-- ``Observable`` and ``Observer`` in ``util`` package.
-- ``build.gradle`` configuration.
-- UI Classes.
-- Javadocs.
+- ``README.md``
+- Assignment of tasks for each student (#6)
+- UML diagram
+- Information about the GUI (#2)
+- Information about the game logic (#11)
+- Packages and the relevant classes based on MVC pattern
+- ``Observable`` and ``Observer`` in ``util`` package
+- ``build.gradle`` configuration
+- UI classes
+- Javadocs
 
 ### Changed
 

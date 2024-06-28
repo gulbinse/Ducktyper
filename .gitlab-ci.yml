@@ -17,7 +17,7 @@ stages:
 
 build:
   stage: build
-  script: gradle build
+  script: gradle assemble
 
 javadoc:
   stage: required
