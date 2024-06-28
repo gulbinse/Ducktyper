@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Skeleton for ``Server`` class (#16)
 - Lobby system & connection classes using the mediator design pattern
 - Basic server tests (#20)
+- ``Main`` class for starting the GUI
+- UI classes: (#19)
+  - ``InitialPromptUi``
+  - ``MainMenuUi``
+  - ``GameUi``
+  - ``GameResultsUi``
+  - ``PlayerStatsUi``
+  - ``ProfileSettingsUi``
+- ``StyleManager`` class for consistent theme development
+- JavaFX 21.0.3 in ``build.gradle``
 
 ### Removed
 - ``GameController`` class
