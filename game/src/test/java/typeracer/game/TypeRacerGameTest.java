@@ -1,5 +1,6 @@
 package typeracer.game;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.charset.StandardCharsets;
@@ -25,9 +26,11 @@ class TypeRacerGameTest {
   }
 
   private void assertWrongLetter(char letter) {
+    assertSame(game.typeLetter(1, letter), Player.TypingResult.UNSUCCESSFUL);
   }
 
   private void assertRightLetter(char letter) {
+    assertSame(game.typeLetter(1, letter), Player.TypingResult.SUCCESSFUL);
   }
 
   private void typingWithInvalidId(char letter) {
