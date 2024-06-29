@@ -30,14 +30,29 @@ public class TextSource {
   public TextSource() {}
 
   /**
-   * Returns a default text to test the game.
+   * Sets a default text to test the game.
    *
-   * @return the default text, which is the beginning of the bee movie script
    * @deprecated will be replaced by a method returning a randomly selected text
    */
   @Deprecated
   public void setDefaultText() {
     currentText = DEFAULT_TEXT;
+  }
+
+  /**
+   * Sets the current text to a default text read from a file.
+   *
+   * @throws IOException when exceptions with reading the file occur
+   */
+  public void setDefaultTextFromFile() throws IOException {
+    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    URL textFileUrl = classLoader.getResource(DEFAULT_TEXT_FILE_PATH);
+    assert textFileUrl != null;
+    try {
+      setTextFromFile(new File(textFileUrl.toURI()));
+    } catch (URISyntaxException e) {
+      throw new RuntimeException("Error with converting default text file URL to URI");
+    }
   }
 
   /**
