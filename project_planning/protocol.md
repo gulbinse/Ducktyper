@@ -13,6 +13,26 @@ The message that asks for joining the game.
 ```
 - `String <NAME>`: the client's (player's) name
 
+### JoinLobbyRequest
+The message that asks for joining the lobby.
+```json
+{
+    "messageType":"JoinLobbyRequest",
+    "lobbyId":<ID>
+}
+```
+- `int <ID>`: the id of the lobby
+
+### ReadyRequest
+The message notifying the server that the client's (player's) readiness status has changed.
+```json
+{
+    "messageType":"ReadyRequest",
+    "ready":<STATUS>
+}
+```
+- `boolean <STATUS>`: true if the player is ready, false otherwise
+
 ### CharacterRequest
 The message containing the client's (player's) typed character.
 ```json
@@ -21,7 +41,7 @@ The message containing the client's (player's) typed character.
     "character":<CHAR>
 }
 ```
-- `String <CHAR>`: the client's (player's) typed character
+- `char <CHAR>`: the client's (player's) typed character
 
 ## Server to Client
 
@@ -37,12 +57,36 @@ The message notifying the client whether its JoinGameRequest has been accepted.
 - `String <STATUS>`: one of `"ACCEPTED"` or `"DENIED"`
 - `String <REASON>`: specifies the reason for a denied connection, null otherwise
 
+### JoinLobbyResponse
+The message notifying the client whether its JoinLobbyRequest has been accepted.
+```json
+{
+    "messageType":"JoinLobbyResponse",
+    "joinStatus":<STATUS>,
+    "reason":<REASON>
+}
+```
+- `String <STATUS>`: one of `"ACCEPTED"` or `"DENIED"`
+- `String <REASON>`: specifies the reason for a denied connection, null otherwise
+
+### ReadyResponse
+The message notifying the client whether its ReadyRequest has been accepted.
+```json
+{
+    "messageType":"ReadyResponse",
+    "readyStatus":<STATUS>,
+    "reason":<REASON>
+}
+```
+- `String <STATUS>`: one of `"ACCEPTED"` or `"DENIED"`
+- `String <REASON>`: specifies the reason for a denied request, null otherwise
+
 ### CharacterResponse
 The message notifying the client whether its typed character was correct.
 ```json
 {
     "messageType":"CharacterResponse",
-    "characterStatus":<STATUS>
+    "correct":<STATUS>
 }
 ```
 - `boolean <STATUS>`: true if the character was correct, false otherwise
@@ -53,10 +97,12 @@ The message notifying all clients that a new player has joined the game.
 {
     "messageType":"PlayerJoinedNotification",
     "numPlayers":<NUM_PLAYERS>,
+    "playerId":<ID>,
     "playerName":<NAME>
 }
 ```
 - `int <NUM_PLAYERS>`: the number of players in the game
+- `int <ID>`: the id of the player who joined the game
 - `String <NAME>`: the name of the player who joined the game
 
 ### PlayerLeftNotification
@@ -65,11 +111,11 @@ The message notifying all clients that a player has left the game.
 {
     "messageType":"PlayerLeftNotification",
     "numPlayers":<NUM_PLAYERS>,
-    "playerName":<NAME>
+    "playerId":<ID>
 }
 ```
 - `int <NUM_PLAYERS>`: the number of players remaining in the game
-- `String <NAME>`: the name of the player who left the game
+- `int <ID>`: the id of the player who left the game
 
 ### PlayerStateNotification
 The message notifying all clients about a player's current state.
@@ -77,13 +123,13 @@ The message notifying all clients about a player's current state.
 {
     "messageType":"PlayerStateNotification",
     "accuracy":<ACCURACY>,
-    "playerName":<NAME>,
+    "playerId":<ID>,
     "progress":<PROGRESS>,
     "wpm":<WPM>
 }
 ```
 - `double <ACCURACY>`: the player's accuracy represented as a value between 0.0 (0%) and 1.0 (100%)
-- `String <NAME>`: the player's name
+- `int <ID>`: the player's id
 - `double <PROGRESS>`: the player's current progress represented as a value between 0.0 (0%) and 1.0 (100%)
 - `double <WPM>`: the player's average words per minute
 
