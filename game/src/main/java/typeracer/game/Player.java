@@ -107,7 +107,12 @@ public class Player {
     state.setWordsPerMinute(wordsPerMinute);
   }
 
-  public PlayerState getState() {
-    return state;
+  /**
+   * Sets the ready state for this player.
+   *
+   * @param isReady true if player is ready, false otherwise
+   */
+  public void setIsReady(boolean isReady) {
+    state.setIsReady(isReady);
   }
 }
