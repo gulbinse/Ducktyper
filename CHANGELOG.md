@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - ``ProfileSettingsUi``
 - ``StyleManager`` class for consistent theme development
 - JavaFX 21.0.3 in ``build.gradle``
+- Client & Server communication messages (#17)
+- ``MoshiAdapter`` class for message conversion
 
 ### Removed
 - ``GameController`` class
