@@ -89,7 +89,7 @@ public class Player {
       // Update Progress only if typing was successful, to avoid unnecessary updates
       state.setProgress(progress);
 
-      if (correctLetter == ' ') {
+      if (Character.isSpaceChar(correctLetter)) {
         state.incrementNumTypedWords();
       }
       return TypingResult.SUCCESSFUL;
