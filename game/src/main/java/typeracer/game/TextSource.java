@@ -20,17 +20,18 @@ public class TextSource {
    * Returns a default text to test the game.
    *
    * @return the default text, which is the beginning of the bee movie script
-   * @throws IOException when exceptions with reading the file occur
    * @deprecated will be replaced by a method returning a randomly selected text
    */
   @Deprecated
-  public String setDefaultText() throws IOException {
-    currentText = "According to all known laws of aviation, there is no way a bee should be able to fly.\n" +
-            "Its wings are too small to get its fat little body off the ground.\n" +
-            "The bee, of course, flies anyway because bees don't care what humans think is impossible.\n" +
-            "Yellow, black. Yellow, black. Yellow, black. Yellow, black.\n" +
-            "Ooh, black and yellow!\n" +
-            "Let's shake it up a little.";
+  public String setDefaultText() {
+    currentText =
+        "According to all known laws of aviation, there is no way a bee should be able to fly.\n"
+            + "Its wings are too small to get its fat little body off the ground.\n"
+            + "The bee, of course, flies anyway because bees don't care what humans think"
+            + "is impossible.\n"
+            + "Yellow, black. Yellow, black. Yellow, black. Yellow, black.\n"
+            + "Ooh, black and yellow!\n"
+            + "Let's shake it up a little.";
     return currentText;
   }
 
