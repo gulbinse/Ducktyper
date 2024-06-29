@@ -1,6 +1,8 @@
 package typeracer.game;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /** The main class for the game, managing states and providing an interface for the server. */
 public class TypeRacerGame {
@@ -19,7 +21,7 @@ public class TypeRacerGame {
 
   /** Starts a new game with a new text. */
   public void start() {
-    if (state.getPlayers().equals(Collections.emptyList())){
+    if (state.getPlayers().equals(Collections.emptyList())) {
       throw new AssertionError("There are currently no players in the game");
     }
 
@@ -38,19 +40,19 @@ public class TypeRacerGame {
    * Adds a player to the game.
    *
    * @param id of the player
-   * @param player that will be added to the game
+   * @param username of the player that will be added to the game
    */
-  public void addPlayer(int id, Player player) {
-    if (!isValidUsername(player.getUsername())) {
+  public void addPlayer(int id, String username) {
+    if (!isValidUsername(username)) {
       throw new AssertionError(
           "An invalid player name reached the game logic. This should be handled before. Name: "
-              + player.getUsername());
+              + username);
     }
     synchronized (this) {
       if (state.getIds().contains(id)) {
         throw new AssertionError("ID " + id + " already contained in player list.");
       }
-      state.addPlayer(id, player);
+      state.addPlayer(id, new Player(username));
       // TODO: notify Mediator about added Player
     }
   }
@@ -76,8 +78,7 @@ public class TypeRacerGame {
     synchronized (this) {
       if (state.getIds().contains(id)) {
         state.removePlayer(id);
-      }
-      else {
+      } else {
         throw new AssertionError("ID " + id + " not contained in player list.");
       }
       // TODO: notify Mediator about removed Player
@@ -98,7 +99,21 @@ public class TypeRacerGame {
     return state.getPlayerById(id).typeLetter(letter, state.getTextToType(), gameStartTime);
   }
 
-  public GameState getState(){
-    return state;
+  /**
+   * SHOULD ONLY BE USED FOR TESTING PURPOSES! Returns a list of all players.
+   *
+   * @return a list of all players in the game
+   */
+  List<Player> getPlayerList() {
+    return state.getPlayers();
+  }
+
+  /**
+   * SHOULD ONLY BE USED FOR TESTING PURPOSES! Returns a set of all players' IDs.
+   *
+   * @return a set of all players' IDs
+   */
+  Set<Integer> getIds() {
+    return state.getIds();
   }
 }
