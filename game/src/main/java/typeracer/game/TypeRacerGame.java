@@ -116,4 +116,13 @@ public class TypeRacerGame {
   Set<Integer> getIds() {
     return state.getIds();
   }
+
+  /**
+   * SHOULD ONLY BE USED FOR TESTING PURPOSES! Returns the current game status.
+   *
+   * @return the current game status
+   */
+  GameState.GameStatus getStatus() {
+    return state.getStatus();
+  }
 }
