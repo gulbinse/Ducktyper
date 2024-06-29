@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - JavaFX 21.0.3 in ``build.gradle``
 - Client & Server communication messages (#17)
 - ``MoshiAdapter`` class for message conversion
+- Lobby support & ready checks in the protocol (#21)
+
+### Changed
+- IDs instead of usernames in the protocol (#21)
 
 ### Removed
 - ``GameController`` class
