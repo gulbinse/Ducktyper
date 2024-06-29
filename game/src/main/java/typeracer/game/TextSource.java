@@ -29,10 +29,7 @@ public class TextSource {
   /** The default constructor of this class. */
   public TextSource() {}
 
-  /**
-   * Sets a default text to test the game.
-   *
-   */
+  /** Sets a default text to test the game. */
   public void setDefaultText() {
     currentText = DEFAULT_TEXT;
   }
