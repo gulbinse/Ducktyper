@@ -32,9 +32,7 @@ public class TextSource {
   /**
    * Sets a default text to test the game.
    *
-   * @deprecated will be replaced by a method returning a randomly selected text
    */
-  @Deprecated
   public void setDefaultText() {
     currentText = DEFAULT_TEXT;
   }
