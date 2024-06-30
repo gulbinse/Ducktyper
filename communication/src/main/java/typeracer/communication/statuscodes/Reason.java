@@ -12,7 +12,7 @@ public enum Reason {
   SESSION_FULL("This session is full."),
   /** Represents that the client does not have permission to create a session. */
   SESSION_CREATION_NO_PERMISSION("You do not have permission to create a session."),
-  /** Represents that a undefined or unknown error occurred. */
+  /** Represents that an undefined or unknown error occurred. */
   UNKNOWN("An unexpected error occurred.");
 
   private final String reason;
