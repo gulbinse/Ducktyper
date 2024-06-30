@@ -10,8 +10,10 @@ public enum Reason {
   SESSION_GAME_ALREADY_STARTED("The game has already started."),
   /** Represents that the session is already full. */
   SESSION_FULL("This session is full."),
+  /** Represents that a player has been kicked. */
+  SESSION_KICKED("You have been kicked."),
   /** Represents that the client does not have permission to create a session. */
-  SESSION_CREATION_NO_PERMISSION("You do not have permission to create a session."),
+  SESSION_CREATE_NO_PERMISSION("You do not have permission to create a session."),
   /** Represents that an undefined or unknown error occurred. */
   UNKNOWN("An unexpected error occurred.");
 

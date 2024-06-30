@@ -1,6 +1,7 @@
 package typeracer.communication.messages.server;
 
 import typeracer.communication.messages.Message;
+import typeracer.communication.statuscodes.Reason;
 
 /**
  * Response indicating whether a client successfully created a session. This response is sent to a
@@ -11,7 +12,7 @@ import typeracer.communication.messages.Message;
  */
 public final class CreateSessionResponse implements Message {
 
-  private final String reason;
+  private final Reason reason;
   private final int sessionId;
 
   /**
@@ -20,7 +21,7 @@ public final class CreateSessionResponse implements Message {
    * @param reason the reason for a denied request, null otherwise
    * @param sessionId the id of the created session or -1 if the request was denied
    */
-  public CreateSessionResponse(String reason, int sessionId) {
+  public CreateSessionResponse(Reason reason, int sessionId) {
     this.reason = reason;
     this.sessionId = sessionId;
   }
@@ -30,7 +31,7 @@ public final class CreateSessionResponse implements Message {
    *
    * @return the reason for a denied request, null otherwise
    */
-  public String getReason() {
+  public Reason getReason() {
     return reason;
   }
 

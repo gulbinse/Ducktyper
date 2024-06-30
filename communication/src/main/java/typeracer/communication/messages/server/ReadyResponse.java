@@ -1,6 +1,8 @@
 package typeracer.communication.messages.server;
 
 import typeracer.communication.messages.Message;
+import typeracer.communication.statuscodes.PermissionStatus;
+import typeracer.communication.statuscodes.Reason;
 
 /**
  * Response indicating whether a client is allowed to change its readiness status. This response is
@@ -10,8 +12,8 @@ import typeracer.communication.messages.Message;
  */
 public final class ReadyResponse implements Message {
 
-  private final String readyStatus;
-  private final String reason;
+  private final PermissionStatus readyStatus;
+  private final Reason reason;
 
   /**
    * Constructs a new ReadyResponse with the specified arguments.
@@ -19,7 +21,7 @@ public final class ReadyResponse implements Message {
    * @param readyStatus the status of the ready request, indicating whether changing is allowed
    * @param reason the reason for a denied request, null otherwise
    */
-  public ReadyResponse(String readyStatus, String reason) {
+  public ReadyResponse(PermissionStatus readyStatus, Reason reason) {
     this.readyStatus = readyStatus;
     this.reason = reason;
   }
@@ -29,7 +31,7 @@ public final class ReadyResponse implements Message {
    *
    * @return the status of the ready request
    */
-  public String getReadyStatus() {
+  public PermissionStatus getReadyStatus() {
     return readyStatus;
   }
 
@@ -38,7 +40,7 @@ public final class ReadyResponse implements Message {
    *
    * @return the reason for a denied request, null otherwise
    */
-  public String getReason() {
+  public Reason getReason() {
     return reason;
   }
 }

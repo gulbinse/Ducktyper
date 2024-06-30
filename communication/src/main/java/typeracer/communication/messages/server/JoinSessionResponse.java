@@ -1,6 +1,8 @@
 package typeracer.communication.messages.server;
 
 import typeracer.communication.messages.Message;
+import typeracer.communication.statuscodes.PermissionStatus;
+import typeracer.communication.statuscodes.Reason;
 
 /**
  * Response indicating whether a client is allowed to join the session. This response is sent to a
@@ -10,8 +12,8 @@ import typeracer.communication.messages.Message;
  */
 public final class JoinSessionResponse implements Message {
 
-  private final String joinStatus;
-  private final String reason;
+  private final PermissionStatus joinStatus;
+  private final Reason reason;
 
   /**
    * Constructs a new JoinSessionResponse with the specified arguments.
@@ -19,7 +21,7 @@ public final class JoinSessionResponse implements Message {
    * @param joinStatus the status of the join request, indicating whether joining is allowed
    * @param reason the reason for a denied connection, null otherwise
    */
-  public JoinSessionResponse(String joinStatus, String reason) {
+  public JoinSessionResponse(PermissionStatus joinStatus, Reason reason) {
     this.joinStatus = joinStatus;
     this.reason = reason;
   }
@@ -29,7 +31,7 @@ public final class JoinSessionResponse implements Message {
    *
    * @return the status of the join request
    */
-  public String getJoinStatus() {
+  public PermissionStatus getJoinStatus() {
     return joinStatus;
   }
 
@@ -38,7 +40,7 @@ public final class JoinSessionResponse implements Message {
    *
    * @return the reason for a denied connection, null otherwise
    */
-  public String getReason() {
+  public Reason getReason() {
     return reason;
   }
 }
