@@ -120,10 +120,20 @@ public class PlayerState {
     numTypedWords++;
   }
 
+  /**
+   * Returns true if the Player is finished, false otherwise.
+   *
+   * @return true if the Player is finished, false otherwise
+   */
   public boolean isFinished() {
     return isFinished;
   }
 
+  /**
+   * Sets the Player to being finished if true is given, to not finished if false is given.
+   *
+   * @param isFinished the state to set this Player to
+   */
   public void setIsFinished(boolean isFinished) {
     this.isFinished = isFinished;
   }

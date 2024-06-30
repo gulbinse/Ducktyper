@@ -72,10 +72,20 @@ public class Player {
     state.setIsReady(isReady);
   }
 
+  /**
+   * Returns true if this Player is finished, false otherwise.
+   *
+   * @return true if this Player is finished, false otherwise
+   */
   public boolean isFinished() {
     return state.isFinished();
   }
 
+  /**
+   * Sets the finished state for this player.
+   *
+   * @param isFinished true if player is finished, false otherwise
+   */
   public void setIsFinished(boolean isFinished) {
     state.setIsFinished(isFinished);
   }
