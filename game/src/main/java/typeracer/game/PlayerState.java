@@ -95,12 +95,11 @@ public class PlayerState {
   }
 
   /**
-   * Sets the zero-indexed position in the current text to the specified integer.
-   *
-   * @param currentTextIndex the index to set
+   * Increases the number of correctly typed characters (i.e. the current text's index) by one. This
+   * should generally be the only way the player's number of typed characters is changed.
    */
-  public void setCurrentTextIndex(int currentTextIndex) {
-    this.currentTextIndex = currentTextIndex;
+  public synchronized void incrementCurrentTextIndex() {
+    currentTextIndex++;
   }
 
   /**
@@ -113,8 +112,8 @@ public class PlayerState {
   }
 
   /**
-   * Increases the number of typed words by one. This should generally be the only way the player's
-   * number of typed words is changed.
+   * Increases the number of correctly typed words by one. This should generally be the only way the
+   * player's number of typed words is changed.
    */
   public void incrementNumTypedWords() {
     numTypedWords++;
