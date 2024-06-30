@@ -128,20 +128,20 @@ public class TypeRacerGame {
   }
 
   /**
+   * Returns the current game status.
+   *
+   * @return the current game status
+   */
+  public GameState.GameStatus getStatus() {
+    return state.getStatus();
+  }
+
+  /**
    * SHOULD ONLY BE USED FOR TESTING PURPOSES! Returns a set of all players' IDs.
    *
    * @return a set of all players' IDs
    */
   Set<Integer> getIds() {
     return state.getIds();
-  }
-
-  /**
-   * SHOULD ONLY BE USED FOR TESTING PURPOSES! Returns the current game status.
-   *
-   * @return the current game status
-   */
-  GameState.GameStatus getStatus() {
-    return state.getStatus();
   }
 }
