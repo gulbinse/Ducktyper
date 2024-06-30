@@ -1,42 +1,52 @@
 package typeracer.server.message.handlers;
 
 import typeracer.communication.messages.Message;
-import typeracer.communication.messages.client.JoinGameRequest;
-import typeracer.communication.messages.server.JoinGameResponse;
+import typeracer.communication.messages.client.HandshakeRequest;
+import typeracer.communication.messages.server.HandshakeResponse;
+import typeracer.communication.statuscodes.PermissionStatus;
+import typeracer.communication.statuscodes.Reason;
 import typeracer.server.connection.ConnectionManager;
 import typeracer.server.message.MessageHandler;
 
 /**
- * Handles JoinGameRequest messages in a chain of responsibility pattern. If the message is not of
+ * Handles HandshakeRequest messages in a chain of responsibility pattern. If the message is not of
  * the specified type, it will be passed to the next handler in the chain, if any.
  */
-public class JoinGameRequestHandler implements MessageHandler {
+public class HandshakeRequestHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
 
   /** The default constructor of this class. */
-  public JoinGameRequestHandler() {
+  public HandshakeRequestHandler() {
     this.nextHandler = null;
   }
 
-  private JoinGameRequestHandler(MessageHandler nextHandler) {
+  private HandshakeRequestHandler(MessageHandler nextHandler) {
     this.nextHandler = nextHandler;
   }
 
   @Override
   public void handleMessage(Message message, int clientId) {
-    if (message instanceof JoinGameRequest joinGameRequest) {
+    if (message instanceof HandshakeRequest handshakeRequest) {
       ConnectionManager connectionManager = new ConnectionManager();
-      connectionManager.setPlayerName(clientId, joinGameRequest.getPlayerName());
-      connectionManager.sendMessage(new JoinGameResponse("ACCEPTED", null), clientId);
-      // TODO
+      ConnectionManager.OperationStatus status =
+          connectionManager.setPlayerName(clientId, handshakeRequest.getPlayerName());
+
+      HandshakeResponse response;
+      switch (status) {
+        case SUCCESS -> response = new HandshakeResponse(PermissionStatus.ACCEPTED, null);
+        case INVALID_USERNAME ->
+            response = new HandshakeResponse(PermissionStatus.DENIED, Reason.INVALID_USERNAME);
+        default -> response = new HandshakeResponse(PermissionStatus.DENIED, Reason.UNKNOWN);
+      }
+      connectionManager.sendMessage(response, clientId);
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, clientId);
     }
   }
 
   @Override
-  public JoinGameRequestHandler setNext(MessageHandler handler) {
-    return new JoinGameRequestHandler(handler);
+  public HandshakeRequestHandler setNext(MessageHandler handler) {
+    return new HandshakeRequestHandler(handler);
   }
 }
