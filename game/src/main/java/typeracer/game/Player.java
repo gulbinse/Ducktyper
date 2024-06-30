@@ -110,16 +110,17 @@ public class Player {
     int currentTextIndex = state.getCurrentTextIndex();
     char correctCharacter = textToType.charAt(currentTextIndex);
 
-    double progress = (double) currentTextIndex / textToType.length();
-    assert 0 <= progress && progress <= 1;
-
     // Update typing speeds in every case, since it might change with a wrong character as well
     updateAllTypingSpeeds();
 
     if (typedCharacter == correctCharacter) {
-      state.setCurrentTextIndex(currentTextIndex + 1);
+      state.incrementCurrentTextIndex();
+      int newTextIndex = state.getCurrentTextIndex(); // Should be incremented by one
+      assert newTextIndex == currentTextIndex + 1;
 
       // Update progress only if typing was successful, to avoid unnecessary updates
+      double progress = (double) newTextIndex / textToType.length();
+      assert 0 <= progress && progress <= 1;
       state.setProgress(progress);
       if (progress >= 1) {
         setIsFinished(true);
