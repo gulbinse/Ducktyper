@@ -137,6 +137,26 @@ public class TypeRacerGame {
   }
 
   /**
+   * Sets a player ready or not. This works only if the game is not currently waiting for players.
+   *
+   * @param id of the player to set the status of
+   * @param isReady true if the player is ready, false otherwise
+   */
+  public synchronized void setPlayerReady(int id, boolean isReady) {
+    if (getStatus().equals(GameState.GameStatus.WAITING_FOR_READY)) {
+      state.getPlayerById(id).setIsReady(isReady);
+    } else {
+      throw new AssertionError(
+          "Attempt to set Player with ID "
+              + id
+              + " to "
+              + (isReady ? "" : "not")
+              + " ready, but game status is "
+              + getStatus());
+    }
+  }
+
+  /**
    * SHOULD ONLY BE USED FOR TESTING PURPOSES! Returns a set of all players' IDs.
    *
    * @return a set of all players' IDs
