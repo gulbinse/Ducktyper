@@ -95,7 +95,7 @@ public final class SessionManager {
    * @param clientId the id of the client attempting to leave the session
    */
   public synchronized void leaveSession(int clientId) {
-    int sessionId = sessionIdByClientId.getOrDefault(clientId, null);
+    int sessionId = sessionIdByClientId.getOrDefault(clientId, -1);
     Session session = sessionBySessionId.getOrDefault(sessionId, null);
     if (session != null) {
       session.removePlayer(clientId);
@@ -125,7 +125,7 @@ public final class SessionManager {
    * @return the session associated with the given client, or null if no such session exists
    */
   public synchronized Session getSessionByClientId(int clientId) {
-    int sessionId = sessionIdByClientId.getOrDefault(clientId, null);
+    int sessionId = sessionIdByClientId.getOrDefault(clientId, -1);
     return sessionBySessionId.getOrDefault(sessionId, null);
   }
 }
