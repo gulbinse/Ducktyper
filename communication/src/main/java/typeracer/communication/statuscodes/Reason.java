@@ -22,7 +22,7 @@ public enum Reason {
   }
 
   /**
-   * Returns the reason for a denied client request.
+   * Returns the reason for a denied client request as a string.
    *
    * @return the reason for a denied client request
    */
