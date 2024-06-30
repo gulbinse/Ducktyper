@@ -15,10 +15,10 @@ public enum Reason {
   /** Represents that an undefined or unknown error occurred. */
   UNKNOWN("An unexpected error occurred.");
 
-  private final String reason;
+  private final String string;
 
-  Reason(String reason) {
-    this.reason = reason;
+  Reason(String string) {
+    this.string = string;
   }
 
   /**
@@ -26,7 +26,7 @@ public enum Reason {
    *
    * @return the reason for a denied client request
    */
-  public String getReason() {
-    return reason;
+  public String getString() {
+    return string;
   }
 }
