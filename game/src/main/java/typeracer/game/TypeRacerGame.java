@@ -86,20 +86,20 @@ public class TypeRacerGame {
   }
 
   /**
-   * Makes the given Player type the given letter.
+   * Makes the given Player type the given character.
    *
    * @param id of the player that types
-   * @param letter the letter that is typed
+   * @param character the character that is typed
    * @return The result of the typing attempt
    */
-  public Player.TypingResult typeLetter(
-      int id, char letter) { // TODO: Does this have to be synchronized?
+  public Player.TypingResult typeCharacter(
+      int id, char character) { // TODO: Does this have to be synchronized?
 
     checkIfGameFinished();
 
     Player player = state.getPlayerById(id);
     if (!player.isFinished()) {
-      return player.typeLetter(letter, state.getTextToType(), gameStartTime);
+      return player.typeCharacter(character, state.getTextToType(), gameStartTime);
     }
     return Player.TypingResult.PLAYER_FINISHED_ALREADY;
   }

@@ -7,7 +7,7 @@ public class Player {
   private static final long MINUTES_TO_NANO_SECONDS_FACTOR = 10 ^ 9;
   private long gameStartTime;
 
-  /** A result of trying to type a letter. */
+  /** A result of trying to type a character. */
   public enum TypingResult {
     /** The typing was correct. */
     CORRECT,
@@ -93,39 +93,39 @@ public class Player {
   }
 
   /**
-   * Makes this player type the given letter. Checks if the typed letter appears in the given text
-   * at the position this Player is currently at, and calculates updated words per minute and
+   * Makes this player type the given character. Checks if the typed character appears in the given
+   * text at the position this Player is currently at, and calculates updated words per minute and
    * progress if necessary.
    *
-   * @param typedLetter the letter this player has typed
+   * @param typedCharacter the character this player has typed
    * @param textToType the text the player has to type
    * @param gameStartTime the time the game started at, given as a long like returned by
    *     System.nanoTime()
-   * @return {@link TypingResult#CORRECT} if the letter was correct, else {@link
+   * @return {@link TypingResult#CORRECT} if the character was correct, else {@link
    *     TypingResult#INCORRECT}
    */
-  public synchronized TypingResult typeLetter(
-      char typedLetter, String textToType, long gameStartTime) {
+  public synchronized TypingResult typeCharacter(
+      char typedCharacter, String textToType, long gameStartTime) {
     this.gameStartTime = gameStartTime;
     int currentTextIndex = state.getCurrentTextIndex();
-    char correctLetter = textToType.charAt(currentTextIndex);
+    char correctCharacter = textToType.charAt(currentTextIndex);
 
     double progress = (double) currentTextIndex / textToType.length();
     assert 0 <= progress && progress <= 1;
 
-    // Update typing speeds in every case, since it might change with a wrong letter as well
+    // Update typing speeds in every case, since it might change with a wrong character as well
     updateAllTypingSpeeds();
 
-    if (typedLetter == correctLetter) {
+    if (typedCharacter == correctCharacter) {
       state.setCurrentTextIndex(currentTextIndex + 1);
 
-      // Update Progress only if typing was successful, to avoid unnecessary updates
+      // Update progress only if typing was successful, to avoid unnecessary updates
       state.setProgress(progress);
       if (progress >= 1) {
         setIsFinished(true);
       }
 
-      if (Character.isSpaceChar(correctLetter)) {
+      if (Character.isSpaceChar(correctCharacter)) {
         state.incrementNumTypedWords();
       }
       return TypingResult.CORRECT;
