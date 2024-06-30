@@ -5,6 +5,7 @@ public class PlayerState {
   private double progress = 0; // Ranging from 0.0 to 1.0 according to the protocol
   private double wordsPerMinute = 0;
   private boolean isReady = false;
+  private boolean isFinished = false;
   private int currentTextIndex = 0;
   private int numTypedWords = 0;
 
@@ -98,5 +99,13 @@ public class PlayerState {
    */
   public void incrementNumTypedWords() {
     numTypedWords++;
+  }
+
+  public boolean isFinished() {
+    return isFinished;
+  }
+
+  public void setIsFinished(boolean isFinished) {
+    this.isFinished = isFinished;
   }
 }

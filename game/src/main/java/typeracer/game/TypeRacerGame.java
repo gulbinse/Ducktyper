@@ -94,13 +94,32 @@ public class TypeRacerGame {
    */
   public Player.TypingResult typeLetter(
       int id, char letter) { // TODO: Does this have to be synchronized?
-    // TODO: Check if all players have progress of 1 (i.e. finished the game -> set status to
-    // FINISHED)
-    return state.getPlayerById(id).typeLetter(letter, state.getTextToType(), gameStartTime);
+
+    checkIfGameFinished();
+
+    Player player = state.getPlayerById(id);
+    if (!player.isFinished()) {
+      return player.typeLetter(letter, state.getTextToType(), gameStartTime);
+    }
+    return Player.TypingResult.PLAYER_FINISHED_ALREADY;
+  }
+
+  private void checkIfGameFinished() {
+    boolean allFinished = true;
+    for (Player player : getPlayerList()) {
+      if (!player.isFinished()) {
+        allFinished = false;
+        break;
+      }
+    }
+
+    if (allFinished) {
+      state.setGameStatus(GameState.GameStatus.FINISHED);
+    }
   }
 
   /**
-   * SHOULD ONLY BE USED FOR TESTING PURPOSES! Returns a list of all players.
+   * Returns a list of all players.
    *
    * @return a list of all players in the game
    */

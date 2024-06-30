@@ -7,11 +7,16 @@ public class Player {
 
   /** A result of trying to type a letter. */
   public enum TypingResult {
-    /** The typing was successful. */
-    SUCCESSFUL,
+    /** The typing was correct. */
+    CORRECT,
 
-    /** The typing was unsuccessful. */
-    UNSUCCESSFUL
+    /** The typing was incorrect. */
+    INCORRECT,
+
+    /**
+     * This Player has already finished the game.
+     */
+    PLAYER_FINISHED_ALREADY
   }
 
   /**
@@ -61,6 +66,23 @@ public class Player {
   }
 
   /**
+   * Sets the ready state for this player.
+   *
+   * @param isReady true if player is ready, false otherwise
+   */
+  public void setIsReady(boolean isReady) {
+    state.setIsReady(isReady);
+  }
+
+  public boolean isFinished() {
+    return state.isFinished();
+  }
+
+  public void setIsFinished(boolean isFinished) {
+    state.setIsFinished(isFinished);
+  }
+
+  /**
    * Makes this player type the given letter. Checks if the typed letter appears in the given text
    * at the position this Player is currently at, and calculates updated words per minute and
    * progress if necessary.
@@ -69,8 +91,8 @@ public class Player {
    * @param textToType the text the player has to type
    * @param gameStartTime the time the game started at, given as a long like returned by
    *     System.nanoTime()
-   * @return {@link TypingResult#SUCCESSFUL} if the letter was correct, else {@link
-   *     TypingResult#UNSUCCESSFUL}
+   * @return {@link TypingResult#CORRECT} if the letter was correct, else {@link
+   *     TypingResult#INCORRECT}
    */
   public TypingResult typeLetter(char typedLetter, String textToType, long gameStartTime) {
     int currentTextIndex = state.getCurrentTextIndex();
@@ -87,13 +109,16 @@ public class Player {
 
       // Update Progress only if typing was successful, to avoid unnecessary updates
       state.setProgress(progress);
+      if (progress >= 1) {
+        setIsFinished(true);
+      }
 
       if (Character.isSpaceChar(correctLetter)) {
         state.incrementNumTypedWords();
       }
-      return TypingResult.SUCCESSFUL;
+      return TypingResult.CORRECT;
     }
-    return TypingResult.UNSUCCESSFUL;
+    return TypingResult.INCORRECT;
   }
 
   private void updateWordsPerMinute(long gameStartTime) {
@@ -104,14 +129,5 @@ public class Player {
     assert wordsPerMinute >= 0;
 
     state.setWordsPerMinute(wordsPerMinute);
-  }
-
-  /**
-   * Sets the ready state for this player.
-   *
-   * @param isReady true if player is ready, false otherwise
-   */
-  public void setIsReady(boolean isReady) {
-    state.setIsReady(isReady);
   }
 }
