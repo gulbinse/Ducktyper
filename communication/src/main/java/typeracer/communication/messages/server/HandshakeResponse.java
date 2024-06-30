@@ -1,6 +1,8 @@
 package typeracer.communication.messages.server;
 
 import typeracer.communication.messages.Message;
+import typeracer.communication.statuscodes.PermissionStatus;
+import typeracer.communication.statuscodes.Reason;
 
 /**
  * Response indicating whether a client is allowed to connect. This response is sent to a specific
@@ -10,8 +12,8 @@ import typeracer.communication.messages.Message;
  */
 public final class HandshakeResponse implements Message {
 
-  private final String connectionStatus;
-  private final String reason;
+  private final PermissionStatus connectionStatus;
+  private final Reason reason;
 
   /**
    * Constructs a new HandshakeResponse with the specified arguments.
@@ -19,7 +21,7 @@ public final class HandshakeResponse implements Message {
    * @param connectionStatus the status of the request, indicating whether connecting is allowed
    * @param reason the reason for a denied connection, null otherwise
    */
-  public HandshakeResponse(String connectionStatus, String reason) {
+  public HandshakeResponse(PermissionStatus connectionStatus, Reason reason) {
     this.connectionStatus = connectionStatus;
     this.reason = reason;
   }
@@ -29,7 +31,7 @@ public final class HandshakeResponse implements Message {
    *
    * @return the status of the connection request
    */
-  public String getConnectionStatus() {
+  public PermissionStatus getConnectionStatus() {
     return connectionStatus;
   }
 
@@ -38,7 +40,7 @@ public final class HandshakeResponse implements Message {
    *
    * @return the reason for a denied connection, null otherwise
    */
-  public String getReason() {
+  public Reason getReason() {
     return reason;
   }
 }
