@@ -3,25 +3,33 @@ We use JSON as the communication protocol, every message should be encoded in JS
 
 ## Client to Server
 
-### JoinGameRequest
-The message that asks for joining the game.
+### HandshakeRequest
+The message that asks for connecting.
 ```json
 {
-    "messageType":"JoinGameRequest",
+    "messageType":"HandshakeRequest",
     "playerName":<NAME>
 }
 ```
 - `String <NAME>`: the client's (player's) name
 
-### JoinLobbyRequest
-The message that asks for joining the lobby.
+### CreateSessionRequest
+The message that asks for creating a session.
 ```json
 {
-    "messageType":"JoinLobbyRequest",
-    "lobbyId":<ID>
+    "messageType":"CreateSessionRequest"
 }
 ```
-- `int <ID>`: the id of the lobby
+
+### JoinSessionRequest
+The message that asks for joining the session.
+```json
+{
+    "messageType":"JoinSessionRequest",
+    "sessionId":<ID>
+}
+```
+- `int <ID>`: the id of the session
 
 ### ReadyRequest
 The message notifying the server that the client's (player's) readiness status has changed.
@@ -45,23 +53,35 @@ The message containing the client's (player's) typed character.
 
 ## Server to Client
 
-### JoinGameResponse
-The message notifying the client whether its JoinGameRequest has been accepted.
+### HandshakeResponse
+The message notifying the client whether its HandshakeRequest has been accepted.
 ```json
 {
-    "messageType":"JoinGameResponse",
-    "joinStatus":<STATUS>,
+    "messageType":"HandshakeResponse",
+    "connectionStatus":<STATUS>,
     "reason":<REASON>
 }
 ```
 - `String <STATUS>`: one of `"ACCEPTED"` or `"DENIED"`
 - `String <REASON>`: specifies the reason for a denied connection, null otherwise
 
-### JoinLobbyResponse
-The message notifying the client whether its JoinLobbyRequest has been accepted.
+### CreateSessionResponse
+The message notifying the client whether its CreateSessionRequest was successful.
 ```json
 {
-    "messageType":"JoinLobbyResponse",
+    "messageType":"CreateSessionResponse",
+    "reason":<REASON>,
+    "sessionId":<ID>
+}
+```
+- `String <REASON>`: specifies the reason for a denied request, null otherwise
+- `int <ID>`: the id of the created session, -1 if creation was denied
+
+### JoinSessionResponse
+The message notifying the client whether its JoinSessionRequest has been accepted.
+```json
+{
+    "messageType":"JoinSessionResponse",
     "joinStatus":<STATUS>,
     "reason":<REASON>
 }
