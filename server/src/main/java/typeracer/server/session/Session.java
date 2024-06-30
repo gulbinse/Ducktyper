@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import typeracer.communication.messages.Message;
+import typeracer.server.connection.ConnectionManager;
 
 /**
  * This class represents a server-managed game session. Each instance of {@link Session} is
@@ -26,37 +27,51 @@ public final class Session {
    *
    * @param playerId the unique id of the player
    */
-  public synchronized void addPlayer(int playerId) {}
+  public synchronized void addPlayer(int playerId) {
+    // TODO notify game about connected player
+  }
 
   /**
    * Removes a recently disconnected client from the session.
    *
    * @param playerId the unique id of the player
    */
-  public synchronized void removePlayer(int playerId) {}
+  public synchronized void removePlayer(int playerId) {
+    // TODO notify game about disconnected player
+  }
 
   /**
    * Updates the readiness status of a player.
    *
    * @param playerId the unique id of the player
    * @param ready <code>true</code> if the player is ready, <code>false</code> otherwise
+   * @return <code>true</code> if the readiness status was updated, <code>false</code> otherwise
    */
-  public synchronized void setReady(int playerId, boolean ready) {}
+  public synchronized boolean setReady(int playerId, boolean ready) {
+    // TODO notify game about readiness update
+    return false;
+  }
 
   /**
    * Broadcasts a message to all clients connected to this session.
    *
    * @param message the message to be broadcast
    */
-  public void broadcastMessage(Message message) {}
+  public void broadcastMessage(Message message) {
+    ConnectionManager connectionManager = new ConnectionManager();
+    playerIds.forEach(id -> connectionManager.sendMessage(message, id));
+  }
 
   /**
    * Sends a message to a specific client connected to this session.
    *
-   * @param playerId the unique id of the player
    * @param message the message to be sent
+   * @param playerId the unique id of the player
    */
-  public void sendMessage(int playerId, Message message) {}
+  public void sendMessage(Message message, int playerId) {
+    ConnectionManager connectionManager = new ConnectionManager();
+    connectionManager.sendMessage(message, playerId);
+  }
 
   /**
    * Gets the current number of clients connected to this session.
@@ -75,6 +90,7 @@ public final class Session {
    * @return <code>true</code> if the typed character is correct, <code>false</code> otherwise
    */
   public boolean validateCharacter(int playerId, char character) {
+    // TODO notify game about character input
     return false;
   }
 
@@ -84,6 +100,16 @@ public final class Session {
    * @return <code>true</code> if the session is joinable, <code>false</code> otherwise
    */
   public boolean isJoinable() {
+    return !hasGameStarted() && !isFull();
+  }
+
+  /**
+   * Checks whether this session's game has already started.
+   *
+   * @return <code>true</code> if the game has started, <code>false</code> otherwise
+   */
+  public boolean hasGameStarted() {
+    // TODO return game status
     return false;
   }
 
@@ -93,7 +119,16 @@ public final class Session {
    * @return <code>true</code> if the session is full, <code>false</code> otherwise
    */
   public boolean isFull() {
-    return false;
+    return numberOfConnectedClients() == MAX_SIZE;
+  }
+
+  /**
+   * Checks whether this session is empty.
+   *
+   * @return <code>true</code> if the session is empty, <code>false</code> otherwise
+   */
+  public boolean isEmpty() {
+    return numberOfConnectedClients() == 0;
   }
 
   /**
