@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2024-06-30
+
+### Added
+- Creation of sessions in protocol (#31)
+
+### Changed
+- "Lobby" to "Session" renamed
+- More consistent protocol
+
 ## [0.1.0] - 2024-06-23
 
 ### Added
