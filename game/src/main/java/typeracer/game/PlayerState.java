@@ -4,6 +4,7 @@ package typeracer.game;
 public class PlayerState {
   private double progress = 0; // Ranging from 0.0 to 1.0 according to the protocol
   private double wordsPerMinute = 0;
+  private double charactersPerMinute = 0;
   private boolean isReady = false;
   private boolean isFinished = false;
   private int currentTextIndex = 0;
@@ -40,12 +41,30 @@ public class PlayerState {
   }
 
   /**
+   * Returns the current speed in characters per minute.
+   *
+   * @return the current speed in characters per minute
+   */
+  public double getCharactersPerMinute() {
+    return charactersPerMinute;
+  }
+
+  /**
    * Sets the words per minute to the specified value.
    *
    * @param wordsPerMinute the new words per minute
    */
   public void setWordsPerMinute(double wordsPerMinute) {
     this.wordsPerMinute = wordsPerMinute;
+  }
+
+  /**
+   * Sets the characters per minute to the specified value.
+   *
+   * @param charactersPerMinute the new characters per minute
+   */
+  public void setCharactersPerMinute(double charactersPerMinute) {
+    this.charactersPerMinute = charactersPerMinute;
   }
 
   /**

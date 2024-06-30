@@ -92,7 +92,8 @@ public class Player {
    * @return {@link TypingResult#CORRECT} if the letter was correct, else {@link
    *     TypingResult#INCORRECT}
    */
-  public TypingResult typeLetter(char typedLetter, String textToType, long gameStartTime) {
+  public synchronized TypingResult typeLetter(
+      char typedLetter, String textToType, long gameStartTime) {
     int currentTextIndex = state.getCurrentTextIndex();
     char correctLetter = textToType.charAt(currentTextIndex);
 
@@ -119,7 +120,7 @@ public class Player {
     return TypingResult.INCORRECT;
   }
 
-  private void updateWordsPerMinute(long gameStartTime) {
+  private synchronized void updateWordsPerMinute(long gameStartTime) {
     long elapsedTime = System.nanoTime() - gameStartTime;
     double elapsedMinutes = (double) elapsedTime / (10 ^ 9);
     double wordsPerMinute = state.getNumTypedWords() / elapsedMinutes;
