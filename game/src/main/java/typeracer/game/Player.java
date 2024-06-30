@@ -4,6 +4,8 @@ package typeracer.game;
 public class Player {
   private String username;
   private final PlayerState state;
+  private static final long MINUTES_TO_NANO_SECONDS_FACTOR = 10 ^ 9;
+  private long gameStartTime;
 
   /** A result of trying to type a letter. */
   public enum TypingResult {
@@ -94,14 +96,15 @@ public class Player {
    */
   public synchronized TypingResult typeLetter(
       char typedLetter, String textToType, long gameStartTime) {
+    this.gameStartTime = gameStartTime;
     int currentTextIndex = state.getCurrentTextIndex();
     char correctLetter = textToType.charAt(currentTextIndex);
 
     double progress = (double) currentTextIndex / textToType.length();
     assert 0 <= progress && progress <= 1;
 
-    // Update words per minute in every case, since it might change with a wrong letter as well
-    updateWordsPerMinute(gameStartTime);
+    // Update typing speeds in every case, since it might change with a wrong letter as well
+    updateAllTypingSpeeds();
 
     if (typedLetter == correctLetter) {
       state.setCurrentTextIndex(currentTextIndex + 1);
@@ -120,13 +123,39 @@ public class Player {
     return TypingResult.INCORRECT;
   }
 
-  private synchronized void updateWordsPerMinute(long gameStartTime) {
-    long elapsedTime = System.nanoTime() - gameStartTime;
-    double elapsedMinutes = (double) elapsedTime / (10 ^ 9);
-    double wordsPerMinute = state.getNumTypedWords() / elapsedMinutes;
+  private synchronized void updateAllTypingSpeeds() {
+    updateWordsPerMinute();
+    updateCharactersPerMinute();
+  }
 
-    assert wordsPerMinute >= 0;
-
+  private synchronized void updateWordsPerMinute() {
+    double wordsPerMinute =
+        getGeneralTypingSpeed(state.getNumTypedWords(), MINUTES_TO_NANO_SECONDS_FACTOR);
     state.setWordsPerMinute(wordsPerMinute);
+  }
+
+  private synchronized void updateCharactersPerMinute() {
+    double charactersPerMinute =
+        getGeneralTypingSpeed(state.getCurrentTextIndex(), MINUTES_TO_NANO_SECONDS_FACTOR);
+    state.setCharactersPerMinute(charactersPerMinute);
+  }
+
+  /**
+   * Returns a general typing speed since start of the game, using the current progress measured by
+   * some metric and a time factor to determine the referred timeframe.
+   *
+   * @param progressMetric the metric used to determine the progress, e.g. the number of typed words
+   *     or typed characters. Must be positive
+   * @param timeFactor the factor used to determine the referred timeframe, such that speed =
+   *     progressMetric * timeFactor / elapsedTime. The factor has to convert the desired time unit
+   *     to nanoseconds as returned by System.nanoTime() and must be positive
+   * @return the typing speed measured in the given metric
+   */
+  private double getGeneralTypingSpeed(int progressMetric, long timeFactor) {
+    assert progressMetric >= 0;
+    assert timeFactor >= 0;
+    long elapsedTime = System.nanoTime() - gameStartTime;
+    assert elapsedTime >= 0;
+    return (double) (progressMetric * timeFactor) / elapsedTime;
   }
 }
