@@ -29,11 +29,11 @@ class TypeRacerGameTest {
   }
 
   private void assertWrongLetter(char letter) {
-    assertEquals(game.typeLetter(1, letter), Player.TypingResult.UNSUCCESSFUL);
+    assertEquals(game.typeLetter(1, letter), Player.TypingResult.INCORRECT);
   }
 
   private void assertRightLetter(char letter) {
-    assertEquals(game.typeLetter(1, letter), Player.TypingResult.SUCCESSFUL);
+    assertEquals(game.typeLetter(1, letter), Player.TypingResult.CORRECT);
   }
 
   private void typingWithInvalidId(char letter) {
