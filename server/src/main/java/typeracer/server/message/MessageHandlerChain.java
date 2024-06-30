@@ -2,7 +2,9 @@ package typeracer.server.message;
 
 import typeracer.communication.messages.Message;
 import typeracer.server.message.handlers.CharacterRequestHandler;
-import typeracer.server.message.handlers.JoinGameRequestHandler;
+import typeracer.server.message.handlers.CreateSessionRequestHandler;
+import typeracer.server.message.handlers.HandshakeRequestHandler;
+import typeracer.server.message.handlers.JoinSessionRequestHandler;
 import typeracer.server.message.handlers.ReadyRequestHandler;
 
 /** Creates a chain of responsibility for messages. */
@@ -16,7 +18,9 @@ public class MessageHandlerChain {
    *
    * <ul>
    *   <li>{@link CharacterRequestHandler}
-   *   <li>{@link JoinGameRequestHandler}
+   *   <li>{@link HandshakeRequestHandler}
+   *   <li>{@link CreateSessionRequestHandler}
+   *   <li>{@link JoinSessionRequestHandler}
    *   <li>{@link ReadyRequestHandler}
    * </ul>
    */
@@ -26,16 +30,21 @@ public class MessageHandlerChain {
 
   private MessageHandler createChain() {
     return new CharacterRequestHandler()
-        .setNext(new JoinGameRequestHandler().setNext(new ReadyRequestHandler()));
+        .setNext(
+            new HandshakeRequestHandler()
+                .setNext(
+                    new CreateSessionRequestHandler()
+                        .setNext(
+                            new JoinSessionRequestHandler().setNext(new ReadyRequestHandler()))));
   }
 
   /**
    * Handles messages in a chain of responsibility.
    *
    * @param message the message to handle
-   * @param id the id of the client requesting the message handling
+   * @param clientId the id of the client requesting the message handling
    */
-  public void handleMessage(Message message, int id) {
-    firstHandler.handleMessage(message, id);
+  public void handleMessage(Message message, int clientId) {
+    firstHandler.handleMessage(message, clientId);
   }
 }
