@@ -157,6 +157,15 @@ public class TypeRacerGame {
   }
 
   /**
+   * Returns the text to type.
+   *
+   * @return the text to type
+   */
+  public String getTextToType() {
+    return state.getTextToType();
+  }
+
+  /**
    * SHOULD ONLY BE USED FOR TESTING PURPOSES! Returns a set of all players' IDs.
    *
    * @return a set of all players' IDs
