@@ -4,6 +4,8 @@ package typeracer.communication.statuscodes;
 public enum Reason {
   /** Represents that a player is not allowed to connect. */
   HANDSHAKE_BANNED("You are currently banned."),
+  /** Represents that a player provided an invalid username. */
+  INVALID_USERNAME("This username is not allowed."),
   /** Represents that the specified session does not exist. */
   SESSION_NOT_FOUND("This session does not exist."),
   /** Represents that the game has already started. */
