@@ -1,6 +1,9 @@
 package typeracer.server.message.handlers;
 
 import typeracer.communication.messages.Message;
+import typeracer.communication.messages.client.JoinGameRequest;
+import typeracer.communication.messages.server.JoinGameResponse;
+import typeracer.server.connection.ConnectionManager;
 import typeracer.server.message.MessageHandler;
 
 /**
@@ -21,7 +24,16 @@ public class JoinGameRequestHandler implements MessageHandler {
   }
 
   @Override
-  public void handleMessage(Message message, int id) {}
+  public void handleMessage(Message message, int clientId) {
+    if (message instanceof JoinGameRequest joinGameRequest) {
+      ConnectionManager connectionManager = new ConnectionManager();
+      connectionManager.setPlayerName(clientId, joinGameRequest.getPlayerName());
+      connectionManager.sendMessage(new JoinGameResponse("ACCEPTED", null), clientId);
+      // TODO
+    } else if (nextHandler != null) {
+      nextHandler.handleMessage(message, clientId);
+    }
+  }
 
   @Override
   public JoinGameRequestHandler setNext(MessageHandler handler) {
