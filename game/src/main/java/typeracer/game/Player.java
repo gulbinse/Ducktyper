@@ -13,9 +13,7 @@ public class Player {
     /** The typing was incorrect. */
     INCORRECT,
 
-    /**
-     * This Player has already finished the game.
-     */
+    /** This Player has already finished the game. */
     PLAYER_FINISHED_ALREADY
   }
 
