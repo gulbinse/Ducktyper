@@ -7,7 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Implementation of bonusfeatures such as
-  - Calculation of cpm
   - Integration of PowerUps
   - Automatic Text generation
   - "Smurf" mode
