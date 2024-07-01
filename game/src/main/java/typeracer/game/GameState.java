@@ -45,7 +45,6 @@ public class GameState {
    * @param player that is added to the game
    */
   public synchronized void addPlayer(int id, Player player) {
-    // TODO: implement a check if there are already maximum number of players in the game
     players.put(id, player);
   }
 

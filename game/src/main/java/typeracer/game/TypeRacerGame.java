@@ -33,7 +33,6 @@ public class TypeRacerGame {
     }
     state.setGameStatus(GameState.GameStatus.RUNNING);
     gameStartTime = System.nanoTime();
-    // TODO: notify Mediator about game start
   }
 
   /**
