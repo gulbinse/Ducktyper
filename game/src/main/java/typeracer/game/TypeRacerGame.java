@@ -113,7 +113,7 @@ public class TypeRacerGame {
    *
    * @return the current game status
    */
-  public GameState.GameStatus getStatus() {
+  GameState.GameStatus getStatus() {
     return state.getStatus();
   }
 
