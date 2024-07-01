@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Creation of sessions in protocol (#31)
 - Status codes & reasons in protocol (#30)
+- Characters per minute methods in ``Player`` class
+- Unit tests for ``TextSource`` and `TypeRacerGame`
 
 ### Changed
 - "Lobby" to "Session" renamed
@@ -38,19 +40,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Client & Server communication messages (#17)
 - ``MoshiAdapter`` class for message conversion
 - Lobby support & ready checks in the protocol (#21)
-- Implementation of the basic Methods in the TypeRacerGame class including:
-    + TypeRacerGame();
-    + start();
-    + addPlayer(Player player);
-    + -boolean validateUsername(String username);
-    + removePlayer(Player player);
-- Implementation of the Observable methods in the TypeRacerGame class:
-    + subscribe(Observer obs);
-    + unsubscribe(Observer obs);
-    + notifyAboutState(GameState newState);
-    + notifyAboutNewPlayer(String playerName, GameState newState)
-    + notifyAboutRemovedPlayer(String playerName, GameState newState)
-    + -updateAll(Consumer<Observer> toCall);
+- Basic methods in the ``TypeRacerGame`` class: (#12)
+  - ``TypeRacerGame()``
+  - ``start()``
+  - ``addPlayer(int id, String username)``
+  - ``removePlayer(int id)``
+  - ``typeCharacter(int id, char character)``
+  - ``getStatus()``
+  - ``setPlayerReady(int id, boolean isReady)``
+  - ``getTextToType()``
+  - Getters & Setters for the ``GameState`` (#13)
+- Basic methods in the ``Player`` class: (#14)
+  - ``Player(String username)``
+  - ``typeCharacter(char typedCharacter, String textToType, long gameStartTime)``
+  - Getters & Setters for the ``PlayerState``
+  - Update methods for typing speed
+- Basic functionality in the ``PlayerState`` class: (#15)
+  - Progress
+  - Words per minute
+  - Ready state
+  - Finished state
+- Basic methods in the ``TextSource`` class:
+  - Setting default text
+  - Setting text from file
+- Example text file to read the text to type from
 
 ### Changed
 - IDs instead of usernames in the protocol (#21)
