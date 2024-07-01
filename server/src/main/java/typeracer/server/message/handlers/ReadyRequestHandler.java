@@ -30,18 +30,16 @@ public class ReadyRequestHandler implements MessageHandler {
   @Override
   public void handleMessage(Message message, int clientId) {
     if (message instanceof ReadyRequest readyRequest) {
-      SessionManager sessionManager = new SessionManager();
-      Session session = sessionManager.getSessionByClientId(clientId);
+      Session session = SessionManager.getInstance().getSessionByClientId(clientId);
       if (session != null) {
         boolean success = session.setReady(clientId, readyRequest.isReady());
-        ConnectionManager connectionManager = new ConnectionManager();
+        ReadyResponse response;
         if (success) {
-          connectionManager.sendMessage(
-              new ReadyResponse(PermissionStatus.ACCEPTED, null), clientId);
+          response = new ReadyResponse(PermissionStatus.ACCEPTED, null);
         } else {
-          connectionManager.sendMessage(
-              new ReadyResponse(PermissionStatus.DENIED, Reason.UNKNOWN), clientId);
+          response = new ReadyResponse(PermissionStatus.DENIED, Reason.UNKNOWN);
         }
+        ConnectionManager.getInstance().sendMessage(response, clientId);
       }
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, clientId);

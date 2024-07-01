@@ -30,8 +30,8 @@ public class JoinSessionRequestHandler implements MessageHandler {
   public void handleMessage(Message message, int clientId) {
     if (message instanceof JoinSessionRequest joinSessionRequest) {
       int sessionId = joinSessionRequest.getSessionId();
-      SessionManager sessionManager = new SessionManager();
-      SessionManager.OperationStatus status = sessionManager.joinSessionById(clientId, sessionId);
+      SessionManager.OperationStatus status =
+          SessionManager.getInstance().joinSessionById(clientId, sessionId);
 
       JoinSessionResponse response;
       switch (status) {
@@ -46,8 +46,7 @@ public class JoinSessionRequestHandler implements MessageHandler {
             response = new JoinSessionResponse(PermissionStatus.DENIED, Reason.SESSION_FULL);
         default -> response = new JoinSessionResponse(PermissionStatus.DENIED, Reason.UNKNOWN);
       }
-      ConnectionManager connectionManager = new ConnectionManager();
-      connectionManager.sendMessage(response, clientId);
+      ConnectionManager.getInstance().sendMessage(response, clientId);
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, clientId);
     }

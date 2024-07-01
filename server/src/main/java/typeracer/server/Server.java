@@ -78,10 +78,9 @@ public class Server {
    * @throws IOException if an I/O error occurs while listening to the socket
    */
   public void start(ServerSocket socket) throws IOException {
-    ConnectionManager connectionManager = new ConnectionManager();
     while (!socket.isClosed()) {
       Socket client = socket.accept();
-      connectionManager.handleClient(client);
+      ConnectionManager.getInstance().handleClient(client);
     }
   }
 }

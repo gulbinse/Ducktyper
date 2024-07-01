@@ -28,12 +28,10 @@ public class CharacterRequestHandler implements MessageHandler {
   @Override
   public void handleMessage(Message message, int clientId) {
     if (message instanceof CharacterRequest characterRequest) {
-      SessionManager sessionManager = new SessionManager();
-      Session session = sessionManager.getSessionByClientId(clientId);
+      Session session = SessionManager.getInstance().getSessionByClientId(clientId);
       if (session != null) {
         boolean correct = session.validateCharacter(clientId, characterRequest.getCharacter());
-        ConnectionManager connectionManager = new ConnectionManager();
-        connectionManager.sendMessage(new CharacterResponse(correct), clientId);
+        ConnectionManager.getInstance().sendMessage(new CharacterResponse(correct), clientId);
       }
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, clientId);
