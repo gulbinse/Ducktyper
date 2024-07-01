@@ -12,13 +12,20 @@ class TextSourceTest {
   private final TextSource textSource = new TextSource();
   private static final String expectedDefaultText =
       """
-          According to all known laws of aviation, there is no way a bee should be able to fly.
-          Its wings are too small to get its fat little body off the ground.
-          The bee, of course, flies anyway because bees don't care what humans think is impossible.
-          Yellow, black. Yellow, black. Yellow, black. Yellow, black.
-          Ooh, black and yellow!
-          Let's shake it up a little.
-          """;
+          According to all known laws of aviation, there is no way a bee should be able to fly.%s\
+          Its wings are too small to get its fat little body off the ground.%s\
+          The bee, of course, flies anyway because bees don't care \
+          what humans think is impossible.%s\
+          Yellow, black. Yellow, black. Yellow, black. Yellow, black.%s\
+          Ooh, black and yellow!%s\
+          Let's shake it up a little.%s"""
+          .formatted(
+              System.lineSeparator(),
+              System.lineSeparator(),
+              System.lineSeparator(),
+              System.lineSeparator(),
+              System.lineSeparator(),
+              System.lineSeparator());
 
   @Test
   void testDefaultTextFromFile() throws IOException {
