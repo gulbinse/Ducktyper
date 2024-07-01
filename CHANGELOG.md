@@ -6,12 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Implementation of bonusfeatures such as
+  - Integration of PowerUps
+  - Automatic Text generation
+  - "Smurf" mode
+  - Display number of Typing errors
 
 ## [0.2.0] - 2024-06-30
 
 ### Added
 - Creation of sessions in protocol (#31)
 - Status codes & reasons in protocol (#30)
+- Characters per minute methods in ``Player`` class
+- Unit tests for ``TextSource`` and `TypeRacerGame`
 
 ### Changed
 - "Lobby" to "Session" renamed
@@ -38,6 +45,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Client & Server communication messages (#17)
 - ``MoshiAdapter`` class for message conversion
 - Lobby support & ready checks in the protocol (#21)
+- Basic methods in the ``TypeRacerGame`` class (#12)
+  - start a game
+  - get the GameState
+  - Type a character
+- Unitests for the ''TypeRacerGame'' class
+- Basic methods in the ``Player`` class: (#14)
+  - Create a player
+  - set its attributes
+  - type a Character
+  - Calculate Stats and safe them in ''PlayerState''
+- Basic functionality in the ``PlayerState`` class: (#15)
+  - Progress
+  - Words per minute
+  - Ready state
+  - Finished state
+- Basic methods in the ``TextSource`` class:
+  - Setting default text
+  - Setting text from file
+- Example text file to read the text to type from
 
 ### Changed
 - IDs instead of usernames in the protocol (#21)
