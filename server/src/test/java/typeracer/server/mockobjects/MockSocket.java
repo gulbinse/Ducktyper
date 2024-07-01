@@ -10,7 +10,7 @@ public class MockSocket extends Socket {
 
   private final InputStream input;
   private final OutputStream output;
-  private boolean closed;
+  private boolean isClosed = false;
 
   public MockSocket(InputStream input, OutputStream output) {
     this.input = input;
@@ -34,8 +34,13 @@ public class MockSocket extends Socket {
   }
 
   @Override
+  public void close() {
+    isClosed = true;
+  }
+
+  @Override
   public boolean isConnected() {
-    return !closed;
+    return !isClosed;
   }
 
   @Override
@@ -45,6 +50,6 @@ public class MockSocket extends Socket {
 
   @Override
   public boolean isClosed() {
-    return closed;
+    return isClosed;
   }
 }

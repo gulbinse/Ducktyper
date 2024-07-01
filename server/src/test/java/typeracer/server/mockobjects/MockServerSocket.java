@@ -8,7 +8,7 @@ import java.util.List;
 
 public class MockServerSocket extends ServerSocket {
 
-  private boolean closed;
+  private boolean isClosed;
   private Iterator<MockSocket> sockets;
 
   public MockServerSocket(List<MockSocket> socketsToAccept) throws IOException {
@@ -52,11 +52,11 @@ public class MockServerSocket extends ServerSocket {
     synchronized (this) {
       notifyAll();
     }
-    closed = true;
+    isClosed = true;
   }
 
   @Override
   public boolean isClosed() {
-    return closed;
+    return isClosed;
   }
 }
