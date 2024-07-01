@@ -72,7 +72,9 @@ public class TypeRacerGame {
   public Player.TypingResult typeCharacter(
       int id, char character) { // TODO: Does this have to be synchronized?
 
-    checkIfGameFinished();
+    if (isGameFinished()) {
+      return Player.TypingResult.PLAYER_FINISHED_ALREADY;
+    }
 
     Player player = state.getPlayerById(id);
     if (!player.isFinished()) {
@@ -81,7 +83,7 @@ public class TypeRacerGame {
     return Player.TypingResult.PLAYER_FINISHED_ALREADY;
   }
 
-  private void checkIfGameFinished() {
+  private boolean isGameFinished() {
     boolean allFinished = true;
     for (Player player : getPlayerList()) {
       if (!player.isFinished()) {
@@ -92,7 +94,9 @@ public class TypeRacerGame {
 
     if (allFinished) {
       state.setGameStatus(GameState.GameStatus.FINISHED);
+      return true;
     }
+    return false;
   }
 
   /**
