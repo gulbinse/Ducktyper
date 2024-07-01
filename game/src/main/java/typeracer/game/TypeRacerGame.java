@@ -59,7 +59,6 @@ public class TypeRacerGame {
       } else {
         throw new AssertionError("ID " + id + " not contained in player list.");
       }
-      // TODO: notify Mediator about removed Player
     }
   }
 
