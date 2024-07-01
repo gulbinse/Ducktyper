@@ -28,9 +28,9 @@ public class HandshakeRequestHandler implements MessageHandler {
   @Override
   public void handleMessage(Message message, int clientId) {
     if (message instanceof HandshakeRequest handshakeRequest) {
-      ConnectionManager connectionManager = new ConnectionManager();
       ConnectionManager.OperationStatus status =
-          connectionManager.setPlayerName(clientId, handshakeRequest.getPlayerName());
+          ConnectionManager.getInstance()
+              .handlePlayerName(clientId, handshakeRequest.getPlayerName());
 
       HandshakeResponse response;
       switch (status) {
@@ -39,7 +39,7 @@ public class HandshakeRequestHandler implements MessageHandler {
             response = new HandshakeResponse(PermissionStatus.DENIED, Reason.INVALID_USERNAME);
         default -> response = new HandshakeResponse(PermissionStatus.DENIED, Reason.UNKNOWN);
       }
-      connectionManager.sendMessage(response, clientId);
+      ConnectionManager.getInstance().sendMessage(response, clientId);
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, clientId);
     }

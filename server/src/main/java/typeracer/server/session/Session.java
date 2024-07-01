@@ -58,8 +58,7 @@ public final class Session {
    * @param message the message to be broadcast
    */
   public void broadcastMessage(Message message) {
-    ConnectionManager connectionManager = new ConnectionManager();
-    playerIds.forEach(id -> connectionManager.sendMessage(message, id));
+    playerIds.forEach(id -> ConnectionManager.getInstance().sendMessage(message, id));
   }
 
   /**
@@ -69,8 +68,7 @@ public final class Session {
    * @param playerId the unique id of the player
    */
   public void sendMessage(Message message, int playerId) {
-    ConnectionManager connectionManager = new ConnectionManager();
-    connectionManager.sendMessage(message, playerId);
+    ConnectionManager.getInstance().sendMessage(message, playerId);
   }
 
   /**

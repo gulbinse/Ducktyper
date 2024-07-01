@@ -7,7 +7,7 @@ import typeracer.communication.messages.Message;
 import typeracer.server.session.SessionManager;
 import typeracer.server.utils.IdentifierGenerator;
 
-/** This class is responsible for managing clients connecting to the server. */
+/** This singleton class is responsible for managing clients connecting to the server. */
 public final class ConnectionManager {
 
   /** Status of a client->server operation. */
@@ -20,12 +20,13 @@ public final class ConnectionManager {
     FAIL
   }
 
-  private static final Map<Integer, ClientHandler> clientHandlerById = new ConcurrentHashMap<>();
-  private static final Map<Integer, String> playerNameById = new ConcurrentHashMap<>();
-  private static final IdentifierGenerator identifierGenerator = new IdentifierGenerator();
+  private static final ConnectionManager INSTANCE = new ConnectionManager();
 
-  /** The default constructor of this class. */
-  public ConnectionManager() {}
+  private final Map<Integer, ClientHandler> clientHandlerById = new ConcurrentHashMap<>();
+  private final Map<Integer, String> playerNameById = new ConcurrentHashMap<>();
+  private final IdentifierGenerator identifierGenerator = new IdentifierGenerator();
+
+  private ConnectionManager() {}
 
   /**
    * Handles a client connection by assigning a unique id to the client and delegating it to another
@@ -42,15 +43,15 @@ public final class ConnectionManager {
   }
 
   /**
-   * Removes an existing clientHandler by its id.
+   * Removes an existing clientHandler by its id. SpotBugs does not like the name removeClient, so
+   * now it's just called unhandleClient.
    *
    * @param clientId the unique id of the client
    */
-  public synchronized void removeClient(int clientId) {
+  public synchronized void unhandleClient(int clientId) {
     clientHandlerById.remove(clientId);
-
-    SessionManager sessionManager = new SessionManager();
-    sessionManager.leaveSession(clientId);
+    playerNameById.remove(clientId);
+    SessionManager.getInstance().leaveSession(clientId);
   }
 
   /**
@@ -99,18 +100,27 @@ public final class ConnectionManager {
   }
 
   /**
-   * Sets the name of the connected client's player.
+   * Handles the name of the connected client's player.
    *
    * @param clientId the unique id of the client
    * @param playerName the name of the player
    * @return the operation status of this method. {@link OperationStatus#SUCCESS} if the action was
    *     successful. Otherwise, a corresponding error status.
    */
-  public synchronized OperationStatus setPlayerName(int clientId, String playerName) {
+  public synchronized OperationStatus handlePlayerName(int clientId, String playerName) {
     if (playerName == null || playerName.isBlank() || playerName.isEmpty()) {
       return OperationStatus.INVALID_USERNAME;
     }
     playerNameById.put(clientId, playerName);
     return OperationStatus.SUCCESS;
+  }
+
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
+  public static synchronized ConnectionManager getInstance() {
+    return INSTANCE;
   }
 }

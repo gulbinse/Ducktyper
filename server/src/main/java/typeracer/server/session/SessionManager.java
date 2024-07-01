@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import typeracer.server.connection.ConnectionManager;
 import typeracer.server.utils.IdentifierGenerator;
 
-/** This class is responsible for managing all sessions. */
+/** This singleton class is responsible for managing all sessions. */
 public final class SessionManager {
 
   /** Status of a session operation. */
@@ -23,12 +23,13 @@ public final class SessionManager {
     FAIL
   }
 
-  private static final Map<Integer, Session> sessionBySessionId = new ConcurrentHashMap<>();
-  private static final Map<Integer, Integer> sessionIdByClientId = new ConcurrentHashMap<>();
-  private static final IdentifierGenerator identifierGenerator = new IdentifierGenerator();
+  private static final SessionManager INSTANCE = new SessionManager();
 
-  /** The default constructor of this class. */
-  public SessionManager() {}
+  private final Map<Integer, Session> sessionBySessionId = new ConcurrentHashMap<>();
+  private final Map<Integer, Integer> sessionIdByClientId = new ConcurrentHashMap<>();
+  private final IdentifierGenerator identifierGenerator = new IdentifierGenerator();
+
+  private SessionManager() {}
 
   /**
    * Creates a new {@link Session} instance and assigns it a unique id.
@@ -52,10 +53,9 @@ public final class SessionManager {
     Session session = sessionBySessionId.getOrDefault(sessionId, null);
     if (session != null) {
       // Disconnect all clients
-      ConnectionManager connectionManager = new ConnectionManager();
       Set<Integer> clientIds = session.getPlayerIds();
       for (int clientId : clientIds) {
-        connectionManager.disconnectClient(clientId);
+        ConnectionManager.getInstance().disconnectClient(clientId);
         sessionIdByClientId.remove(clientId);
       }
 
@@ -103,7 +103,7 @@ public final class SessionManager {
 
       // Delete empty sessions
       if (session.isEmpty()) {
-        sessionBySessionId.remove(sessionId);
+        closeSession(sessionId);
       }
     }
   }
@@ -127,5 +127,14 @@ public final class SessionManager {
   public synchronized Session getSessionByClientId(int clientId) {
     int sessionId = sessionIdByClientId.getOrDefault(clientId, -1);
     return sessionBySessionId.getOrDefault(sessionId, null);
+  }
+
+  /**
+   * Returns the singleton instance of this class.
+   *
+   * @return the singleton instance of this class
+   */
+  public static synchronized SessionManager getInstance() {
+    return INSTANCE;
   }
 }

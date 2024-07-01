@@ -91,8 +91,7 @@ public class ClientHandler implements Runnable {
 
   /** Closes the connection to the client. */
   void close() {
-    ConnectionManager connectionManager = new ConnectionManager();
-    connectionManager.removeClient(clientId);
+    ConnectionManager.getInstance().unhandleClient(clientId);
     try {
       if (bufferedReader != null) {
         bufferedReader.close();
