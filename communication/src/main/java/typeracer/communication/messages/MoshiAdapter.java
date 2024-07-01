@@ -18,6 +18,7 @@ import typeracer.communication.messages.server.PlayerJoinedNotification;
 import typeracer.communication.messages.server.PlayerLeftNotification;
 import typeracer.communication.messages.server.PlayerStateNotification;
 import typeracer.communication.messages.server.ReadyResponse;
+import typeracer.communication.messages.server.TextNotification;
 
 /**
  * This class is used for message conversion. Every {@link Message} has to be registered in the
@@ -46,7 +47,8 @@ public class MoshiAdapter {
                     .withSubtype(PlayerJoinedNotification.class, "PlayerJoinedNotification")
                     .withSubtype(PlayerLeftNotification.class, "PlayerLeftNotification")
                     .withSubtype(PlayerStateNotification.class, "PlayerStateNotification")
-                    .withSubtype(ReadyResponse.class, "ReadyResponse"))
+                    .withSubtype(ReadyResponse.class, "ReadyResponse")
+                    .withSubtype(TextNotification.class, "TextNotification"))
             .build();
     jsonAdapter = moshi.adapter(Message.class);
   }
