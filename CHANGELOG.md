@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Implementation of bonusfeatures such as
+  - Calculation of cpm
+  - Integration of PowerUps
+  - Automatic Text generation
+  - "Smurf" mode
+  - Display number of Typing errors
 
 ## [0.2.0] - 2024-06-30
 
@@ -40,21 +46,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Client & Server communication messages (#17)
 - ``MoshiAdapter`` class for message conversion
 - Lobby support & ready checks in the protocol (#21)
-- Basic methods in the ``TypeRacerGame`` class: (#12)
-  - ``TypeRacerGame()``
-  - ``start()``
-  - ``addPlayer(int id, String username)``
-  - ``removePlayer(int id)``
-  - ``typeCharacter(int id, char character)``
-  - ``getStatus()``
-  - ``setPlayerReady(int id, boolean isReady)``
-  - ``getTextToType()``
-  - Getters & Setters for the ``GameState`` (#13)
+- Basic methods in the ``TypeRacerGame`` class (#12)
+  - start a game
+  - get the GameState
+  - Type a character
+- Unitests for the ''TypeRacerGame'' class
 - Basic methods in the ``Player`` class: (#14)
-  - ``Player(String username)``
-  - ``typeCharacter(char typedCharacter, String textToType, long gameStartTime)``
-  - Getters & Setters for the ``PlayerState``
-  - Update methods for typing speed
+  - Create a player
+  - set its attributes
+  - type a Character
+  - Calculate Stats and safe them in ''PlayerState''
 - Basic functionality in the ``PlayerState`` class: (#15)
   - Progress
   - Words per minute
