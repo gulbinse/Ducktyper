@@ -38,7 +38,6 @@ public class ClientHandler implements Runnable {
       bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), UTF_8));
     } catch (IOException e) {
       System.out.println("Input and output streams could not be created: " + e.getMessage());
-    } finally {
       close();
     }
   }
@@ -86,7 +85,6 @@ public class ClientHandler implements Runnable {
       bufferedWriter.flush();
     } catch (IOException e) {
       System.out.println("An error occurred trying to send the message: " + e.getMessage());
-    } finally {
       close();
     }
   }
