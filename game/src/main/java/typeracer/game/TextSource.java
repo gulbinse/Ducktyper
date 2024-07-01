@@ -62,7 +62,7 @@ public class TextSource {
 
       StringBuilder textBuilder = new StringBuilder();
       while (line != null) {
-        textBuilder.append(line).append("\n");
+        textBuilder.append(line).append(System.lineSeparator());
         line = reader.readLine();
       }
       currentText = textBuilder.toString();
