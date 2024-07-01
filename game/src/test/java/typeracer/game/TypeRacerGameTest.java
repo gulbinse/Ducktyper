@@ -42,23 +42,13 @@ class TypeRacerGameTest {
         () -> game.typeLetter(Collections.max(game.getIds()) + 1, letter));
   }
 
-  private void addUserWithInvalidUsername() {
-    game.addPlayer(14, "AlphaKevin");
-    assertThrows(AssertionError.class, () -> game.addPlayer(15, "AlphaKevin"));
-  }
-
-  void addUserWithValidUsername() {
+  void addValidUser() {
     game.addPlayer(25, "BetaKevin");
   }
 
   void addUserWithInvalidId() {
     game.addPlayer(35, "GammaKevin");
     assertThrows(AssertionError.class, () -> game.addPlayer(35, "GammaKevin1"));
-  }
-
-  void addUserWithNoUsername() {
-    assertThrows(AssertionError.class, () -> game.addPlayer(35, null));
-    assertThrows(AssertionError.class, () -> game.addPlayer(36, ""));
   }
 
   void removeExistingUserWithCorrectId() {
@@ -129,10 +119,8 @@ class TypeRacerGameTest {
   @Tag("CharacterValidation")
   @Test
   void testAddingPlayer() {
-    addUserWithInvalidUsername();
-    addUserWithValidUsername();
+    addValidUser();
     addUserWithInvalidId();
-    addUserWithNoUsername();
   }
 
   @Test

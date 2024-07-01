@@ -1,6 +1,5 @@
 package typeracer.game;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -41,31 +40,11 @@ public class TypeRacerGame {
    * @param id of the player
    * @param username of the player that will be added to the game
    */
-  public void addPlayer(int id, String username) {
-    if (!isValidUsername(username)) {
-      throw new AssertionError(
-          "An invalid player name reached the game logic. This should be handled before. Name: "
-              + username);
+  public synchronized void addPlayer(int id, String username) {
+    if (state.getIds().contains(id)) {
+      throw new AssertionError("ID " + id + " already contained in player list.");
     }
-    synchronized (this) {
-      if (state.getIds().contains(id)) {
-        throw new AssertionError("ID " + id + " already contained in player list.");
-      }
-      state.addPlayer(id, new Player(username));
-      // TODO: notify Mediator about added Player
-    }
-  }
-
-  private boolean isValidUsername(String username) {
-    if (username == null || username.isBlank()) {
-      return false;
-    }
-    for (Player p : state.getPlayers()) {
-      if (p.getUsername().equals(username)) {
-        return false;
-      }
-    }
-    return true;
+    state.addPlayer(id, new Player(username));
   }
 
   /**
