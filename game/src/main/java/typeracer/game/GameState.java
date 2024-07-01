@@ -62,7 +62,7 @@ public class GameState {
    *
    * @return List of players
    */
-  public List<Player> getPlayers() {
+  List<Player> getPlayers() {
     return List.copyOf(players.values());
   }
 

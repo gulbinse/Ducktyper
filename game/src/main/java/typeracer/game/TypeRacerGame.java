@@ -20,11 +20,11 @@ public class TypeRacerGame {
 
   /** Starts a new game with a new text. */
   public void start() {
-    if (state.getPlayers().isEmpty()) {
+    if (getPlayerList().isEmpty()) {
       throw new AssertionError("There are currently no players in the game");
     }
 
-    for (Player player : state.getPlayers()) {
+    for (Player player : getPlayerList()) {
       if (!player.isReady()) {
         throw new AssertionError(
             "Player " + player.getUsername() + " not yet ready, but start was attempted");
