@@ -2,6 +2,8 @@ package typeracer.communication.statuscodes;
 
 /** Possible reason for a denied client request. */
 public enum Reason {
+  /** Represents that a request has been accepted. */
+  SUCCESS("Your request has been accepted."),
   /** Represents that a player is not allowed to connect. */
   HANDSHAKE_BANNED("You are currently banned."),
   /** Represents that a player provided an invalid username. */
