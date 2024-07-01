@@ -104,7 +104,7 @@ public class Player {
    * @return {@link TypingResult#CORRECT} if the character was correct, else {@link
    *     TypingResult#INCORRECT}
    */
-  public synchronized TypingResult typeCharacter(
+  synchronized TypingResult typeCharacter(
       char typedCharacter, String textToType, long gameStartTime) {
     this.gameStartTime = gameStartTime;
     int currentTextIndex = state.getCurrentTextIndex();

@@ -11,14 +11,14 @@ public class PlayerState {
   private int numTypedWords = 0;
 
   /** The default constructor of this class. */
-  public PlayerState() {}
+  PlayerState() {}
 
   /**
    * Returns the current progress.
    *
    * @return the current progress
    */
-  public double getProgress() {
+  double getProgress() {
     return progress;
   }
 
@@ -27,7 +27,7 @@ public class PlayerState {
    *
    * @param progress the new progress
    */
-  public void setProgress(double progress) {
+  void setProgress(double progress) {
     this.progress = progress;
   }
 
@@ -36,7 +36,7 @@ public class PlayerState {
    *
    * @return the current speed in words per minute
    */
-  public double getWordsPerMinute() {
+  double getWordsPerMinute() {
     return wordsPerMinute;
   }
 
@@ -45,7 +45,7 @@ public class PlayerState {
    *
    * @return the current speed in characters per minute
    */
-  public double getCharactersPerMinute() {
+  double getCharactersPerMinute() {
     return charactersPerMinute;
   }
 
@@ -54,7 +54,7 @@ public class PlayerState {
    *
    * @param wordsPerMinute the new words per minute
    */
-  public void setWordsPerMinute(double wordsPerMinute) {
+  void setWordsPerMinute(double wordsPerMinute) {
     this.wordsPerMinute = wordsPerMinute;
   }
 
@@ -63,7 +63,7 @@ public class PlayerState {
    *
    * @param charactersPerMinute the new characters per minute
    */
-  public void setCharactersPerMinute(double charactersPerMinute) {
+  void setCharactersPerMinute(double charactersPerMinute) {
     this.charactersPerMinute = charactersPerMinute;
   }
 
@@ -72,7 +72,7 @@ public class PlayerState {
    *
    * @return true if the Player is ready, false otherwise
    */
-  public boolean isReady() {
+  boolean isReady() {
     return isReady;
   }
 
@@ -81,7 +81,7 @@ public class PlayerState {
    *
    * @param isReady the readiness state to set this Player to
    */
-  public void setIsReady(boolean isReady) {
+  void setIsReady(boolean isReady) {
     this.isReady = isReady;
   }
 
@@ -90,7 +90,7 @@ public class PlayerState {
    *
    * @return the current text index
    */
-  public int getCurrentTextIndex() {
+  int getCurrentTextIndex() {
     return currentTextIndex;
   }
 
@@ -98,7 +98,7 @@ public class PlayerState {
    * Increases the number of correctly typed characters (i.e. the current text's index) by one. This
    * should generally be the only way the player's number of typed characters is changed.
    */
-  public synchronized void incrementCurrentTextIndex() {
+  synchronized void incrementCurrentTextIndex() {
     currentTextIndex++;
   }
 
@@ -107,7 +107,7 @@ public class PlayerState {
    *
    * @return the number of typed words until now
    */
-  public int getNumTypedWords() {
+  int getNumTypedWords() {
     return numTypedWords;
   }
 

@@ -87,10 +87,20 @@ public class GameState {
     return gameStatus;
   }
 
-  public void setStatus(GameStatus gameStatus) {
+  /**
+   * Sets the game status to the specified value.
+   *
+   * @param gameStatus the value to set the game status to
+   */
+  public void setGameStatus(GameStatus gameStatus) {
     this.gameStatus = gameStatus;
   }
 
+  /**
+   * Returns a Set of all Player's IDs.
+   *
+   * @return a Set of all Player's IDs
+   */
   public Set<Integer> getIds() {
     return Set.copyOf(players.keySet());
   }
