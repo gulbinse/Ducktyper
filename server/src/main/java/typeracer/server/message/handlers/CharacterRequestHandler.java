@@ -1,7 +1,12 @@
 package typeracer.server.message.handlers;
 
 import typeracer.communication.messages.Message;
+import typeracer.communication.messages.client.CharacterRequest;
+import typeracer.communication.messages.server.CharacterResponse;
+import typeracer.server.connection.ConnectionManager;
 import typeracer.server.message.MessageHandler;
+import typeracer.server.session.Session;
+import typeracer.server.session.SessionManager;
 
 /**
  * Handles CharacterRequest messages in a chain of responsibility pattern. If the message is not of
@@ -21,7 +26,17 @@ public class CharacterRequestHandler implements MessageHandler {
   }
 
   @Override
-  public void handleMessage(Message message, int id) {}
+  public void handleMessage(Message message, int clientId) {
+    if (message instanceof CharacterRequest characterRequest) {
+      Session session = SessionManager.getInstance().getSessionByClientId(clientId);
+      if (session != null) {
+        boolean correct = session.validateCharacter(clientId, characterRequest.getCharacter());
+        ConnectionManager.getInstance().sendMessage(new CharacterResponse(correct), clientId);
+      }
+    } else if (nextHandler != null) {
+      nextHandler.handleMessage(message, clientId);
+    }
+  }
 
   @Override
   public CharacterRequestHandler setNext(MessageHandler handler) {

@@ -9,9 +9,9 @@ public interface MessageHandler {
    * Handles the incoming message. Implementations should provide specific handling logic.
    *
    * @param message the message to handle
-   * @param id the unique id of the player
+   * @param clientId the unique id of the client
    */
-  void handleMessage(Message message, int id);
+  void handleMessage(Message message, int clientId);
 
   /**
    * Sets the next handler in the chain.

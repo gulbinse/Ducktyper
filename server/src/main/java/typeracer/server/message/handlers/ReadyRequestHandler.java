@@ -1,7 +1,14 @@
 package typeracer.server.message.handlers;
 
 import typeracer.communication.messages.Message;
+import typeracer.communication.messages.client.ReadyRequest;
+import typeracer.communication.messages.server.ReadyResponse;
+import typeracer.communication.statuscodes.PermissionStatus;
+import typeracer.communication.statuscodes.Reason;
+import typeracer.server.connection.ConnectionManager;
 import typeracer.server.message.MessageHandler;
+import typeracer.server.session.Session;
+import typeracer.server.session.SessionManager;
 
 /**
  * Handles ReadyRequest messages in a chain of responsibility pattern. If the message is not of the
@@ -21,7 +28,23 @@ public class ReadyRequestHandler implements MessageHandler {
   }
 
   @Override
-  public void handleMessage(Message message, int id) {}
+  public void handleMessage(Message message, int clientId) {
+    if (message instanceof ReadyRequest readyRequest) {
+      Session session = SessionManager.getInstance().getSessionByClientId(clientId);
+      if (session != null) {
+        boolean success = session.setReady(clientId, readyRequest.isReady());
+        ReadyResponse response;
+        if (success) {
+          response = new ReadyResponse(PermissionStatus.ACCEPTED, Reason.SUCCESS);
+        } else {
+          response = new ReadyResponse(PermissionStatus.DENIED, Reason.UNKNOWN);
+        }
+        ConnectionManager.getInstance().sendMessage(response, clientId);
+      }
+    } else if (nextHandler != null) {
+      nextHandler.handleMessage(message, clientId);
+    }
+  }
 
   @Override
   public ReadyRequestHandler setNext(MessageHandler handler) {

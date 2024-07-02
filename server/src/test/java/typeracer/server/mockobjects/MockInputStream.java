@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 public class MockInputStream extends InputStream {
 
   private ByteArrayInputStream toRead;
-  private boolean done;
+  private boolean done = false;
 
   public MockInputStream(String toRead) {
     this.toRead = new ByteArrayInputStream(toRead.getBytes(StandardCharsets.UTF_8));
