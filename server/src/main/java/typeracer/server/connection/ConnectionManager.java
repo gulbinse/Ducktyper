@@ -45,8 +45,8 @@ public final class ConnectionManager {
   }
 
   /**
-   * Removes an existing clientHandler by its id. SpotBugs does not like the name removeClient, so
-   * now it's just called unhandleClient.
+   * Removes an existing ClientHandler by its id. For whatever reason, SpotBugs does not like the
+   * name removeClient, so now it's just called unhandleClient.
    *
    * @param clientId the unique id of the client
    */
@@ -88,7 +88,7 @@ public final class ConnectionManager {
   }
 
   /**
-   * Returns a clientHandler by its id.
+   * Returns a ClientHandler by its id.
    *
    * @param clientId the unique id of the client
    * @return the clientHandler associated with the given id, or null if no such handler exists
