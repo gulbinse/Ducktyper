@@ -88,16 +88,6 @@ public final class ConnectionManager {
   }
 
   /**
-   * Returns a ClientHandler by its id.
-   *
-   * @param clientId the unique id of the client
-   * @return the clientHandler associated with the given id, or null if no such handler exists
-   */
-  public synchronized ClientHandler getClientHandler(int clientId) {
-    return clientHandlerById.getOrDefault(clientId, null);
-  }
-
-  /**
    * Returns the name of the specified player, or 'Guest' if no such player exists.
    *
    * @param clientId the unique id of the client
