@@ -32,7 +32,8 @@ public class ServerConnectionTest {
   @Test
   public void testServer_receivesHandshakeRequest_sendsResponse()
       throws IOException, InterruptedException {
-    String handshakeRequest = "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
+    String handshakeRequest =
+        "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
     MockInputStream networkIn = getNetworkIn(handshakeRequest);
     ByteArrayOutputStream networkOut = getNetworkOut();
     MockSocket mockSocket = new MockSocket(networkIn, networkOut);
@@ -58,10 +59,13 @@ public class ServerConnectionTest {
   }
 
   @Test
-  public void testServer_receivesCreateSessionRequest_sendsResponse() throws IOException, InterruptedException {
-    String handshakeRequest = "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
+  public void testServer_receivesCreateSessionRequest_sendsResponse()
+      throws IOException, InterruptedException {
+    String handshakeRequest =
+        "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
     String createSessionRequest = "{\"messageType\":\"CreateSessionRequest\"}";
-    MockInputStream networkIn = getNetworkIn(handshakeRequest + System.lineSeparator() + createSessionRequest);
+    MockInputStream networkIn =
+        getNetworkIn(handshakeRequest + System.lineSeparator() + createSessionRequest);
     ByteArrayOutputStream networkOut = getNetworkOut();
     MockSocket mockSocket = new MockSocket(networkIn, networkOut);
     MockServerSocket serverSocket = new MockServerSocket(List.of(mockSocket));
@@ -86,13 +90,19 @@ public class ServerConnectionTest {
   }
 
   @Test
-  public void testServer_receivesJoinSessionRequest_sendsResponseAndPlayerJoin() throws IOException, InterruptedException {
+  public void testServer_receivesJoinSessionRequest_sendsResponseAndPlayerJoin()
+      throws IOException, InterruptedException {
     final int sessionId = 69;
-    String handshakeRequest1 = "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
-    String handshakeRequest2 = "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER2 + "\"}";
-    String joinSessionRequest = "{\"messageType\":\"JoinSessionRequest\",\"sessionId\":" + sessionId + "}";
-    MockInputStream networkIn1 = getNetworkIn(handshakeRequest1 + System.lineSeparator() + joinSessionRequest);
-    MockInputStream networkIn2 = getNetworkIn(handshakeRequest2 + System.lineSeparator() + joinSessionRequest);
+    String handshakeRequest1 =
+        "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
+    String handshakeRequest2 =
+        "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER2 + "\"}";
+    String joinSessionRequest =
+        "{\"messageType\":\"JoinSessionRequest\",\"sessionId\":" + sessionId + "}";
+    MockInputStream networkIn1 =
+        getNetworkIn(handshakeRequest1 + System.lineSeparator() + joinSessionRequest);
+    MockInputStream networkIn2 =
+        getNetworkIn(handshakeRequest2 + System.lineSeparator() + joinSessionRequest);
     ByteArrayOutputStream networkOut1 = getNetworkOut();
     ByteArrayOutputStream networkOut2 = getNetworkOut();
     MockSocket mockSocket1 = new MockSocket(networkIn1, networkOut1);
@@ -119,7 +129,8 @@ public class ServerConnectionTest {
         assertThatContainsNKeyValuePairs(message, 3);
         joinSessionResponse = true;
       }
-      if (message.matches(".*\"messageType\":\"PlayerJoinedNotification\".*") && message.matches(".*\"playerName\":\"" + USER2 + "\".*")) {
+      if (message.matches(".*\"messageType\":\"PlayerJoinedNotification\".*")
+          && message.matches(".*\"playerName\":\"" + USER2 + "\".*")) {
         assertThat(message.matches(".*\"numPlayers\":2"));
         assertThat(message.matches(".*\"playerId\":(0|[1-9][0-9]*).*"));
         assertThat(message.matches(".*\"playerName\":\"" + USER2 + "\".*"));
@@ -136,10 +147,17 @@ public class ServerConnectionTest {
   @Test
   public void testServer_receivesReadyRequest_sendsResponseAndGameState()
       throws IOException, InterruptedException {
-    String handshakeRequest = "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
+    String handshakeRequest =
+        "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
     String createSessionRequest = "{\"messageType\":\"CreateSessionRequest\"}";
     String readyRequest = "{\"messageType\":\"ReadyRequest\",\"ready\":true}";
-    MockInputStream networkIn = getNetworkIn(handshakeRequest + System.lineSeparator() + createSessionRequest + System.lineSeparator() + readyRequest);
+    MockInputStream networkIn =
+        getNetworkIn(
+            handshakeRequest
+                + System.lineSeparator()
+                + createSessionRequest
+                + System.lineSeparator()
+                + readyRequest);
     ByteArrayOutputStream networkOut = getNetworkOut();
     MockSocket mockSocket = new MockSocket(networkIn, networkOut);
     MockServerSocket serverSocket = new MockServerSocket(List.of(mockSocket));
@@ -176,7 +194,8 @@ public class ServerConnectionTest {
   @Test
   public void testServer_receivesCharacterRequest_sendsResponseAndPlayerState()
       throws IOException, InterruptedException {
-    String handshakeRequest = "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
+    String handshakeRequest =
+        "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
     String createSessionRequest = "{\"messageType\":\"CreateSessionRequest\"}";
     String readyRequest = "{\"messageType\":\"ReadyRequest\",\"ready\":true}";
     String characterRequest = "{\"messageType\":\"CharacterRequest\",\"character\":'a'}";
@@ -228,11 +247,16 @@ public class ServerConnectionTest {
   public void testServer_clientUnreachable_sendsPlayerLeft()
       throws IOException, InterruptedException {
     final int sessionId = 69;
-    String handshakeRequest1 = "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
-    String handshakeRequest2 = "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER2 + "\"}";
-    String joinSessionRequest = "{\"messageType\":\"JoinSessionRequest\",\"sessionId\":" + sessionId + "}";
-    MockInputStream networkIn1 = getNetworkIn(handshakeRequest1 + System.lineSeparator() + joinSessionRequest);
-    MockInputStream networkIn2 = getNetworkIn(handshakeRequest2 + System.lineSeparator() + joinSessionRequest);
+    String handshakeRequest1 =
+        "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
+    String handshakeRequest2 =
+        "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER2 + "\"}";
+    String joinSessionRequest =
+        "{\"messageType\":\"JoinSessionRequest\",\"sessionId\":" + sessionId + "}";
+    MockInputStream networkIn1 =
+        getNetworkIn(handshakeRequest1 + System.lineSeparator() + joinSessionRequest);
+    MockInputStream networkIn2 =
+        getNetworkIn(handshakeRequest2 + System.lineSeparator() + joinSessionRequest);
     ByteArrayOutputStream networkOut1 = getNetworkOut();
     ByteArrayOutputStream networkOut2 = getNetworkOut();
     MockSocket mockSocket1 = new MockSocket(networkIn1, networkOut1);
@@ -272,9 +296,12 @@ public class ServerConnectionTest {
     List<MockInputStream> inputs = new ArrayList<>(numUsers);
     for (int i = 1; i <= numUsers; i++) {
       String user = "U" + i;
-      String handshakeRequest = "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + user + "\"}";
-      String joinSessionRequest = "{\"messageType\":\"JoinSessionRequest\",\"sessionId\":" + sessionId + "}";
-      MockInputStream networkIn = getNetworkIn(handshakeRequest + System.lineSeparator() + joinSessionRequest);
+      String handshakeRequest =
+          "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + user + "\"}";
+      String joinSessionRequest =
+          "{\"messageType\":\"JoinSessionRequest\",\"sessionId\":" + sessionId + "}";
+      MockInputStream networkIn =
+          getNetworkIn(handshakeRequest + System.lineSeparator() + joinSessionRequest);
       ByteArrayOutputStream networkOut = getNetworkOut();
       inputs.add(networkIn);
       outputs.add(networkOut);

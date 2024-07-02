@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import typeracer.communication.messages.Message;
-import typeracer.communication.messages.server.PlayerJoinedNotification;
 import typeracer.server.connection.ConnectionManager;
 
 /**
