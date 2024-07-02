@@ -56,7 +56,8 @@ public final class ConnectionManager {
 
     Session session = SessionManager.getInstance().getSessionByClientId(clientId);
     if (session != null) {
-      session.broadcastMessage(new PlayerLeftNotification(session.numberOfConnectedClients(), clientId));
+      session.broadcastMessage(
+          new PlayerLeftNotification(session.numberOfConnectedClients(), clientId));
       SessionManager.getInstance().leaveSession(clientId);
     }
   }
