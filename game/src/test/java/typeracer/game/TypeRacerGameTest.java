@@ -28,18 +28,18 @@ class TypeRacerGameTest {
     game.addPlayer(1, dummyPlayerName);
   }
 
-  private void assertWrongLetter(char letter) {
-    assertEquals(game.typeLetter(1, letter), Player.TypingResult.INCORRECT);
+  private void assertWrongCharacter(char character) {
+    assertEquals(game.typeCharacter(1, character), Player.TypingResult.INCORRECT);
   }
 
-  private void assertRightLetter(char letter) {
-    assertEquals(game.typeLetter(1, letter), Player.TypingResult.CORRECT);
+  private void assertRightCharacter(char character) {
+    assertEquals(game.typeCharacter(1, character), Player.TypingResult.CORRECT);
   }
 
-  private void typingWithInvalidId(char letter) {
+  private void typingWithInvalidId(char character) {
     assertThrows(
         NullPointerException.class,
-        () -> game.typeLetter(Collections.max(game.getIds()) + 1, letter));
+        () -> game.typeCharacter(Collections.max(game.getIds()) + 1, character));
   }
 
   void addValidUser() {
@@ -74,8 +74,8 @@ class TypeRacerGameTest {
   @Tag("Typing")
   @ParameterizedTest
   @MethodSource("charProvider")
-  void testWrongLetter_differentLetters(char value) {
-    assertWrongLetter(value);
+  void testWrongCharacter_differentCharacters(char character) {
+    assertWrongCharacter(character);
   }
 
   void testStart() {
@@ -102,9 +102,9 @@ class TypeRacerGameTest {
 
   @Tag("Typing")
   @Test
-  void testCorrectLetter_byText() {
-    for (char value : textSource.getCurrentText().toCharArray()) {
-      assertRightLetter(value);
+  void testCorrectCharacter_byText() {
+    for (char character : textSource.getCurrentText().toCharArray()) {
+      assertRightCharacter(character);
     }
   }
 

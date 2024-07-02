@@ -44,7 +44,7 @@ public class GameState {
    * @param id of the player
    * @param player that is added to the game
    */
-  public synchronized void addPlayer(int id, Player player) {
+  synchronized void addPlayer(int id, Player player) {
     players.put(id, player);
   }
 
@@ -53,7 +53,7 @@ public class GameState {
    *
    * @param id of the Player that is removed from the game
    */
-  public synchronized void removePlayer(int id) {
+  synchronized void removePlayer(int id) {
     players.remove(id);
   }
 
@@ -71,7 +71,7 @@ public class GameState {
    *
    * @return the text to type
    */
-  public String getTextToType() {
+  String getTextToType() {
     return textToType;
   }
 
@@ -83,7 +83,7 @@ public class GameState {
    *
    * @return current status
    */
-  public GameStatus getStatus() {
+  GameStatus getStatus() {
     return gameStatus;
   }
 
@@ -92,7 +92,7 @@ public class GameState {
    *
    * @param gameStatus the value to set the game status to
    */
-  public void setGameStatus(GameStatus gameStatus) {
+  void setGameStatus(GameStatus gameStatus) {
     this.gameStatus = gameStatus;
   }
 
@@ -101,7 +101,7 @@ public class GameState {
    *
    * @return a Set of all Player's IDs
    */
-  public Set<Integer> getIds() {
+  Set<Integer> getIds() {
     return Set.copyOf(players.keySet());
   }
 
@@ -111,7 +111,7 @@ public class GameState {
    * @param id of the player
    * @return the player belonging to the given ID
    */
-  public synchronized Player getPlayerById(int id) {
+  synchronized Player getPlayerById(int id) {
     if (!players.containsKey(id)) {
       throw new NullPointerException("Player with ID " + id + " not contained in list of players.");
     }
