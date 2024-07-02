@@ -38,7 +38,8 @@ public class JoinSessionRequestHandler implements MessageHandler {
       // Send JoinSessionResponse
       JoinSessionResponse response;
       switch (status) {
-        case SUCCESS -> response = new JoinSessionResponse(PermissionStatus.ACCEPTED, null);
+        case SUCCESS ->
+            response = new JoinSessionResponse(PermissionStatus.ACCEPTED, Reason.SUCCESS);
         case SESSION_NOT_FOUND ->
             response = new JoinSessionResponse(PermissionStatus.DENIED, Reason.SESSION_NOT_FOUND);
         case SESSION_GAME_ALREADY_STARTED ->

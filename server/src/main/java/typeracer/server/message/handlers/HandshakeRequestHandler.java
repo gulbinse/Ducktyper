@@ -34,7 +34,7 @@ public class HandshakeRequestHandler implements MessageHandler {
 
       HandshakeResponse response;
       switch (status) {
-        case SUCCESS -> response = new HandshakeResponse(PermissionStatus.ACCEPTED, null);
+        case SUCCESS -> response = new HandshakeResponse(PermissionStatus.ACCEPTED, Reason.SUCCESS);
         case INVALID_USERNAME ->
             response = new HandshakeResponse(PermissionStatus.DENIED, Reason.INVALID_USERNAME);
         default -> response = new HandshakeResponse(PermissionStatus.DENIED, Reason.UNKNOWN);

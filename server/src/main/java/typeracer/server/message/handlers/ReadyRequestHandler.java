@@ -35,7 +35,7 @@ public class ReadyRequestHandler implements MessageHandler {
         boolean success = session.setReady(clientId, readyRequest.isReady());
         ReadyResponse response;
         if (success) {
-          response = new ReadyResponse(PermissionStatus.ACCEPTED, null);
+          response = new ReadyResponse(PermissionStatus.ACCEPTED, Reason.SUCCESS);
         } else {
           response = new ReadyResponse(PermissionStatus.DENIED, Reason.UNKNOWN);
         }
