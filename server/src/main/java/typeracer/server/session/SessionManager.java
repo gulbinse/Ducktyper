@@ -120,16 +120,6 @@ public final class SessionManager {
   }
 
   /**
-   * Returns a session by its id.
-   *
-   * @param sessionId the unique id of the session
-   * @return the session associated with the given id, or null if no such session exists
-   */
-  public synchronized Session getSessionBySessionId(int sessionId) {
-    return sessionBySessionId.getOrDefault(sessionId, null);
-  }
-
-  /**
    * Returns the session the given client is connected to.
    *
    * @param clientId the unique id of the client
