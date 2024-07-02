@@ -51,7 +51,7 @@ public class ServerConnectionTest {
       if (message.matches(".*\"messageType\":\"HandshakeResponse\".*")) {
         assertThat(message.matches(".*\"connectionStatus\":\"(ACCEPTED|DENIED)\".*"));
         assertThat(message.matches(".*\"reason\":\".*\".*"));
-        assertThatContainsNKeyValuePairs(message, 2);
+        assertThatContainsNKeyValuePairs(message, 3);
         return;
       }
     }
@@ -82,7 +82,7 @@ public class ServerConnectionTest {
       if (message.matches(".*\"messageType\":\"CreateSessionResponse\".*")) {
         assertThat(message.matches(".*\"reason\":\".*\".*"));
         assertThat(message.matches(".*\"sessionId\":(-1|0|[1-9][0-9]*).*"));
-        assertThatContainsNKeyValuePairs(message, 2);
+        assertThatContainsNKeyValuePairs(message, 3);
         return;
       }
     }
@@ -122,7 +122,6 @@ public class ServerConnectionTest {
     boolean joinSessionResponse = false;
     boolean playerJoinedNotification = false;
     for (String message : jsonMessages) {
-      System.out.println(message);
       if (message.matches(".*\"messageType\":\"JoinSessionResponse\".*")) {
         assertThat(message.matches(".*\"joinStatus\":\"(ACCEPTED|DENIED)\".*"));
         assertThat(message.matches(".*\"reason\":\".*\".*"));
@@ -198,7 +197,7 @@ public class ServerConnectionTest {
         "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
     String createSessionRequest = "{\"messageType\":\"CreateSessionRequest\"}";
     String readyRequest = "{\"messageType\":\"ReadyRequest\",\"ready\":true}";
-    String characterRequest = "{\"messageType\":\"CharacterRequest\",\"character\":'a'}";
+    String characterRequest = "{\"messageType\":\"CharacterRequest\",\"character\":\"a\"}";
     MockInputStream networkIn =
         getNetworkIn(
             handshakeRequest
@@ -276,7 +275,6 @@ public class ServerConnectionTest {
     String sent = networkOut1.toString(StandardCharsets.UTF_8);
     String[] jsonMessages = sent.split(System.lineSeparator());
     for (String message : jsonMessages) {
-      System.out.println(message);
       if (message.matches(".*\"messageType\":\"PlayerLeftNotification\".*")) {
         assertThat(message.matches(".*\"numPlayers\":1.*"));
         assertThat(message.matches(".*\"playerName\":\"" + USER2 + "\".*"));
