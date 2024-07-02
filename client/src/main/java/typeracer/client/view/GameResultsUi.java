@@ -14,7 +14,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
-import javafx.stage.Stage;
+import typeracer.client.ViewController;
 
 /**
  * Represents the game results user interface for the TypeRacer game. This class sets up the GUI
@@ -22,18 +22,27 @@ import javafx.stage.Stage;
  */
 public class GameResultsUi extends VBox {
 
-  /** Constructs a GameResultsUi pane. Initializes the layout with specified spacing. */
-  public GameResultsUi() {
+  /** The controller managing views and handling interactions. */
+  private ViewController viewController;
+
+  /**
+   * Constructs a new GameResultsUi and initializes its user interface.
+   *
+   * @param viewController The controller to manage views and handle interactions.
+   */
+  public GameResultsUi(ViewController viewController) {
     super(10);
+    this.viewController = viewController;
     initializeUi();
   }
 
   /** Initializes the UI elements of the GameResultsUi pane. */
   private void initializeUi() {
     this.setAlignment(Pos.CENTER);
-    this.setPadding(new Insets(20));
-    this.setStyle(
-        "-fx-background-color: " + StyleManager.colorToHex(StyleManager.BACKGROUND_COLOR) + ";");
+    this.setSpacing(20);
+    this.setBackground(
+        new Background(
+            new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
     Label titleLabel = new Label("Game Results");
     titleLabel.setFont(StyleManager.BOLD_FONT);
@@ -46,25 +55,24 @@ public class GameResultsUi extends VBox {
     Button playAgainButton =
         StyleManager.createStyledButton(
             "play again", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
-    Button exitButton =
+    Button mainMenuButton =
         StyleManager.createStyledButton(
-            "exit", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
+            "main menu", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
 
-    HBox buttonBox = new HBox(20, playAgainButton, exitButton);
+    HBox buttonBox = new HBox(20, playAgainButton, mainMenuButton);
     buttonBox.setAlignment(Pos.CENTER);
 
     this.getChildren().addAll(titleLabel, statsBox, leaderboardPanel, buttonBox);
 
-    playAgainButton.setOnAction(
-        e -> StyleManager.switchToGameUi((Stage) this.getScene().getWindow()));
-    exitButton.setOnAction(e -> closeWindow());
+    playAgainButton.setOnAction(e -> ViewController.switchToLobbyUi());
+    mainMenuButton.setOnAction(e -> ViewController.switchToMainMenu());
 
     StyleManager.applyFadeInAnimation(titleLabel, 1000);
     StyleManager.applyFadeInAnimation(statsBox, 1200);
     StyleManager.applyFadeInAnimation(leaderboardPanel, 1400);
     StyleManager.applyFadeInAnimation(buttonBox, 1600);
 
-    StyleManager.applyButtonHoverAnimation(playAgainButton, exitButton);
+    StyleManager.applyButtonHoverAnimation(playAgainButton, mainMenuButton);
   }
 
   /**
@@ -132,11 +140,5 @@ public class GameResultsUi extends VBox {
     leaderboardBox.getChildren().addAll(leaderboardTitle, playerA, playerB, playerC);
     VBox.setMargin(leaderboardBox, new Insets(10, 200, 50, 200));
     return leaderboardBox;
-  }
-
-  /** Closes the current window. */
-  private void closeWindow() {
-    Stage stage = (Stage) this.getScene().getWindow();
-    stage.close();
   }
 }

@@ -2,6 +2,7 @@ package typeracer.client.view;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -15,7 +16,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
-import javafx.stage.Stage;
+import typeracer.client.ViewController;
 
 /**
  * Represents the profile settings user interface for the TypeRacer game. This class sets up the GUI
@@ -23,6 +24,8 @@ import javafx.stage.Stage;
  * cancel these changes.
  */
 public class ProfileSettingsUi extends VBox {
+
+  private ViewController viewController;
 
   /** The text field for entering the username. */
   private TextField usernameField;
@@ -39,8 +42,13 @@ public class ProfileSettingsUi extends VBox {
   /** The button to cancel the profile settings changes. */
   private Button cancelButton;
 
-  /** Constructs a new ProfileSettingsUi and initializes its user interface. */
-  public ProfileSettingsUi() {
+  /**
+   * Constructs a new ProfileSettingsUi and initializes its user interface components.
+   *
+   * @param viewController The controller to manage views and handle interactions.
+   */
+  public ProfileSettingsUi(ViewController viewController) {
+    this.viewController = viewController;
     initializeUi();
   }
 
@@ -51,9 +59,9 @@ public class ProfileSettingsUi extends VBox {
   private void initializeUi() {
     this.setSpacing(10);
     this.setAlignment(Pos.TOP_CENTER);
-    this.setPadding(new Insets(20, 20, 20, 20));
-    this.setStyle(
-        "-fx-background-color: " + StyleManager.colorToHex(StyleManager.BACKGROUND_COLOR) + ";");
+    this.setBackground(
+        new Background(
+            new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
     usernameField = new TextField();
     wpmGoalField = new TextField();
@@ -133,21 +141,41 @@ public class ProfileSettingsUi extends VBox {
   private void configureButtonActions() {
     saveButton.setOnAction(
         e -> {
-          saveSettings();
-          StyleManager.switchToMainMenu((Stage) this.getScene().getWindow());
+          String wpmText = wpmGoalField.getText();
+          if (isNumeric(wpmText)) { // Check if the input is numeric
+            int wpmGoal = Integer.parseInt(wpmText); // Convert to integer
+            viewController.saveUserSettings(
+                usernameField.getText(), wpmGoal, favoriteTextField.getText());
+          } else {
+            // Display error if WPM is not a valid number
+            showAlert("Error", "WPM goal must be a whole number");
+          }
         });
-    cancelButton.setOnAction(
-        e -> StyleManager.switchToMainMenu((Stage) this.getScene().getWindow()));
+
+    cancelButton.setOnAction(e -> viewController.cancelSettings());
   }
 
-  /** Saves the settings entered by the user. */
-  private void saveSettings() {
-    System.out.println(
-        "Saved: Username - "
-            + usernameField.getText()
-            + ", WPM Goal - "
-            + wpmGoalField.getText()
-            + ", Favorite Text - "
-            + favoriteTextField.getText());
+  /**
+   * Utility method to show an alert dialog.
+   *
+   * @param title the title of the alert dialog
+   * @param content the content text of the alert dialog
+   */
+  private void showAlert(String title, String content) {
+    Alert alert = new Alert(Alert.AlertType.ERROR);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(content);
+    alert.showAndWait();
+  }
+
+  /**
+   * Checks if the input string is numeric.
+   *
+   * @param str String to check
+   * @return true if the string is numeric, false otherwise
+   */
+  private boolean isNumeric(String str) {
+    return str != null && str.matches("-?\\d+");
   }
 }

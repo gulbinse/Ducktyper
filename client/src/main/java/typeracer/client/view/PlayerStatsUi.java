@@ -1,5 +1,6 @@
 package typeracer.client.view;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -14,17 +15,28 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
-import javafx.stage.Stage;
+import typeracer.client.ViewController;
 
 /**
  * Represents the player statistics user interface for the TypeRacer game. This class sets up the
  * GUI elements that display the player's statistics, including total games played, average WPM,
- * total errors, best WPM, and average accuracy.
+ * total errors, the best WPM, and average accuracy.
  */
 public class PlayerStatsUi extends VBox {
+  private ViewController viewController;
+  private Label gamesPlayedLabel;
+  private Label averageWpmLabel;
+  private Label totalErrorsLabel;
+  private Label bestWpmLabel;
+  private Label averageAccuracyLabel;
 
-  /** Constructs a new PlayerStatsUi and initializes its user interface. */
-  public PlayerStatsUi() {
+  /**
+   * Constructs a new PlayerStatsUi and initializes its user interface.
+   *
+   * @param viewController the controller to manage views and handle interactions.
+   */
+  public PlayerStatsUi(ViewController viewController) {
+    this.viewController = viewController;
     initializeUi();
   }
 
@@ -35,8 +47,9 @@ public class PlayerStatsUi extends VBox {
   private void initializeUi() {
     this.setAlignment(Pos.CENTER);
     this.setSpacing(10);
-    this.setPadding(new Insets(30));
-    this.setStyle("-fx-background-color: white;");
+    this.setBackground(
+        new Background(
+            new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
     Label titleLabel = new Label("Player Statistics");
     titleLabel.setFont(StyleManager.BOLD_FONT);
@@ -47,12 +60,12 @@ public class PlayerStatsUi extends VBox {
     Button backButton =
         StyleManager.createStyledButton(
             "back", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
-    backButton.setOnAction(e -> StyleManager.switchToMainMenu((Stage) this.getScene().getWindow()));
+    backButton.setOnAction(e -> ViewController.switchToMainMenu());
 
     Button resetButton =
         StyleManager.createStyledButton(
             "reset stats", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
-    resetButton.setOnAction(e -> resetStats());
+    resetButton.setOnAction(e -> viewController.handleResetStats());
 
     HBox buttonBar = new HBox(10, backButton, resetButton);
     buttonBar.setAlignment(Pos.CENTER);
@@ -82,38 +95,55 @@ public class PlayerStatsUi extends VBox {
                 CornerRadii.EMPTY,
                 new BorderWidths(1))));
 
-    statsBox.getChildren().add(createStatLabel("Total games played: ", "0"));
-    statsBox.getChildren().add(createStatLabel("Average WPM: ", "0"));
-    statsBox.getChildren().add(createStatLabel("Total errors: ", "0"));
-    statsBox.getChildren().add(createStatLabel("Best WPM: ", "0"));
-    statsBox.getChildren().add(createStatLabel("Average accuracy: ", "0%"));
+    gamesPlayedLabel = new Label("Total games played: 0");
+    averageWpmLabel = new Label("Average WPM: 0");
+    totalErrorsLabel = new Label("Total errors: 0");
+    bestWpmLabel = new Label("Best WPM: 0");
+    averageAccuracyLabel = new Label("Average accuracy: 0%");
+
+    statsBox
+        .getChildren()
+        .addAll(
+            gamesPlayedLabel,
+            averageWpmLabel,
+            totalErrorsLabel,
+            bestWpmLabel,
+            averageAccuracyLabel);
 
     VBox.setMargin(statsBox, new Insets(10, 75, 30, 75));
     return statsBox;
   }
 
-  /** Resets the player's statistics. This method should contain the logic to reset the stats. */
-  private void resetStats() {
-    // Logic to reset stats goes here
+  /**
+   * Updates the displayed statistics with the provided values.
+   *
+   * @param gamesPlayed The total number of games played.
+   * @param averageWpm The average words per minute (WPM).
+   * @param totalErrors The total number of errors.
+   * @param bestWpm The best WPM achieved.
+   * @param averageAccuracy The average accuracy percentage.
+   */
+  public void updateStats(
+      int gamesPlayed, double averageWpm, int totalErrors, double bestWpm, double averageAccuracy) {
+    Platform.runLater(
+        () -> {
+          gamesPlayedLabel.setText(String.format("Total games played: %d", gamesPlayed));
+          averageWpmLabel.setText(String.format("Average WPM: %.2f", averageWpm));
+          totalErrorsLabel.setText(String.format("Total errors: %d", totalErrors));
+          bestWpmLabel.setText(String.format("Best WPM: %.2f", bestWpm));
+          averageAccuracyLabel.setText(String.format("Average accuracy: %.2f%%", averageAccuracy));
+        });
   }
 
-  /**
-   * Creates a label with the specified text and value, laid out in a horizontal box.
-   *
-   * @param labelText The text for the label.
-   * @param valueText The label displaying the value.
-   * @return A HBox containing the label and value.
-   */
-  private HBox createStatLabel(String labelText, String valueText) {
-    Label label = new Label(labelText);
-    label.setFont(StyleManager.STANDARD_FONT);
-
-    Label valueLabel = new Label(valueText);
-    valueLabel.setFont(StyleManager.STANDARD_FONT);
-
-    HBox hbox = new HBox();
-    hbox.setSpacing(5);
-    hbox.getChildren().addAll(label, valueLabel);
-    return hbox;
+  /** Clears the displayed statistics, resetting all values to zero. */
+  public void clearDisplayedStats() {
+    Platform.runLater(
+        () -> {
+          gamesPlayedLabel.setText("Total games played: 0");
+          averageWpmLabel.setText("Average WPM: 0");
+          totalErrorsLabel.setText("Total errors: 0");
+          bestWpmLabel.setText("Best WPM: 0");
+          averageAccuracyLabel.setText("Average accuracy: 0%");
+        });
   }
 }
