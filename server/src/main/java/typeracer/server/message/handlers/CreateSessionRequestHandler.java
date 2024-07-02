@@ -29,7 +29,7 @@ public class CreateSessionRequestHandler implements MessageHandler {
   public void handleMessage(Message message, int clientId) {
     if (message instanceof CreateSessionRequest) {
       int id = SessionManager.getInstance().createNewSession();
-      Reason reason = id > 0 ? null : Reason.SESSION_CREATE_NO_PERMISSION;
+      Reason reason = id > 0 ? Reason.SUCCESS : Reason.SESSION_CREATE_NO_PERMISSION;
       ConnectionManager.getInstance().sendMessage(new CreateSessionResponse(reason, id), clientId);
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, clientId);
