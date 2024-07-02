@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import typeracer.communication.messages.Message;
+import typeracer.communication.messages.server.PlayerJoinedNotification;
 import typeracer.server.connection.ConnectionManager;
 
 /**
@@ -29,6 +30,7 @@ public final class Session {
    */
   public synchronized void addPlayer(int playerId) {
     // TODO notify game about connected player
+    playerIds.add(playerId);
   }
 
   /**
@@ -38,6 +40,7 @@ public final class Session {
    */
   public synchronized void removePlayer(int playerId) {
     // TODO notify game about disconnected player
+    playerIds.remove(playerId);
   }
 
   /**
@@ -58,7 +61,7 @@ public final class Session {
    * @param message the message to be broadcast
    */
   public void broadcastMessage(Message message) {
-    playerIds.forEach(id -> ConnectionManager.getInstance().sendMessage(message, id));
+    playerIds.forEach(id -> sendMessage(message, id));
   }
 
   /**
