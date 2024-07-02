@@ -19,10 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Status codes & reasons in protocol (#30)
 - Characters per minute methods in ``Player`` class
 - Unit tests for ``TextSource`` and `TypeRacerGame`
+- ``TextNotification`` in protocol
 
 ### Changed
 - "Lobby" to "Session" renamed
 - More consistent protocol
+
+### Removed
+- ``null`` values from protocol (#35)
 
 ## [0.1.0] - 2024-06-23
 

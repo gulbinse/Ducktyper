@@ -63,7 +63,7 @@ The message notifying the client whether its HandshakeRequest has been accepted.
 }
 ```
 - `String <STATUS>`: one of `"ACCEPTED"` or `"DENIED"`
-- `String <REASON>`: specifies the reason for a denied connection, null otherwise
+- `String <REASON>`: specifies the reason for a denied connection, SUCCESS otherwise
 
 ### CreateSessionResponse
 The message notifying the client whether its CreateSessionRequest was successful.
@@ -74,7 +74,7 @@ The message notifying the client whether its CreateSessionRequest was successful
     "sessionId":<ID>
 }
 ```
-- `String <REASON>`: specifies the reason for a denied request, null otherwise
+- `String <REASON>`: specifies the reason for a denied request, SUCCESS otherwise
 - `int <ID>`: the id of the created session, -1 if creation was denied
 
 ### JoinSessionResponse
@@ -87,7 +87,7 @@ The message notifying the client whether its JoinSessionRequest has been accepte
 }
 ```
 - `String <STATUS>`: one of `"ACCEPTED"` or `"DENIED"`
-- `String <REASON>`: specifies the reason for a denied connection, null otherwise
+- `String <REASON>`: specifies the reason for a denied connection, SUCCESS otherwise
 
 ### ReadyResponse
 The message notifying the client whether its ReadyRequest has been accepted.
@@ -99,7 +99,7 @@ The message notifying the client whether its ReadyRequest has been accepted.
 }
 ```
 - `String <STATUS>`: one of `"ACCEPTED"` or `"DENIED"`
-- `String <REASON>`: specifies the reason for a denied request, null otherwise
+- `String <REASON>`: specifies the reason for a denied request, SUCCESS otherwise
 
 ### CharacterResponse
 The message notifying the client whether its typed character was correct.
@@ -162,3 +162,13 @@ The message notifying all clients that the game state has changed.
 }
 ```
 - `String <STATUS>`: one of `"RUNNING"` or `"FINISHED"`
+
+### TextNotification
+The message notifying all clients that the game is played with a new text.
+```json
+{
+    "messageType":"TextNotification",
+    "text":<TEXT>
+}
+```
+- `String <TEXT>`: the current text in the game
