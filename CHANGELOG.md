@@ -2,8 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 - Implementation of bonusfeatures such as
@@ -20,10 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Characters per minute methods in ``Player`` class
 - Unit tests for ``TextSource`` and `TypeRacerGame`
 - ``TextNotification`` in protocol
+- ``main`` class for the server
+- Implementation of ``MessageHandler`` classes
+- Connection & session logic (#23)
 
 ### Changed
 - "Lobby" to "Session" renamed
 - More consistent protocol
+- IDs look more random
 
 ### Removed
 - ``null`` values from protocol (#35)
