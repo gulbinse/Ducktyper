@@ -4,6 +4,8 @@ import java.net.Socket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import typeracer.communication.messages.Message;
+import typeracer.communication.messages.server.PlayerLeftNotification;
+import typeracer.server.session.Session;
 import typeracer.server.session.SessionManager;
 import typeracer.server.utils.IdentifierGenerator;
 
@@ -51,7 +53,12 @@ public final class ConnectionManager {
   public synchronized void unhandleClient(int clientId) {
     clientHandlerById.remove(clientId);
     playerNameById.remove(clientId);
-    SessionManager.getInstance().leaveSession(clientId);
+
+    Session session = SessionManager.getInstance().getSessionByClientId(clientId);
+    if (session != null) {
+      session.broadcastMessage(new PlayerLeftNotification(session.numberOfConnectedClients(), clientId));
+      SessionManager.getInstance().leaveSession(clientId);
+    }
   }
 
   /**
