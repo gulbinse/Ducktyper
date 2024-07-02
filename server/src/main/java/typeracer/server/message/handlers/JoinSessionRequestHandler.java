@@ -3,10 +3,12 @@ package typeracer.server.message.handlers;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.client.JoinSessionRequest;
 import typeracer.communication.messages.server.JoinSessionResponse;
+import typeracer.communication.messages.server.PlayerJoinedNotification;
 import typeracer.communication.statuscodes.PermissionStatus;
 import typeracer.communication.statuscodes.Reason;
 import typeracer.server.connection.ConnectionManager;
 import typeracer.server.message.MessageHandler;
+import typeracer.server.session.Session;
 import typeracer.server.session.SessionManager;
 
 /**
@@ -33,6 +35,7 @@ public class JoinSessionRequestHandler implements MessageHandler {
       SessionManager.OperationStatus status =
           SessionManager.getInstance().joinSessionById(clientId, sessionId);
 
+      // Send JoinSessionResponse
       JoinSessionResponse response;
       switch (status) {
         case SUCCESS -> response = new JoinSessionResponse(PermissionStatus.ACCEPTED, null);
@@ -47,6 +50,16 @@ public class JoinSessionRequestHandler implements MessageHandler {
         default -> response = new JoinSessionResponse(PermissionStatus.DENIED, Reason.UNKNOWN);
       }
       ConnectionManager.getInstance().sendMessage(response, clientId);
+
+      // Send PlayerJoinedNotification
+      if (status == SessionManager.OperationStatus.SUCCESS) {
+        Session session = SessionManager.getInstance().getSessionByClientId(clientId);
+        if (session != null) {
+          int numPlayers = session.numberOfConnectedClients();
+          String playerName = ConnectionManager.getInstance().getPlayerName(clientId);
+          session.broadcastMessage(new PlayerJoinedNotification(numPlayers, clientId, playerName));
+        }
+      }
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, clientId);
     }
