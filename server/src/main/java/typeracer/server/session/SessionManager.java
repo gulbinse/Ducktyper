@@ -44,6 +44,17 @@ public final class SessionManager {
   }
 
   /**
+   * FOR TESTING PURPOSE ONLY. Creates a new {@link Session} instance and assigns it the specified
+   * id.
+   *
+   * @param id the id of the session
+   */
+  public synchronized void createNewSession(int id) {
+    Session session = new Session();
+    sessionBySessionId.put(id, session);
+  }
+
+  /**
    * Closes an existing session by its id and disconnects all corresponding clients. If the session
    * does not exist, nothing happens.
    *
