@@ -74,7 +74,7 @@ public class Client {
     // start a client
     InetSocketAddress address = new InetSocketAddress(inetAddress, port);
 
-    Client client = new Client();
+    Client client = new Client(username);
 
     try (Socket socket = new Socket(address.getAddress(), address.getPort())) {
       client.start(username, socket);
