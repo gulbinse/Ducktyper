@@ -15,38 +15,36 @@ import typeracer.server.utils.Enums;
  */
 public class CharacterRequestHandler implements MessageHandler {
 
-    private final MessageHandler nextHandler;
+  private final MessageHandler nextHandler;
 
-    /**
-     * The default constructor of this class.
-     */
-    public CharacterRequestHandler() {
-        this.nextHandler = null;
-    }
+  /** The default constructor of this class. */
+  public CharacterRequestHandler() {
+    this.nextHandler = null;
+  }
 
-    private CharacterRequestHandler(MessageHandler nextHandler) {
-        this.nextHandler = nextHandler;
-    }
+  private CharacterRequestHandler(MessageHandler nextHandler) {
+    this.nextHandler = nextHandler;
+  }
 
-    @Override
-    public void handleMessage(Message message, int clientId) {
-        if (message instanceof CharacterRequest characterRequest) {
-            Session session = SessionManager.getInstance().getSessionByClientId(clientId);
-            if (session != null) {
-                Enums.TypingResult result = session.validateCharacter(clientId, characterRequest.getCharacter());
-                boolean returnValue = result == Enums.TypingResult.CORRECT;
-
-                if (result != Enums.TypingResult.PLAYER_FINISHED_ALREADY) {
-                    ConnectionManager.getInstance().sendMessage(new CharacterResponse(returnValue), clientId);
-                }
-            }
-        } else if (nextHandler != null) {
-            nextHandler.handleMessage(message, clientId);
+  @Override
+  public void handleMessage(Message message, int clientId) {
+    if (message instanceof CharacterRequest characterRequest) {
+      Session session = SessionManager.getInstance().getSessionByClientId(clientId);
+      if (session != null) {
+        Enums.TypingResult result =
+            session.validateCharacter(clientId, characterRequest.getCharacter());
+        if (result == Enums.TypingResult.CORRECT || result == Enums.TypingResult.INCORRECT) {
+          boolean returnValue = result == Enums.TypingResult.CORRECT;
+          ConnectionManager.getInstance().sendMessage(new CharacterResponse(returnValue), clientId);
         }
+      }
+    } else if (nextHandler != null) {
+      nextHandler.handleMessage(message, clientId);
     }
+  }
 
-    @Override
-    public CharacterRequestHandler setNext(MessageHandler handler) {
-        return new CharacterRequestHandler(handler);
-    }
+  @Override
+  public CharacterRequestHandler setNext(MessageHandler handler) {
+    return new CharacterRequestHandler(handler);
+  }
 }

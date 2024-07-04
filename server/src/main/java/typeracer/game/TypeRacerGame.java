@@ -1,12 +1,9 @@
 package typeracer.game;
 
-import typeracer.server.session.Session;
-import typeracer.server.utils.Enums.TypingResult;
-
-
-
 import java.util.List;
 import java.util.Set;
+import typeracer.server.session.Session;
+import typeracer.server.utils.Enums.TypingResult;
 
 /** The main class for the game, managing states and providing an interface for the server. */
 public class TypeRacerGame {
@@ -23,7 +20,12 @@ public class TypeRacerGame {
     state = new GameState(textSource);
   }
 
-  public TypeRacerGame(Session session){
+  /**
+   * Constructs a new Typeracer game.
+   *
+   * @param session the session this game belongs to
+   */
+  public TypeRacerGame(Session session) {
     state = new GameState(new TextSource());
   }
 

@@ -4,11 +4,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import typeracer.communication.messages.Message;
-import typeracer.game.Player;
 import typeracer.game.TypeRacerGame;
 import typeracer.server.connection.ConnectionManager;
 import typeracer.server.utils.Enums;
-
 
 /**
  * This class represents a server-managed game session. Each instance of {@link Session} is
@@ -20,8 +18,8 @@ public final class Session {
 
   /** Defines the maximum number of players allowed in one session. */
   public static final int MAX_SIZE = 5;
-  private final TypeRacerGame game = new TypeRacerGame(this);
 
+  private final TypeRacerGame game = new TypeRacerGame(this);
   private final Set<Integer> playerIds = Collections.synchronizedSet(new HashSet<>());
 
   /** The default constructor of this class. */
@@ -59,7 +57,6 @@ public final class Session {
   public synchronized boolean setReady(int playerId, boolean ready) {
     // TODO notify game about readiness update
     return game.setPlayerReady(playerId, ready);
-
   }
 
   /**
@@ -93,7 +90,7 @@ public final class Session {
   /**
    * Validates whether the typed character is correct for the specified player.
    *
-   * @param playerId  the unique id of the player
+   * @param playerId the unique id of the player
    * @param character the input character
    * @return <code>true</code> if the typed character is correct, <code>false</code> otherwise
    */

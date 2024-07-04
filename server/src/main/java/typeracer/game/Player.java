@@ -9,7 +9,6 @@ public class Player {
   private static final long MINUTES_TO_NANO_SECONDS_FACTOR = 10 ^ 9;
   private long gameStartTime;
 
-
   /**
    * Creates a new Player with the given username.
    *

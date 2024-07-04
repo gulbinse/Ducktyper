@@ -3,7 +3,6 @@ package typeracer.game;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import typeracer.server.utils.Enums.TypingResult;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -15,6 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import typeracer.server.utils.Enums.TypingResult;
 
 class TypeRacerGameTest {
   TypeRacerGame game;
