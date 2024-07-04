@@ -18,6 +18,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class TypeRacerGameTest {
   TypeRacerGame game;
+  String dummyPlayerName = "Kevin";
   TextSource textSource;
 
   @BeforeEach
@@ -25,7 +26,7 @@ class TypeRacerGameTest {
     textSource = new TextSource();
     textSource.setDefaultText();
     game = new TypeRacerGame(textSource);
-    game.addPlayer(1);
+    game.addPlayer(1, dummyPlayerName);
   }
 
   private void assertWrongCharacter(char character) {
@@ -43,18 +44,18 @@ class TypeRacerGameTest {
   }
 
   void addValidUser() {
-    game.addPlayer(25);
+    game.addPlayer(25, "BetaKevin");
   }
 
   void addUserWithInvalidId() {
-    game.addPlayer(35);
-    assertThrows(AssertionError.class, () -> game.addPlayer(35));
+    game.addPlayer(35, "GammaKevin");
+    assertThrows(AssertionError.class, () -> game.addPlayer(35, "GammaKevin1"));
   }
 
   void removeExistingUserWithCorrectId() {
     final List<Player> playerListBefore = game.getPlayerList();
     final Set<Integer> idSetBefore = game.getIds();
-    game.addPlayer(45);
+    game.addPlayer(45, "OmegaKevin");
     game.removePlayer(45);
     assertEquals(playerListBefore, game.getPlayerList());
     assertEquals(idSetBefore, game.getIds());
@@ -81,7 +82,7 @@ class TypeRacerGameTest {
   void testStart() {
     removeAllPlayers();
     assertThrows(AssertionError.class, game::start);
-    game.addPlayer(101);
+    game.addPlayer(101, "Kevinovic");
     assertThrows(AssertionError.class, game::start);
     for (Player player : game.getPlayerList()) {
       player.setIsReady(true);

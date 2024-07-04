@@ -4,7 +4,7 @@ import typeracer.server.utils.Enums.TypingResult;
 
 /** Represents a player of the game. */
 public class Player {
-  private int id;
+  private String username;
   private final PlayerState state;
   private static final long MINUTES_TO_NANO_SECONDS_FACTOR = 10 ^ 9;
   private long gameStartTime;
@@ -13,10 +13,10 @@ public class Player {
   /**
    * Creates a new Player with the given username.
    *
-   * @param id The unique id of the player
+   * @param username The username of the player
    */
-  public Player(int id) {
-    this.id = id;
+  public Player(String username) {
+    this.username = username;
     state = new PlayerState();
   }
 
@@ -25,8 +25,8 @@ public class Player {
    *
    * @return this Player's username
    */
-  public int getId() {
-    return id;
+  public String getUsername() {
+    return username;
   }
 
   /**
