@@ -7,6 +7,7 @@ import typeracer.server.connection.ConnectionManager;
 import typeracer.server.message.MessageHandler;
 import typeracer.server.session.Session;
 import typeracer.server.session.SessionManager;
+import typeracer.server.utils.Enums;
 
 /**
  * Handles CharacterRequest messages in a chain of responsibility pattern. If the message is not of
@@ -14,32 +15,38 @@ import typeracer.server.session.SessionManager;
  */
 public class CharacterRequestHandler implements MessageHandler {
 
-  private final MessageHandler nextHandler;
+    private final MessageHandler nextHandler;
 
-  /** The default constructor of this class. */
-  public CharacterRequestHandler() {
-    this.nextHandler = null;
-  }
-
-  private CharacterRequestHandler(MessageHandler nextHandler) {
-    this.nextHandler = nextHandler;
-  }
-
-  @Override
-  public void handleMessage(Message message, int clientId) {
-    if (message instanceof CharacterRequest characterRequest) {
-      Session session = SessionManager.getInstance().getSessionByClientId(clientId);
-      if (session != null) {
-        boolean correct = session.validateCharacter(clientId, characterRequest.getCharacter());
-        ConnectionManager.getInstance().sendMessage(new CharacterResponse(correct), clientId);
-      }
-    } else if (nextHandler != null) {
-      nextHandler.handleMessage(message, clientId);
+    /**
+     * The default constructor of this class.
+     */
+    public CharacterRequestHandler() {
+        this.nextHandler = null;
     }
-  }
 
-  @Override
-  public CharacterRequestHandler setNext(MessageHandler handler) {
-    return new CharacterRequestHandler(handler);
-  }
+    private CharacterRequestHandler(MessageHandler nextHandler) {
+        this.nextHandler = nextHandler;
+    }
+
+    @Override
+    public void handleMessage(Message message, int clientId) {
+        if (message instanceof CharacterRequest characterRequest) {
+            Session session = SessionManager.getInstance().getSessionByClientId(clientId);
+            if (session != null) {
+                Enums.TypingResult result = session.validateCharacter(clientId, characterRequest.getCharacter());
+                boolean returnValue = result == Enums.TypingResult.CORRECT;
+
+                if (result != Enums.TypingResult.PLAYER_FINISHED_ALREADY) {
+                    ConnectionManager.getInstance().sendMessage(new CharacterResponse(returnValue), clientId);
+                }
+            }
+        } else if (nextHandler != null) {
+            nextHandler.handleMessage(message, clientId);
+        }
+    }
+
+    @Override
+    public CharacterRequestHandler setNext(MessageHandler handler) {
+        return new CharacterRequestHandler(handler);
+    }
 }

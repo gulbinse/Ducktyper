@@ -3,6 +3,7 @@ package typeracer.game;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import typeracer.server.utils.Enums.TypingResult;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -29,11 +30,11 @@ class TypeRacerGameTest {
   }
 
   private void assertWrongCharacter(char character) {
-    assertEquals(game.typeCharacter(1, character), Player.TypingResult.INCORRECT);
+    assertEquals(game.typeCharacter(1, character), TypingResult.INCORRECT);
   }
 
   private void assertRightCharacter(char character) {
-    assertEquals(game.typeCharacter(1, character), Player.TypingResult.CORRECT);
+    assertEquals(game.typeCharacter(1, character), TypingResult.CORRECT);
   }
 
   private void typingWithInvalidId(char character) {

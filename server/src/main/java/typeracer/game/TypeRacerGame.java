@@ -1,5 +1,10 @@
 package typeracer.game;
 
+import typeracer.server.session.Session;
+import typeracer.server.utils.Enums.TypingResult;
+
+
+
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +21,10 @@ public class TypeRacerGame {
    */
   public TypeRacerGame(TextSource textSource) {
     state = new GameState(textSource);
+  }
+
+  public TypeRacerGame(Session session){
+    state = new GameState(new TextSource());
   }
 
   /** Starts a new game with a new text. */
@@ -69,18 +78,18 @@ public class TypeRacerGame {
    * @param character the character that is typed
    * @return The result of the typing attempt
    */
-  public Player.TypingResult typeCharacter(
+  public TypingResult typeCharacter(
       int id, char character) { // TODO: Does this have to be synchronized?
 
     if (isGameFinished()) {
-      return Player.TypingResult.PLAYER_FINISHED_ALREADY;
+      return TypingResult.PLAYER_FINISHED_ALREADY;
     }
 
     Player player = state.getPlayerById(id);
     if (!player.isFinished()) {
       return player.typeCharacter(character, state.getTextToType(), gameStartTime);
     }
-    return Player.TypingResult.PLAYER_FINISHED_ALREADY;
+    return TypingResult.PLAYER_FINISHED_ALREADY;
   }
 
   private boolean isGameFinished() {

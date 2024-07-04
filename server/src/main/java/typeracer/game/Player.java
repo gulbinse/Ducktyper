@@ -1,5 +1,7 @@
 package typeracer.game;
 
+import typeracer.server.utils.Enums.TypingResult;
+
 /** Represents a player of the game. */
 public class Player {
   private String username;
@@ -7,17 +9,6 @@ public class Player {
   private static final long MINUTES_TO_NANO_SECONDS_FACTOR = 10 ^ 9;
   private long gameStartTime;
 
-  /** A result of trying to type a character. */
-  public enum TypingResult {
-    /** The typing was correct. */
-    CORRECT,
-
-    /** The typing was incorrect. */
-    INCORRECT,
-
-    /** This Player has already finished the game. */
-    PLAYER_FINISHED_ALREADY
-  }
 
   /**
    * Creates a new Player with the given username.
