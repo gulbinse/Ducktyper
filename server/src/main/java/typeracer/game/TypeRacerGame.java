@@ -131,9 +131,11 @@ public class TypeRacerGame {
    * @param id of the player to set the status of
    * @param isReady true if the player is ready, false otherwise
    */
-  public synchronized void setPlayerReady(int id, boolean isReady) {
+  public synchronized boolean setPlayerReady(int id, boolean isReady) {
+    GameState.GameStatus statusBefore = getStatus();
     if (getStatus().equals(GameState.GameStatus.WAITING_FOR_READY)) {
       state.getPlayerById(id).setIsReady(isReady);
+      return (statusBefore != getStatus());
     } else {
       throw new AssertionError(
           "Attempt to set Player with ID "
