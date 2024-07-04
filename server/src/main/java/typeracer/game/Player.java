@@ -2,7 +2,7 @@ package typeracer.game;
 
 /** Represents a player of the game. */
 public class Player {
-  private String username;
+  private final int id;
   private final PlayerState state;
   private static final long MINUTES_TO_NANO_SECONDS_FACTOR = 10 ^ 9;
   private long gameStartTime;
@@ -22,10 +22,10 @@ public class Player {
   /**
    * Creates a new Player with the given username.
    *
-   * @param username The username of the player
+   * @param id The ID of the player
    */
-  public Player(String username) {
-    this.username = username;
+  public Player(int id) {
+    this.id = id;
     state = new PlayerState();
   }
 
@@ -34,8 +34,8 @@ public class Player {
    *
    * @return this Player's username
    */
-  public String getUsername() {
-    return username;
+  public int getID() {
+    return id;
   }
 
   /**
@@ -104,7 +104,7 @@ public class Player {
    * @return {@link TypingResult#CORRECT} if the character was correct, else {@link
    *     TypingResult#INCORRECT}
    */
-  synchronized TypingResult typeCharacter(
+  synchronized boolean typeCharacter(
       char typedCharacter, String textToType, long gameStartTime) {
     this.gameStartTime = gameStartTime;
     int currentTextIndex = state.getCurrentTextIndex();
@@ -129,9 +129,9 @@ public class Player {
       if (Character.isSpaceChar(correctCharacter)) {
         state.incrementNumTypedWords();
       }
-      return TypingResult.CORRECT;
+      return true;
     }
-    return TypingResult.INCORRECT;
+    return false;
   }
 
   private synchronized void updateAllTypingSpeeds() {
