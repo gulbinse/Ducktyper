@@ -22,7 +22,7 @@ build:
 javadoc:
   stage: required
   script:
-    - gradle :client:javadoc :server:javadoc :communication:javadoc :game:javadoc
+    - gradle :client:javadoc :server:javadoc :communication:javadoc
   artifacts:
     # Store generated JavaDoc on success
     when: on_success
@@ -39,7 +39,7 @@ code-format:
 checkstyle:
   stage: optional-quality
   needs: ["javadoc"]
-  script: gradle :client:checkstyleMain :server:checkstyleMain :communication:checkstyleMain :game:checkstyleMain
+  script: gradle :client:checkstyleMain :server:checkstyleMain :communication:checkstyleMain
   allow_failure: true
   artifacts:
     # Only store artifacts on failure, for inspection of the error reports
@@ -51,7 +51,7 @@ checkstyle:
 spotbugs:
   stage: optional-quality
   needs: ["javadoc"]
-  script: gradle :client:spotbugsMain :server:spotbugsMain :communication:spotbugsMain :game:spotbugsMain
+  script: gradle :client:spotbugsMain :server:spotbugsMain :communication:spotbugsMain
   allow_failure: true
   artifacts:
     # Only store artifacts on failure, for inspection of the error reports
