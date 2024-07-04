@@ -46,6 +46,7 @@ public final class Session {
   public synchronized void removePlayer(int playerId) {
     // TODO notify game about disconnected player
     playerIds.remove(playerId);
+    game.removePlayer(playerId);
   }
 
   /**
@@ -57,7 +58,8 @@ public final class Session {
    */
   public synchronized boolean setReady(int playerId, boolean ready) {
     // TODO notify game about readiness update
-    return false;
+    return game.setPlayerReady(playerId, ready);
+
   }
 
   /**
@@ -96,7 +98,6 @@ public final class Session {
    * @return <code>true</code> if the typed character is correct, <code>false</code> otherwise
    */
   public Enums.TypingResult validateCharacter(int playerId, char character) {
-    // TODO notify game about character input
     return game.typeCharacter(playerId, character);
   }
 
@@ -125,7 +126,7 @@ public final class Session {
    * @return <code>true</code> if the session is full, <code>false</code> otherwise
    */
   public boolean isFull() {
-    return numberOfConnectedClients() == MAX_SIZE;
+    return numberOfConnectedClients() >= MAX_SIZE;
   }
 
   /**
