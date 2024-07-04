@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import typeracer.communication.messages.Message;
-import typeracer.game.TypeRacerGame;
 import typeracer.server.connection.ConnectionManager;
 
 /**
@@ -19,7 +18,6 @@ public final class Session {
   public static final int MAX_SIZE = 5;
 
   private final Set<Integer> playerIds = Collections.synchronizedSet(new HashSet<>());
-  private final TypeRacerGame game = new TypeRacerGame(this);
 
   /** The default constructor of this class. */
   public Session() {}
@@ -32,7 +30,6 @@ public final class Session {
   public synchronized void addPlayer(int playerId) {
     // TODO notify game about connected player
     playerIds.add(playerId);
-    game.addPlayer(playerId);
   }
 
   /**
@@ -43,7 +40,6 @@ public final class Session {
   public synchronized void removePlayer(int playerId) {
     // TODO notify game about disconnected player
     playerIds.remove(playerId);
-    game.removePlayer(playerId);
   }
 
   /**
@@ -94,9 +90,8 @@ public final class Session {
    * @return <code>true</code> if the typed character is correct, <code>false</code> otherwise
    */
   public boolean validateCharacter(int playerId, char character) {
-
-     return game.typeCharacter(playerId, character);
     // TODO notify game about character input
+    return false;
   }
 
   /**
@@ -143,9 +138,5 @@ public final class Session {
    */
   public Set<Integer> getPlayerIds() {
     return Set.copyOf(playerIds);
-  }
-
-  public boolean checkIfPlayerHasFinished(int playerId) {
-    return game.checkIfPlayerHasFinishedAlready(playerId);
   }
 }

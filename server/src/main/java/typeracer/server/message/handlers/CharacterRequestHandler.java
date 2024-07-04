@@ -30,10 +30,8 @@ public class CharacterRequestHandler implements MessageHandler {
     if (message instanceof CharacterRequest characterRequest) {
       Session session = SessionManager.getInstance().getSessionByClientId(clientId);
       if (session != null) {
-        if(!session.checkIfPlayerHasFinished(clientId)) {
-          boolean correct = session.validateCharacter(clientId, characterRequest.getCharacter());
-          ConnectionManager.getInstance().sendMessage(new CharacterResponse(correct), clientId);
-        }
+        boolean correct = session.validateCharacter(clientId, characterRequest.getCharacter());
+        ConnectionManager.getInstance().sendMessage(new CharacterResponse(correct), clientId);
       }
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, clientId);
