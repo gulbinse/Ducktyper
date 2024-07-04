@@ -1,15 +1,16 @@
 package typeracer.server.utils;
 
+/** This class holds many useful enums. */
 public class Enums {
-    /** A result of trying to type a character. */
-    public enum TypingResult {
-        /** The typing was correct. */
-        CORRECT,
+  /** A result of trying to type a character. */
+  public enum TypingResult {
+    /** The typing was correct. */
+    CORRECT,
 
-        /** The typing was incorrect. */
-        INCORRECT,
+    /** The typing was incorrect. */
+    INCORRECT,
 
-        /** This Player has already finished the game. */
-        PLAYER_FINISHED_ALREADY
-    }
+    /** This Player has already finished the game. */
+    PLAYER_FINISHED_ALREADY
+  }
 }
