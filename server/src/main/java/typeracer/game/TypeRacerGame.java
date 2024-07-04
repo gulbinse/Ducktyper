@@ -36,7 +36,7 @@ public class TypeRacerGame {
     for (Player player : getPlayerList()) {
       if (!player.isReady()) {
         throw new AssertionError(
-            "Player " + player.getUsername() + " not yet ready, but start was attempted");
+            "Player " + player.getId() + " not yet ready, but start was attempted");
       }
     }
     state.setGameStatus(GameState.GameStatus.RUNNING);
@@ -47,13 +47,12 @@ public class TypeRacerGame {
    * Adds a player to the game.
    *
    * @param id of the player
-   * @param username of the player that will be added to the game
    */
-  public synchronized void addPlayer(int id, String username) {
+  public synchronized void addPlayer(int id) {
     if (state.getIds().contains(id)) {
       throw new AssertionError("ID " + id + " already contained in player list.");
     }
-    state.addPlayer(id, new Player(username));
+    state.addPlayer(id, new Player(id));
   }
 
   /**

@@ -35,6 +35,7 @@ public final class Session {
   public synchronized void addPlayer(int playerId) {
     // TODO notify game about connected player
     playerIds.add(playerId);
+    game.addPlayer(playerId);
   }
 
   /**
