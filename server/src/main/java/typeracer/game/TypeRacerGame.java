@@ -130,6 +130,7 @@ public class TypeRacerGame {
    *
    * @param id of the player to set the status of
    * @param isReady true if the player is ready, false otherwise
+   * @return true if the ReadyStatus of the player has been changed
    */
   public synchronized boolean setPlayerReady(int id, boolean isReady) {
     GameState.GameStatus statusBefore = getStatus();
