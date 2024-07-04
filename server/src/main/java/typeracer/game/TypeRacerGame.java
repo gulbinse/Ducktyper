@@ -1,5 +1,7 @@
 package typeracer.game;
 
+import typeracer.server.session.Session;
+
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +20,10 @@ public class TypeRacerGame {
     state = new GameState(textSource);
   }
 
+  public TypeRacerGame(Session session){
+    state = new GameState(new TextSource());
+  }
+
   /** Starts a new game with a new text. */
   public void start() {
     if (getPlayerList().isEmpty()) {
@@ -27,7 +33,7 @@ public class TypeRacerGame {
     for (Player player : getPlayerList()) {
       if (!player.isReady()) {
         throw new AssertionError(
-            "Player " + player.getUsername() + " not yet ready, but start was attempted");
+            "Player " + player.getID() + " not yet ready, but start was attempted");
       }
     }
     state.setGameStatus(GameState.GameStatus.RUNNING);
@@ -38,13 +44,12 @@ public class TypeRacerGame {
    * Adds a player to the game.
    *
    * @param id of the player
-   * @param username of the player that will be added to the game
    */
-  public synchronized void addPlayer(int id, String username) {
+  public synchronized void addPlayer(int id) {
     if (state.getIds().contains(id)) {
       throw new AssertionError("ID " + id + " already contained in player list.");
     }
-    state.addPlayer(id, new Player(username));
+    state.addPlayer(id, new Player(id));
   }
 
   /**
@@ -67,20 +72,13 @@ public class TypeRacerGame {
    *
    * @param id of the player that types
    * @param character the character that is typed
-   * @return The result of the typing attempt
+   * @return true if the typing attempt was successful
    */
-  public Player.TypingResult typeCharacter(
+  public boolean typeCharacter(
       int id, char character) { // TODO: Does this have to be synchronized?
-
-    if (isGameFinished()) {
-      return Player.TypingResult.PLAYER_FINISHED_ALREADY;
-    }
-
     Player player = state.getPlayerById(id);
-    if (!player.isFinished()) {
-      return player.typeCharacter(character, state.getTextToType(), gameStartTime);
-    }
-    return Player.TypingResult.PLAYER_FINISHED_ALREADY;
+
+    return player.typeCharacter(character, state.getTextToType(), gameStartTime);
   }
 
   private boolean isGameFinished() {
@@ -153,5 +151,10 @@ public class TypeRacerGame {
    */
   Set<Integer> getIds() {
     return state.getIds();
+  }
+
+  public boolean checkIfPlayerHasFinishedAlready(int playerId) {
+    if (isGameFinished()) return true;
+    return state.getPlayerById(playerId).isFinished();
   }
 }
