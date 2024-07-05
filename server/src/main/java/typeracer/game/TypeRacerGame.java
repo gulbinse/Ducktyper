@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import typeracer.communication.messages.server.GameStateNotification;
 import typeracer.communication.messages.server.TextNotification;
+import typeracer.communication.statuscodes.GameStatus;
 import typeracer.server.session.Session;
 import typeracer.server.utils.TypingResult;
 
@@ -49,7 +50,7 @@ public class TypeRacerGame {
             "Player " + player.getId() + " not yet ready, but start was attempted");
       }
     }
-    GameState.GameStatus running = GameState.GameStatus.RUNNING;
+    GameStatus running = GameStatus.RUNNING;
     state.setGameStatus(running);
     session.broadcastMessage(new GameStateNotification(running.name()));
     gameStartTime = System.nanoTime();
@@ -114,7 +115,7 @@ public class TypeRacerGame {
     }
 
     if (allFinished) {
-      GameState.GameStatus finished = GameState.GameStatus.FINISHED;
+      GameStatus finished = GameStatus.FINISHED;
       state.setGameStatus(finished);
       session.broadcastMessage(new GameStateNotification(finished.name()));
       return true;
@@ -136,7 +137,7 @@ public class TypeRacerGame {
    *
    * @return the current game status
    */
-  public GameState.GameStatus getStatus() {
+  public GameStatus getStatus() {
     return state.getStatus();
   }
 
@@ -148,8 +149,8 @@ public class TypeRacerGame {
    * @return true if the ReadyStatus of the player has been changed
    */
   public synchronized boolean setPlayerReady(int id, boolean isReady) {
-    GameState.GameStatus statusBefore = getStatus();
-    if (getStatus().equals(GameState.GameStatus.WAITING_FOR_READY)) {
+    GameStatus statusBefore = getStatus();
+    if (getStatus().equals(GameStatus.WAITING_FOR_PLAYERS)) {
       state.getPlayerById(id).setIsReady(isReady);
 
       // Start game if everyone is ready

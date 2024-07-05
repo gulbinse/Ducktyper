@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import typeracer.communication.statuscodes.GameStatus;
 import typeracer.server.session.Session;
 import typeracer.server.utils.TypingResult;
 
@@ -87,9 +88,9 @@ class TypeRacerGameTest {
     for (Player player : game.getPlayerList()) {
       player.setIsReady(true);
     }
-    assertEquals(GameState.GameStatus.WAITING_FOR_READY, game.getStatus());
+    assertEquals(GameStatus.WAITING_FOR_PLAYERS, game.getStatus());
     game.start();
-    assertEquals(GameState.GameStatus.RUNNING, game.getStatus());
+    assertEquals(GameStatus.RUNNING, game.getStatus());
   }
 
   static Stream<Character> charProvider() {
