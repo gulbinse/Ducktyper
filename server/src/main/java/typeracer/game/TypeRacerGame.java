@@ -151,6 +151,18 @@ public class TypeRacerGame {
     GameState.GameStatus statusBefore = getStatus();
     if (getStatus().equals(GameState.GameStatus.WAITING_FOR_READY)) {
       state.getPlayerById(id).setIsReady(isReady);
+
+      // Start game if everyone is ready
+      boolean allReady = true;
+      for (Player player : getPlayerList()) {
+        if (!player.isReady()) {
+          allReady = false;
+          break;
+        }
+      }
+      if (allReady) {
+        start();
+      }
       return (statusBefore != getStatus());
     } else {
       throw new AssertionError(
