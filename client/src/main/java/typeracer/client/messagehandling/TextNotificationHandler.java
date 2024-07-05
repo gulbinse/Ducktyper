@@ -2,14 +2,13 @@ package typeracer.client.messagehandling;
 
 import typeracer.client.Client;
 import typeracer.communication.messages.Message;
-import typeracer.communication.messages.server.PlayerStateNotification;
-
+import typeracer.communication.messages.server.TextNotification;
 
 /**
- * Handles PlayerStateNotification messages in a chain of responsibility pattern. If the message is not of
+ * Handles TextNotification messages in a chain of responsibility pattern. If the message is not of
  * the specified type, it will be passed to the next handler in the chain, if any.
  */
-public class PlayerStateNotificationHandler implements MessageHandler {
+public class TextNotificationHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
 
@@ -18,7 +17,7 @@ public class PlayerStateNotificationHandler implements MessageHandler {
    *
    * @param nextHandler the next handler in message handling chain
    */
-  public PlayerStateNotificationHandler(MessageHandler nextHandler) {
+  public TextNotificationHandler(MessageHandler nextHandler) {
     this.nextHandler = nextHandler;
   }
 
@@ -30,10 +29,9 @@ public class PlayerStateNotificationHandler implements MessageHandler {
    */
   @Override
   public void handleMessage(Message message, Client client) {
-    if (message instanceof PlayerStateNotification playerStateNotification) {
-      client.updatePlayerState(playerStateNotification);
-
-    } else if (nextHandler != null) {
+    if (message instanceof TextNotification textNotification) {
+      client.setNewGameText(textNotification);
+    } else {
       nextHandler.handleMessage(message, client);
     }
   }

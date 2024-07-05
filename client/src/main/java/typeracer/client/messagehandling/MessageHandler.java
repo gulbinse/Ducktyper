@@ -1,5 +1,6 @@
 package typeracer.client.messagehandling;
 
+import typeracer.client.Client;
 import typeracer.communication.messages.Message;
 
 /** Interface for handling messages in a chain of responsibility pattern. */
@@ -10,5 +11,5 @@ public interface MessageHandler {
    *
    * @param message the message to handle
    */
-  void handleMessage(Message message);
+  void handleMessage(Message message, Client client);
 }
