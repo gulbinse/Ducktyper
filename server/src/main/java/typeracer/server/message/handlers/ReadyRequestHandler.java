@@ -32,7 +32,7 @@ public class ReadyRequestHandler implements MessageHandler {
     if (message instanceof ReadyRequest readyRequest) {
       Session session = SessionManager.getInstance().getSessionByClientId(clientId);
       if (session != null) {
-        boolean success = session.setReady(clientId, readyRequest.isReady());
+        boolean success = session.updateReadiness(clientId, readyRequest.isReady());
         ReadyResponse response;
         if (success) {
           response = new ReadyResponse(PermissionStatus.ACCEPTED, Reason.SUCCESS);
