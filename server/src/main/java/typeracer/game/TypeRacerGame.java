@@ -2,6 +2,8 @@ package typeracer.game;
 
 import java.util.List;
 import java.util.Set;
+import typeracer.communication.messages.server.GameStateNotification;
+import typeracer.communication.messages.server.TextNotification;
 import typeracer.server.session.Session;
 import typeracer.server.utils.Enums.TypingResult;
 
@@ -10,23 +12,29 @@ public class TypeRacerGame {
 
   private final GameState state;
   private long gameStartTime;
+  private final Session session;
 
   /**
-   * The default constructor of this class.
+   * Allows to create an instance of this class with a custom {@link TextSource}.
    *
    * @param textSource the source to receive the text the players have to type from
+   * @param session the session this game is running in. Used to send messages to the server
    */
-  public TypeRacerGame(TextSource textSource) {
+  public TypeRacerGame(TextSource textSource, Session session) {
     state = new GameState(textSource);
+    this.session = session;
   }
 
   /**
-   * Constructs a new Typeracer game.
+   * Constructs a new Typeracer game and sets the text to type to the default text.
    *
    * @param session the session this game belongs to
    */
   public TypeRacerGame(Session session) {
-    state = new GameState(new TextSource());
+    TextSource textSource = new TextSource();
+    textSource.setDefaultText();
+    state = new GameState(textSource);
+    this.session = session;
   }
 
   /** Starts a new game with a new text. */
@@ -41,8 +49,11 @@ public class TypeRacerGame {
             "Player " + player.getId() + " not yet ready, but start was attempted");
       }
     }
-    state.setGameStatus(GameState.GameStatus.RUNNING);
+    GameState.GameStatus running = GameState.GameStatus.RUNNING;
+    state.setGameStatus(running);
+    session.broadcastMessage(new GameStateNotification(running.name()));
     gameStartTime = System.nanoTime();
+    session.broadcastMessage(new TextNotification(getTextToType()));
   }
 
   /**
@@ -103,7 +114,9 @@ public class TypeRacerGame {
     }
 
     if (allFinished) {
-      state.setGameStatus(GameState.GameStatus.FINISHED);
+      GameState.GameStatus finished = GameState.GameStatus.FINISHED;
+      state.setGameStatus(finished);
+      session.broadcastMessage(new GameStateNotification(finished.name()));
       return true;
     }
     return false;

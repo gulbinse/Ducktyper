@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import typeracer.server.session.Session;
 import typeracer.server.utils.Enums.TypingResult;
 
 class TypeRacerGameTest {
@@ -24,7 +25,7 @@ class TypeRacerGameTest {
   void setUpBeforeAll() {
     textSource = new TextSource();
     textSource.setDefaultText();
-    game = new TypeRacerGame(textSource);
+    game = new TypeRacerGame(textSource, new Session());
     game.addPlayer(1);
   }
 
