@@ -5,7 +5,7 @@ import java.util.Set;
 import typeracer.communication.messages.server.GameStateNotification;
 import typeracer.communication.messages.server.TextNotification;
 import typeracer.server.session.Session;
-import typeracer.server.utils.Enums.TypingResult;
+import typeracer.server.utils.TypingResult;
 
 /** The main class for the game, managing states and providing an interface for the server. */
 public class TypeRacerGame {

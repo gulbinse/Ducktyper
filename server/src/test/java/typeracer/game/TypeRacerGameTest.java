@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import typeracer.server.session.Session;
-import typeracer.server.utils.Enums.TypingResult;
+import typeracer.server.utils.TypingResult;
 
 class TypeRacerGameTest {
   TypeRacerGame game;

@@ -6,7 +6,7 @@ import java.util.Set;
 import typeracer.communication.messages.Message;
 import typeracer.game.TypeRacerGame;
 import typeracer.server.connection.ConnectionManager;
-import typeracer.server.utils.Enums;
+import typeracer.server.utils.TypingResult;
 
 /**
  * This class represents a server-managed game session. Each instance of {@link Session} is
@@ -94,7 +94,7 @@ public final class Session {
    * @param character the input character
    * @return <code>true</code> if the typed character is correct, <code>false</code> otherwise
    */
-  public Enums.TypingResult validateCharacter(int playerId, char character) {
+  public TypingResult validateCharacter(int playerId, char character) {
     return game.typeCharacter(playerId, character);
   }
 

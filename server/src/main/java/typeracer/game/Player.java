@@ -1,6 +1,6 @@
 package typeracer.game;
 
-import typeracer.server.utils.Enums.TypingResult;
+import typeracer.server.utils.TypingResult;
 
 /** Represents a player of the game. */
 public class Player {

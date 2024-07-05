@@ -7,7 +7,7 @@ import typeracer.server.connection.ConnectionManager;
 import typeracer.server.message.MessageHandler;
 import typeracer.server.session.Session;
 import typeracer.server.session.SessionManager;
-import typeracer.server.utils.Enums;
+import typeracer.server.utils.TypingResult;
 
 /**
  * Handles CharacterRequest messages in a chain of responsibility pattern. If the message is not of
@@ -31,10 +31,10 @@ public class CharacterRequestHandler implements MessageHandler {
     if (message instanceof CharacterRequest characterRequest) {
       Session session = SessionManager.getInstance().getSessionByClientId(clientId);
       if (session != null) {
-        Enums.TypingResult result =
+        TypingResult result =
             session.validateCharacter(clientId, characterRequest.getCharacter());
-        if (result == Enums.TypingResult.CORRECT || result == Enums.TypingResult.INCORRECT) {
-          boolean returnValue = result == Enums.TypingResult.CORRECT;
+        if (result == TypingResult.CORRECT || result == TypingResult.INCORRECT) {
+          boolean returnValue = result == TypingResult.CORRECT;
           ConnectionManager.getInstance().sendMessage(new CharacterResponse(returnValue), clientId);
         }
       }
