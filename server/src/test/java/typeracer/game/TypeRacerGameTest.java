@@ -88,8 +88,7 @@ class TypeRacerGameTest {
     for (Player player : game.getPlayerList()) {
       player.setIsReady(true);
     }
-    assertEquals(GameStatus.WAITING_FOR_PLAYERS, game.getStatus());
-    game.start();
+    // Game should start automatically when all players are ready
     assertEquals(GameStatus.RUNNING, game.getStatus());
   }
 
