@@ -8,12 +8,14 @@ import typeracer.communication.messages.client.CharacterRequest;
 import typeracer.communication.messages.client.CreateSessionRequest;
 import typeracer.communication.messages.client.HandshakeRequest;
 import typeracer.communication.messages.client.JoinSessionRequest;
+import typeracer.communication.messages.client.LeaveSessionRequest;
 import typeracer.communication.messages.client.ReadyRequest;
 import typeracer.communication.messages.server.CharacterResponse;
 import typeracer.communication.messages.server.CreateSessionResponse;
 import typeracer.communication.messages.server.GameStateNotification;
 import typeracer.communication.messages.server.HandshakeResponse;
 import typeracer.communication.messages.server.JoinSessionResponse;
+import typeracer.communication.messages.server.LeaveSessionResponse;
 import typeracer.communication.messages.server.PlayerJoinedNotification;
 import typeracer.communication.messages.server.PlayerLeftNotification;
 import typeracer.communication.messages.server.PlayerStateNotification;
@@ -38,12 +40,14 @@ public class MoshiAdapter {
                     .withSubtype(CreateSessionRequest.class, "CreateSessionRequest")
                     .withSubtype(HandshakeRequest.class, "HandshakeRequest")
                     .withSubtype(JoinSessionRequest.class, "JoinSessionRequest")
+                    .withSubtype(LeaveSessionRequest.class, "LeaveSessionRequest")
                     .withSubtype(ReadyRequest.class, "ReadyRequest")
                     .withSubtype(CharacterResponse.class, "CharacterResponse")
                     .withSubtype(CreateSessionResponse.class, "CreateSessionResponse")
                     .withSubtype(GameStateNotification.class, "GameStateNotification")
                     .withSubtype(HandshakeResponse.class, "HandshakeResponse")
                     .withSubtype(JoinSessionResponse.class, "JoinSessionResponse")
+                    .withSubtype(LeaveSessionResponse.class, "LeaveSessionResponse")
                     .withSubtype(PlayerJoinedNotification.class, "PlayerJoinedNotification")
                     .withSubtype(PlayerLeftNotification.class, "PlayerLeftNotification")
                     .withSubtype(PlayerStateNotification.class, "PlayerStateNotification")
