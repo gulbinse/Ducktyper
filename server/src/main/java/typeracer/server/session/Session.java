@@ -30,7 +30,7 @@ public final class Session {
    *
    * @param playerId the unique id of the player
    */
-  public synchronized void addPlayer(int playerId) {
+  public synchronized void handlePlayer(int playerId) {
     // TODO notify game about connected player
     playerIds.add(playerId);
     game.addPlayer(playerId);
@@ -41,7 +41,7 @@ public final class Session {
    *
    * @param playerId the unique id of the player
    */
-  public synchronized void removePlayer(int playerId) {
+  public synchronized void unhandlePlayer(int playerId) {
     // TODO notify game about disconnected player
     playerIds.remove(playerId);
     game.removePlayer(playerId);
@@ -54,7 +54,7 @@ public final class Session {
    * @param ready <code>true</code> if the player is ready, <code>false</code> otherwise
    * @return <code>true</code> if the readiness status was updated, <code>false</code> otherwise
    */
-  public synchronized boolean setReady(int playerId, boolean ready) {
+  public synchronized boolean updateReadiness(int playerId, boolean ready) {
     // TODO notify game about readiness update
     return game.setPlayerReady(playerId, ready);
   }

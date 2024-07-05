@@ -31,8 +31,7 @@ public class CharacterRequestHandler implements MessageHandler {
     if (message instanceof CharacterRequest characterRequest) {
       Session session = SessionManager.getInstance().getSessionByClientId(clientId);
       if (session != null) {
-        TypingResult result =
-            session.validateCharacter(clientId, characterRequest.getCharacter());
+        TypingResult result = session.validateCharacter(clientId, characterRequest.getCharacter());
         if (result == TypingResult.CORRECT || result == TypingResult.INCORRECT) {
           boolean returnValue = result == TypingResult.CORRECT;
           ConnectionManager.getInstance().sendMessage(new CharacterResponse(returnValue), clientId);

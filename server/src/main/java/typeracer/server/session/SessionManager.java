@@ -94,7 +94,7 @@ public final class SessionManager {
       return OperationStatus.SESSION_FULL;
     }
 
-    session.addPlayer(clientId);
+    session.handlePlayer(clientId);
     sessionIdByClientId.put(clientId, sessionId);
     return OperationStatus.SUCCESS;
   }
@@ -109,7 +109,7 @@ public final class SessionManager {
     int sessionId = sessionIdByClientId.getOrDefault(clientId, -1);
     Session session = sessionBySessionId.getOrDefault(sessionId, null);
     if (session != null) {
-      session.removePlayer(clientId);
+      session.unhandlePlayer(clientId);
       sessionIdByClientId.remove(clientId);
 
       // Delete empty sessions
