@@ -51,6 +51,7 @@ public class Client {
   private double accuracy;
   private double progress;
   private int wpm;
+  private ViewController viewController;
 
   /**
    * Constructor for the client.
@@ -187,7 +188,6 @@ public class Client {
     System.out.println("Error! " + str);
   }
 
-
   /**
    * Starts the client and listens to the server.
    *
@@ -220,7 +220,6 @@ public class Client {
     System.out.println("Received message: " + message);
     messageHandlerChain.handleMessage(message, client);
   }
-
 
   /**
    * Sends messages to the server.
@@ -334,6 +333,7 @@ public class Client {
    * @param gameStateNotification object containing the state of the game
    */
   public void setCurrentGameState(GameStateNotification gameStateNotification) {
+    updateGameState(gameStateNotification);
     this.gameStatus = gameStateNotification.getGameStatus();
   }
 
@@ -344,6 +344,17 @@ public class Client {
    */
   public String getCurrentGameState() {
     return gameStatus;
+  }
+
+  /**
+   * Updates the game state.
+   *
+   * @param gameStateNotification object with the game state
+   */
+  private void updateGameState (GameStateNotification gameStateNotification) {
+    Platform.runLater(() -> {
+      viewController.updateGameState(gameStateNotification);
+    });
   }
 
   /**
@@ -364,53 +375,74 @@ public class Client {
     return text;
   }
 
+  /** Sets the average words per minutes. */
   public void setAverageWpm() {
     this.averageWpm = gamesPlayed == 0 ? 0 : totalWpm / gamesPlayed;
   }
 
+  /** Gets the average words per minutes. */
   public int getAverageWpm() {
     return averageWpm;
   }
 
+  /** Sets the total words per minutes. */
   public void setTotalWpm () {
     this.totalWpm = totalWpm + wpm;
   }
 
+  /** Gets the total words per minutes. */
   public int getTotalWpm() {
     return totalWpm;
   }
 
+  /**
+   * Updates the player state based on the player state notification.
+   *
+   * @param playerStateNotification object containing the player state
+   */
   public void updatePlayerState(PlayerStateNotification playerStateNotification) {
     this.playerId = playerStateNotification.getPlayerId();
     this.accuracy = playerStateNotification.getAccuracy();
     this.progress = playerStateNotification.getProgress();
     this.wpm = (int) playerStateNotification.getWpm();
+    Platform.runLater(() -> viewController.updatePlayerState(playerId, accuracy, progress, wpm));
   }
 
+  /** Set the best words per minute. */
   public void setBestWpm() {
     this.bestWpm = Math.max(bestWpm, wpm);
   }
 
+  /** Get the best words per minute. */
   public int getBestWpm() {
     return bestWpm;
   }
 
+  /** Set the average accuracy. */
   public void setAverageAccuracy() {
     this.averageAccuracy = gamesPlayed == 0 ? 0 : totalAccuracy / gamesPlayed;
   }
 
+  /** Get the average accuracy. */
   public double getAverageAccuracy() {
     return averageAccuracy;
   }
 
+  /** Set the total accuracy. */
   public void setTotalAccuracy() {
     this.totalAccuracy = totalAccuracy + accuracy;
   }
 
+  /** Get the total accuracy. */
   public double getTotalAccuracy() {
     return totalAccuracy;
   }
 
+  /**
+   * Updates the player statistics on the client side.
+   *
+   * @param client client
+   */
   public void onPlayerStatsReceived(Client client) {
     Platform.runLater(() -> {
       this.gamesPlayed = client.getGamesPlayed();
@@ -420,18 +452,9 @@ public class Client {
     });
   }
 
+  /** Get the list of top players. */
   public List<String> getTopPlayers() {
     return topPlayers;
-  }
-
-  public void onTopPlayersReceived(List<PlayerStateNotification> topPlayers) {
-    Platform.runLater(() -> {
-      ObservableList<String> formattedPlayers = topPlayers.stream()
-          .map(p -> p.getPlayerId() + " - WPM: " + p.getWpm())
-          .collect(Collectors.toCollection(FXCollections::observableArrayList));
-      this.topPlayers.clear();
-      this.topPlayers.addAll(formattedPlayers);
-    });
   }
 
   /** Updates the player statistics properties. */
@@ -442,5 +465,30 @@ public class Client {
     setAverageWpm();
     setBestWpm();
     setAverageAccuracy();
+  }
+
+  /**
+   * Updates the players based on the top players notification.
+   *
+   * @param topPlayersNotification object containing the top players
+   */
+  public void onTopPlayersNotification(TopPlayersNotification topPlayersNotification) {
+    Platform.runLater(() -> {
+      List<String> topPlayers = topPlayersNotification.getTopPlayers().stream()
+          .map(player -> String.format("%s - WPM: %d, Errors: %d, Accuracy: %.2f%%",
+              player.getUsername(), player.getWpm(),
+              player.getErrors(), player.getAccuracy()))
+          .collect(Collectors.toList());
+      updateTopPlayers(topPlayers);
+    });
+  }
+
+  /**
+   * Updates the top players list.
+   *
+   * @param topPlayers list of top players
+   */
+  public void updateTopPlayers(List<String> topPlayers) {
+    this.topPlayers.setAll(topPlayers);
   }
 }
