@@ -31,6 +31,14 @@ The message that asks for joining the session.
 ```
 - `int <ID>`: the id of the session
 
+### LeaveSessionRequest
+The message that asks for leaving the session.
+```json
+{
+    "messageType":"LeaveSessionRequest"
+}
+```
+
 ### ReadyRequest
 The message notifying the server that the client's (player's) readiness status has changed.
 ```json
@@ -88,6 +96,18 @@ The message notifying the client whether its JoinSessionRequest has been accepte
 ```
 - `String <STATUS>`: one of `"ACCEPTED"` or `"DENIED"`
 - `String <REASON>`: specifies the reason for a denied connection, SUCCESS otherwise
+
+### LeaveSessionResponse
+The message notifying the client whether its LeaveSessionRequest has been accepted.
+```json
+{
+    "messageType":"LeaveSessionResponse",
+    "leaveStatus":<STATUS>,
+    "reason":<REASON>
+}
+```
+- `String <STATUS>`: one of `"ACCEPTED"` or `"DENIED""`
+- `String <REASON>`: specifies the reason for a denied disconnection, SUCCESS otherwise
 
 ### ReadyResponse
 The message notifying the client whether its ReadyRequest has been accepted.
