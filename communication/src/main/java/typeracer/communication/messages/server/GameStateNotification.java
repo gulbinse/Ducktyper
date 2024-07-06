@@ -1,6 +1,7 @@
 package typeracer.communication.messages.server;
 
 import typeracer.communication.messages.Message;
+import typeracer.communication.statuscodes.GameStatus;
 
 /**
  * Notification indicating a change in the state of the game. This notification is sent from the
@@ -8,14 +9,14 @@ import typeracer.communication.messages.Message;
  */
 public final class GameStateNotification implements Message {
 
-  private final String gameStatus;
+  private final GameStatus gameStatus;
 
   /**
    * Constructs a new GameStateNotification with the specified arguments.
    *
    * @param gameStatus the new state of the game
    */
-  public GameStateNotification(String gameStatus) {
+  public GameStateNotification(GameStatus gameStatus) {
     this.gameStatus = gameStatus;
   }
 
@@ -24,7 +25,7 @@ public final class GameStateNotification implements Message {
    *
    * @return the new state of the game
    */
-  public String getGameStatus() {
+  public GameStatus getGameStatus() {
     return gameStatus;
   }
 }
