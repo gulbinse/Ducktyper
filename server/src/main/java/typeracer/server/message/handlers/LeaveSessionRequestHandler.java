@@ -35,10 +35,15 @@ public class LeaveSessionRequestHandler implements MessageHandler {
       if (session != null) {
         boolean success = SessionManager.getInstance().leaveSession(clientId);
         if (success) {
-          ConnectionManager.getInstance().sendMessage(new LeaveSessionResponse(PermissionStatus.ACCEPTED, Reason.SUCCESS), clientId);
-          session.broadcastMessage(new PlayerLeftNotification(session.numberOfConnectedClients(), clientId));
+          ConnectionManager.getInstance()
+              .sendMessage(
+                  new LeaveSessionResponse(PermissionStatus.ACCEPTED, Reason.SUCCESS), clientId);
+          session.broadcastMessage(
+              new PlayerLeftNotification(session.numberOfConnectedClients(), clientId));
         } else {
-          ConnectionManager.getInstance().sendMessage(new LeaveSessionResponse(PermissionStatus.DENIED, Reason.UNKNOWN), clientId);
+          ConnectionManager.getInstance()
+              .sendMessage(
+                  new LeaveSessionResponse(PermissionStatus.DENIED, Reason.UNKNOWN), clientId);
         }
       }
     } else if (nextHandler != null) {

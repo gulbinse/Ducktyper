@@ -37,7 +37,10 @@ public class MessageHandlerChain {
                 .setNext(
                     new CreateSessionRequestHandler()
                         .setNext(
-                            new JoinSessionRequestHandler().setNext(new ReadyRequestHandler().setNext(new LeaveSessionRequestHandler())))));
+                            new JoinSessionRequestHandler()
+                                .setNext(
+                                    new ReadyRequestHandler()
+                                        .setNext(new LeaveSessionRequestHandler())))));
   }
 
   /**

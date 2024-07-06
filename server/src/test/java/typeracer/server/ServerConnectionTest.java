@@ -287,18 +287,34 @@ public class ServerConnectionTest {
   }
 
   @Test
-  public void testServer_clientLeavesSessionAndJoinsAnother() throws IOException, InterruptedException {
+  public void testServer_clientLeavesSessionAndJoinsAnother()
+      throws IOException, InterruptedException {
     final int sessionId1 = 69;
     final int sessionId2 = 420;
-    String handshakeRequest1 = "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
-    String handshakeRequest2 = "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER2 + "\"}";
-    String handshakeRequest3 = "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER3 + "\"}";
-    String joinSessionRequest1 = "{\"messageType\":\"JoinSessionRequest\",\"sessionId\":" + sessionId1 + "}";
-    String joinSessionRequest2 = "{\"messageType\":\"JoinSessionRequest\",\"sessionId\":" + sessionId2 + "}";
+    String handshakeRequest1 =
+        "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
+    String handshakeRequest2 =
+        "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER2 + "\"}";
+    String handshakeRequest3 =
+        "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER3 + "\"}";
+    String joinSessionRequest1 =
+        "{\"messageType\":\"JoinSessionRequest\",\"sessionId\":" + sessionId1 + "}";
+    String joinSessionRequest2 =
+        "{\"messageType\":\"JoinSessionRequest\",\"sessionId\":" + sessionId2 + "}";
     String leaveSessionRequest = "{\"messageType\":\"LeaveSessionRequest\"}";
-    MockInputStream networkIn1 = getNetworkIn(handshakeRequest1 + System.lineSeparator() + joinSessionRequest1);
-    MockInputStream networkIn2 = getNetworkIn(handshakeRequest2 + System.lineSeparator() + joinSessionRequest2);
-    MockInputStream networkIn3 = getNetworkIn(handshakeRequest3 + System.lineSeparator() + joinSessionRequest1 + System.lineSeparator() + leaveSessionRequest + System.lineSeparator() + joinSessionRequest2);
+    MockInputStream networkIn1 =
+        getNetworkIn(handshakeRequest1 + System.lineSeparator() + joinSessionRequest1);
+    MockInputStream networkIn2 =
+        getNetworkIn(handshakeRequest2 + System.lineSeparator() + joinSessionRequest2);
+    MockInputStream networkIn3 =
+        getNetworkIn(
+            handshakeRequest3
+                + System.lineSeparator()
+                + joinSessionRequest1
+                + System.lineSeparator()
+                + leaveSessionRequest
+                + System.lineSeparator()
+                + joinSessionRequest2);
     ByteArrayOutputStream networkOut1 = getNetworkOut();
     ByteArrayOutputStream networkOut2 = getNetworkOut();
     ByteArrayOutputStream networkOut3 = getNetworkOut();
@@ -306,7 +322,8 @@ public class ServerConnectionTest {
     MockSocket mockSocket2 = new MockSocket(networkIn2, networkOut2);
     MockSocket mockSocket3 = new MockSocket(networkIn3, networkOut3);
     List<MockInputStream> inputs = List.of(networkIn1, networkIn2, networkIn3);
-    MockServerSocket serverSocket = new MockServerSocket(List.of(mockSocket1, mockSocket2, mockSocket3));
+    MockServerSocket serverSocket =
+        new MockServerSocket(List.of(mockSocket1, mockSocket2, mockSocket3));
 
     SessionManager.getInstance().createNewSession(sessionId1);
     SessionManager.getInstance().createNewSession(sessionId2);
@@ -332,7 +349,8 @@ public class ServerConnectionTest {
     String sent2 = networkOut2.toString(StandardCharsets.UTF_8);
     String[] jsonMessages2 = sent2.split(System.lineSeparator());
     for (String message : jsonMessages2) {
-      if (message.matches(".*\"messageType\":\"PlayerJoinedNotification\".*") && message.matches(".*\"playerName\":\"" + USER3 + "\".*")) {
+      if (message.matches(".*\"messageType\":\"PlayerJoinedNotification\".*")
+          && message.matches(".*\"playerName\":\"" + USER3 + "\".*")) {
         test2 = true;
         break;
       }

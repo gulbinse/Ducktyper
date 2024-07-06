@@ -34,7 +34,8 @@ public class CreateSessionRequestHandler implements MessageHandler {
         SessionManager.getInstance().joinSessionById(clientId, sessionId);
         reason = Reason.SUCCESS;
       }
-      ConnectionManager.getInstance().sendMessage(new CreateSessionResponse(reason, sessionId), clientId);
+      ConnectionManager.getInstance()
+          .sendMessage(new CreateSessionResponse(reason, sessionId), clientId);
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, clientId);
     }
