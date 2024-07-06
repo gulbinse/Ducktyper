@@ -5,6 +5,7 @@ import java.util.Set;
 import typeracer.communication.messages.server.GameStateNotification;
 import typeracer.communication.messages.server.TextNotification;
 import typeracer.communication.statuscodes.GameStatus;
+import typeracer.game.timer.PlayerStateNotifier;
 import typeracer.server.session.Session;
 import typeracer.server.utils.TypingResult;
 
@@ -14,6 +15,7 @@ public class TypeRacerGame {
   private final GameState state;
   private long gameStartTime;
   private final Session session;
+  private final PlayerStateNotifier notifier;
 
   /**
    * Allows to create an instance of this class with a custom {@link TextSource}.
@@ -24,6 +26,7 @@ public class TypeRacerGame {
   public TypeRacerGame(TextSource textSource, Session session) {
     state = new GameState(textSource);
     this.session = session;
+    notifier = PlayerStateNotifier.create(this);
   }
 
   /**
@@ -36,6 +39,7 @@ public class TypeRacerGame {
     textSource.setDefaultText();
     state = new GameState(textSource);
     this.session = session;
+    notifier = PlayerStateNotifier.create(this);
   }
 
   /** Starts a new game with a new text. */
@@ -52,9 +56,18 @@ public class TypeRacerGame {
     }
     GameStatus running = GameStatus.RUNNING;
     state.setGameStatus(running);
-    session.broadcastMessage(new GameStateNotification(running.name()));
+    session.broadcastMessage(new GameStateNotification(running));
     gameStartTime = System.nanoTime();
     session.broadcastMessage(new TextNotification(getTextToType()));
+    notifier.start();
+  }
+
+  /** Stops the game. */
+  public void stop() {
+    GameStatus finished = GameStatus.FINISHED;
+    state.setGameStatus(finished);
+    session.broadcastMessage(new GameStateNotification(finished));
+    notifier.stop();
   }
 
   /**
@@ -115,12 +128,15 @@ public class TypeRacerGame {
     }
 
     if (allFinished) {
-      GameStatus finished = GameStatus.FINISHED;
-      state.setGameStatus(finished);
-      session.broadcastMessage(new GameStateNotification(finished.name()));
+      stop();
       return true;
     }
     return false;
+  }
+
+  /** Broadcasts every player's state to every player. */
+  public void broadcastPlayerStates() {
+    // TODO broadcast every player's state to every player
   }
 
   /**
@@ -149,22 +165,9 @@ public class TypeRacerGame {
    * @return true if the ReadyStatus of the player has been changed
    */
   public synchronized boolean setPlayerReady(int id, boolean isReady) {
-    GameStatus statusBefore = getStatus();
     if (getStatus().equals(GameStatus.WAITING_FOR_PLAYERS)) {
       state.getPlayerById(id).setIsReady(isReady);
-
-      // Start game if everyone is ready
-      boolean allReady = true;
-      for (Player player : getPlayerList()) {
-        if (!player.isReady()) {
-          allReady = false;
-          break;
-        }
-      }
-      if (allReady) {
-        start();
-      }
-      return (statusBefore != getStatus());
+      return true;
     } else {
       throw new AssertionError(
           "Attempt to set Player with ID "
@@ -174,6 +177,15 @@ public class TypeRacerGame {
               + " ready, but game status is "
               + getStatus());
     }
+  }
+
+  /**
+   * Returns whether every player is ready.
+   *
+   * @return <code>true</code> if every player is ready, <code>false</code> otherwise
+   */
+  public boolean isEveryoneReady() {
+    return getPlayerList().stream().allMatch(Player::isReady);
   }
 
   /**
