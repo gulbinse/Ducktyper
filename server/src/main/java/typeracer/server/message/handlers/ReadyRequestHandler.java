@@ -40,6 +40,10 @@ public class ReadyRequestHandler implements MessageHandler {
           response = new ReadyResponse(PermissionStatus.DENIED, Reason.UNKNOWN);
         }
         ConnectionManager.getInstance().sendMessage(response, clientId);
+
+        if (session.isEveryoneReady()) {
+          session.startGame();
+        }
       }
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, clientId);
