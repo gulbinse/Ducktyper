@@ -104,8 +104,9 @@ public final class SessionManager {
    * session does not exist, nothing happens.
    *
    * @param clientId the id of the client attempting to leave the session
+   * @return <code>true</code> if leaving was successful, <code>false</code> otherwise
    */
-  public synchronized void leaveSession(int clientId) {
+  public synchronized boolean leaveSession(int clientId) {
     int sessionId = sessionIdByClientId.getOrDefault(clientId, -1);
     Session session = sessionBySessionId.getOrDefault(sessionId, null);
     if (session != null) {
@@ -116,7 +117,10 @@ public final class SessionManager {
       if (session.isEmpty()) {
         closeSession(sessionId);
       }
+
+      return true;
     }
+    return false;
   }
 
   /**

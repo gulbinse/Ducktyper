@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import typeracer.communication.messages.Message;
+import typeracer.communication.statuscodes.GameStatus;
 import typeracer.game.TypeRacerGame;
 import typeracer.server.connection.ConnectionManager;
 import typeracer.server.utils.TypingResult;
@@ -31,7 +32,6 @@ public final class Session {
    * @param playerId the unique id of the player
    */
   public synchronized void handlePlayer(int playerId) {
-    // TODO notify game about connected player
     playerIds.add(playerId);
     game.addPlayer(playerId);
   }
@@ -42,7 +42,6 @@ public final class Session {
    * @param playerId the unique id of the player
    */
   public synchronized void unhandlePlayer(int playerId) {
-    // TODO notify game about disconnected player
     playerIds.remove(playerId);
     game.removePlayer(playerId);
   }
@@ -55,8 +54,12 @@ public final class Session {
    * @return <code>true</code> if the readiness status was updated, <code>false</code> otherwise
    */
   public synchronized boolean updateReadiness(int playerId, boolean ready) {
-    // TODO notify game about readiness update
     return game.setPlayerReady(playerId, ready);
+  }
+
+  /** Starts the game. */
+  public void startGame() {
+    game.start();
   }
 
   /**
@@ -99,12 +102,12 @@ public final class Session {
   }
 
   /**
-   * Checks whether this session is joinable.
+   * Returns whether every player is ready.
    *
-   * @return <code>true</code> if the session is joinable, <code>false</code> otherwise
+   * @return <code>true</code> if every player is ready, <code>false</code> otherwise
    */
-  public boolean isJoinable() {
-    return !hasGameStarted() && !isFull();
+  public boolean isEveryoneReady() {
+    return game.isEveryoneReady();
   }
 
   /**
@@ -113,8 +116,7 @@ public final class Session {
    * @return <code>true</code> if the game has started, <code>false</code> otherwise
    */
   public boolean hasGameStarted() {
-    // TODO return game status
-    return false;
+    return game.getStatus() == GameStatus.RUNNING;
   }
 
   /**
