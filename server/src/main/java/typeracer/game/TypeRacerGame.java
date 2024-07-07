@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import typeracer.communication.messages.server.GameStateNotification;
+import typeracer.communication.messages.server.PlayerStateNotification;
 import typeracer.communication.messages.server.TextNotification;
 import typeracer.communication.statuscodes.GameStatus;
 import typeracer.game.timer.PlayerStateNotifier;
@@ -141,7 +142,14 @@ public final class TypeRacerGame { // made final to prevent finalizer attacks in
 
   /** Broadcasts every player's state to every player. */
   public void broadcastPlayerStates() {
-    // TODO broadcast every player's state to every player
+    for (Player player : getPlayerList()) {
+      session.broadcastMessage(
+          new PlayerStateNotification(
+              player.getAccuracy(),
+              player.getId(),
+              player.getProgress(),
+              player.getWordsPerMinute()));
+    }
   }
 
   /**

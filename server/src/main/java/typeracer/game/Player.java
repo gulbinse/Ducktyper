@@ -53,6 +53,7 @@ public class Player {
    * @return this Player's current words per minute
    */
   public double getWordsPerMinute() {
+    updateWordsPerMinute();
     return state.getWordsPerMinute();
   }
 
@@ -139,7 +140,8 @@ public class Player {
     return TypingResult.INCORRECT;
   }
 
-  private synchronized void updateAllTypingSpeeds() {
+  /** Updates the typing speeds (e.g. words per minute) of this player. */
+  public void updateAllTypingSpeeds() {
     updateWordsPerMinute();
     updateCharactersPerMinute();
   }
