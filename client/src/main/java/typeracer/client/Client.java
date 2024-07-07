@@ -7,6 +7,7 @@ import typeracer.client.messagehandling.*;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.MoshiAdapter;
 import typeracer.communication.messages.client.CharacterRequest;
+import typeracer.communication.messages.server.CreateSessionResponse;
 import typeracer.communication.messages.server.GameStateNotification;
 import typeracer.communication.messages.server.PlayerStateNotification;
 import typeracer.communication.messages.server.TextNotification;
@@ -52,6 +53,7 @@ public class Client {
   private double progress;
   private int wpm;
   private ViewController viewController;
+  private int sessionID;
 
   /**
    * Constructor for the client.
@@ -130,15 +132,20 @@ public class Client {
     }
 
     // start a client
-    InetSocketAddress address = new InetSocketAddress(inetAddress, port);
+
 
     Client client = new Client();
+    client.connect(inetAddress, port, username);
+
+    /**
+      InetSocketAddress address = new InetSocketAddress(inetAddress, port);
 
     try (Socket socket = new Socket(address.getAddress(), address.getPort())) {
       client.start(username, socket);
     } catch (IOException e) {
       System.out.println("Connection lost. Shutting down: " + e.getMessage());
     }
+     */
   }
 
   /**
@@ -201,6 +208,15 @@ public class Client {
     new Thread(() -> receiveMessage(socket)).start();
     // handles user input
     handleUserInput(socket);
+  }
+
+  public void connect(InetAddress ip, int port, String username) throws IOException {
+    InetSocketAddress address = new InetSocketAddress(ip, port);
+    try (Socket socket = new Socket(address.getAddress(), address.getPort())) {
+      start(username, socket);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   private MessageHandler createMessageHandlerChain() {
@@ -401,11 +417,13 @@ public class Client {
    * @param playerStateNotification object containing the player state
    */
   public void updatePlayerState(PlayerStateNotification playerStateNotification) {
-    this.playerId = playerStateNotification.getPlayerId();
-    this.accuracy = playerStateNotification.getAccuracy();
-    this.progress = playerStateNotification.getProgress();
-    this.wpm = (int) playerStateNotification.getWpm();
-    Platform.runLater(() -> viewController.updatePlayerState(playerId, accuracy, progress, wpm));
+    Platform.runLater(() -> {
+      this.playerId = playerStateNotification.getPlayerId();
+      this.accuracy = playerStateNotification.getAccuracy();
+      this.progress = playerStateNotification.getProgress();
+      this.wpm = (int) playerStateNotification.getWpm();
+      viewController.updatePlayerState(playerId, accuracy, progress, wpm);
+    });
   }
 
   /** Set the best words per minute. */
@@ -445,6 +463,7 @@ public class Client {
    */
   public void onPlayerStatsReceived(Client client) {
     Platform.runLater(() -> {
+      updatesPlayerStats();
       this.gamesPlayed = client.getGamesPlayed();
       this.averageWpm = client.getAverageWpm();
       this.bestWpm = client.getBestWpm();
@@ -458,7 +477,7 @@ public class Client {
   }
 
   /** Updates the player statistics properties. */
-  public void updatePlayerStats() {
+  private void updatesPlayerStats() {
     setTotalWpm();
     setTotalAccuracy();
     incrementGamesPlayed();
@@ -491,4 +510,26 @@ public class Client {
   public void updateTopPlayers(List<String> topPlayers) {
     this.topPlayers.setAll(topPlayers);
   }
+
+  public void setSessionID(CreateSessionResponse createSessionResponse) {
+    this.sessionID = createSessionResponse.getSessionId();
+  }
+
+  public int getSessionID() {
+    return sessionID;
+  }
+
+  public void sendUsername(String username, Socket socket) {
+    String message = "LOGIN " + username;
+    sendMessage(message, socket);
+  }
+
+  public void onCharacterTyped(char typedChar, char expectedChar) {
+    if (typedChar != expectedChar) {
+      viewController.updatePlayerErrors(viewController.getCurrentPlayerId(), viewController.getPlayerErrorsProperty(viewController.getCurrentPlayerId()).get() + 1);
+      // Send error update to server
+    }
+  }
+
+
 }
