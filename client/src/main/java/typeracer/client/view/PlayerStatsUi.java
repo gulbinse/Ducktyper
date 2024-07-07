@@ -1,6 +1,8 @@
 package typeracer.client.view;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -23,11 +25,22 @@ import typeracer.client.ViewController;
  * total errors, the best WPM, and average accuracy.
  */
 public class PlayerStatsUi extends VBox {
+  /** The view controller to manage views and handle interactions. */
   private ViewController viewController;
+
+  /** Label for displaying the number of games played. */
   private Label gamesPlayedLabel;
+
+  /** Label for displaying the average words per minute (WPM). */
   private Label averageWpmLabel;
+
+  /** Label for displaying the total number of errors. */
   private Label totalErrorsLabel;
+
+  /** Label for displaying the best words per minute (WPM) achieved. */
   private Label bestWpmLabel;
+
+  /** Label for displaying the average accuracy. */
   private Label averageAccuracyLabel;
 
   /**
@@ -95,44 +108,29 @@ public class PlayerStatsUi extends VBox {
                 CornerRadii.EMPTY,
                 new BorderWidths(1))));
 
-    gamesPlayedLabel = new Label("Total games played: 0");
-    averageWpmLabel = new Label("Average WPM: 0");
-    totalErrorsLabel = new Label("Total errors: 0");
-    bestWpmLabel = new Label("Best WPM: 0");
-    averageAccuracyLabel = new Label("Average accuracy: 0%");
+    Label wpmLabel = new Label();
+    Label accuracyLabel = new Label();
 
-    statsBox
-        .getChildren()
-        .addAll(
-            gamesPlayedLabel,
-            averageWpmLabel,
-            totalErrorsLabel,
-            bestWpmLabel,
-            averageAccuracyLabel);
+    DoubleProperty wpmProperty =
+        viewController.getPlayerWpmProperty(viewController.getCurrentPlayerId());
+    wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
+    accuracyLabel
+        .textProperty()
+        .bind(
+            viewController
+                .getPlayerAccuracyProperty(viewController.getCurrentPlayerId())
+                .multiply(100)
+                .asString("%.2f%% Accuracy"));
 
-    VBox.setMargin(statsBox, new Insets(10, 75, 30, 75));
+    wpmLabel.setAlignment(Pos.CENTER_LEFT);
+    accuracyLabel.setAlignment(Pos.CENTER_RIGHT);
+
+    VBox.setMargin(wpmLabel, new Insets(10, 50, 10, 50));
+    VBox.setMargin(accuracyLabel, new Insets(10, 50, 10, 50));
+    VBox.setMargin(statsBox, new Insets(10, 200, 10, 200));
+
+    statsBox.getChildren().addAll(wpmLabel, accuracyLabel);
     return statsBox;
-  }
-
-  /**
-   * Updates the displayed statistics with the provided values.
-   *
-   * @param gamesPlayed The total number of games played.
-   * @param averageWpm The average words per minute (WPM).
-   * @param totalErrors The total number of errors.
-   * @param bestWpm The best WPM achieved.
-   * @param averageAccuracy The average accuracy percentage.
-   */
-  public void updateStats(
-      int gamesPlayed, double averageWpm, int totalErrors, double bestWpm, double averageAccuracy) {
-    Platform.runLater(
-        () -> {
-          gamesPlayedLabel.setText(String.format("Total games played: %d", gamesPlayed));
-          averageWpmLabel.setText(String.format("Average WPM: %.2f", averageWpm));
-          totalErrorsLabel.setText(String.format("Total errors: %d", totalErrors));
-          bestWpmLabel.setText(String.format("Best WPM: %.2f", bestWpm));
-          averageAccuracyLabel.setText(String.format("Average accuracy: %.2f%%", averageAccuracy));
-        });
   }
 
   /** Clears the displayed statistics, resetting all values to zero. */

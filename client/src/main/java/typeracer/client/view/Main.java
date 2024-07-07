@@ -53,7 +53,7 @@ public class Main extends Application {
 
     initializeScenes(viewController, primaryStage);
 
-    Platform.runLater(() -> viewController.showView("initial prompt"));
+    Platform.runLater(() -> viewController.showView(ViewController.ViewName.INITIAL_PROMPT));
     primaryStage.setResizable(true);
     primaryStage.setOnCloseRequest(event -> System.exit(0));
     primaryStage.show();
@@ -69,32 +69,32 @@ public class Main extends Application {
     InitialPromptUi initialPromptUi = new InitialPromptUi(viewController, primaryStage);
     Scene initialScene = new Scene(initialPromptUi, WIDTH, HEIGHT);
     loadStylesheets(initialScene);
-    viewController.addScene("InitialPrompt", initialScene);
+    viewController.addScene(ViewController.ViewName.INITIAL_PROMPT, initialScene);
 
     MainMenuUi mainMenuUi = new MainMenuUi(viewController);
     Scene mainMenuScene = new Scene(mainMenuUi, WIDTH, HEIGHT);
     loadStylesheets(mainMenuScene);
-    viewController.addScene("MainMenu", mainMenuScene);
+    viewController.addScene(ViewController.ViewName.MAIN_MENU, mainMenuScene);
 
     GameUi gameUi = new GameUi(viewController);
     Scene gameScene = new Scene(gameUi, WIDTH, HEIGHT);
     loadStylesheets(gameScene);
-    viewController.addScene("Game", gameScene);
+    viewController.addScene(ViewController.ViewName.GAME, gameScene);
 
     PlayerStatsUi playerStatsUi = new PlayerStatsUi(viewController);
     Scene statsScene = new Scene(playerStatsUi, WIDTH, HEIGHT);
     loadStylesheets(statsScene);
-    viewController.addScene("Stats", statsScene);
+    viewController.addScene(ViewController.ViewName.STATS, statsScene);
 
     ProfileSettingsUi profileSettingsUi = new ProfileSettingsUi(viewController);
     Scene profileSettingsScene = new Scene(profileSettingsUi, WIDTH, HEIGHT);
     loadStylesheets(profileSettingsScene);
-    viewController.addScene("ProfileSettings", profileSettingsScene);
+    viewController.addScene(ViewController.ViewName.PROFILE_SETTINGS, profileSettingsScene);
 
     GameResultsUi gameResultsUi = new GameResultsUi(viewController);
     Scene gameResultsScene = new Scene(gameResultsUi, WIDTH, HEIGHT);
     loadStylesheets(gameResultsScene);
-    viewController.addScene("GameResults", gameResultsScene);
+    viewController.addScene(ViewController.ViewName.GAME_RESULTS, gameResultsScene);
   }
 
   /**

@@ -17,7 +17,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import typeracer.client.ViewController;
-import typeracer.game.GameState;
 
 /**
  * This class represents the UI for the game lobby. It includes components such as player list, mode
@@ -30,7 +29,6 @@ public class LobbyUi extends VBox {
   private ComboBox<String> modeDropdown;
   private ViewController viewController;
   private Label usernameLabel;
-  private GameState gameState;
 
   /**
    * Constructor to initialize the Lobby UI.
@@ -75,9 +73,7 @@ public class LobbyUi extends VBox {
 
     playerList = new ListView<>();
     playerList.setPrefHeight(200);
-    playerList
-        .getItems()
-        .addAll("Spieler A - Active", "Spieler B - Inactive", "Spieler C " + "- Inactive");
+    playerList.setItems(viewController.getPlayerUsernames());
     customizePlayerList();
 
     modeDropdown = new ComboBox<>();

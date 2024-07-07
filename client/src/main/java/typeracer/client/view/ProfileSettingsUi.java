@@ -24,7 +24,7 @@ import typeracer.client.ViewController;
  * cancel these changes.
  */
 public class ProfileSettingsUi extends VBox {
-
+  /** The view controller to manage views and handle interactions. */
   private ViewController viewController;
 
   /** The text field for entering the username. */
@@ -142,12 +142,11 @@ public class ProfileSettingsUi extends VBox {
     saveButton.setOnAction(
         e -> {
           String wpmText = wpmGoalField.getText();
-          if (isNumeric(wpmText)) { // Check if the input is numeric
-            int wpmGoal = Integer.parseInt(wpmText); // Convert to integer
+          if (isNumeric(wpmText)) {
+            int wpmGoal = Integer.parseInt(wpmText);
             viewController.saveUserSettings(
                 usernameField.getText(), wpmGoal, favoriteTextField.getText());
           } else {
-            // Display error if WPM is not a valid number
             showAlert("Error", "WPM goal must be a whole number");
           }
         });

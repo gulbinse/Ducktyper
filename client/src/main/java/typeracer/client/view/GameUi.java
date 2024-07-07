@@ -1,14 +1,14 @@
 package typeracer.client.view;
 
+import java.util.stream.Collectors;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ListProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -20,7 +20,6 @@ import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -32,6 +31,7 @@ import typeracer.client.ViewController;
  */
 public class GameUi extends VBox {
 
+  /** The controller to manage views and handle interactions. */
   private ViewController viewController;
 
   /** The text area where the typing text is displayed. */
@@ -104,14 +104,15 @@ public class GameUi extends VBox {
 
   /** Adds a display panel that contains a non-editable TextArea for displaying typing text. */
   private void addDisplayPanel() {
-    VBox panel = new VBox();
-    panel.setAlignment(Pos.CENTER);
-    panel.setPadding(new Insets(10, 50, 10, 50));
-    displayText = new TextArea("Typing text will appear here");
+    displayText = new TextArea();
     displayText.setEditable(false);
     displayText.setWrapText(true);
     displayText.setPrefHeight(150);
     displayText.setMaxWidth(Double.MAX_VALUE);
+    displayText.textProperty().bind(viewController.gameTextProperty());
+    VBox panel = new VBox();
+    panel.setAlignment(Pos.CENTER);
+    panel.setPadding(new Insets(10, 50, 10, 50));
     panel.getChildren().add(displayText);
     getChildren().add(panel);
   }
@@ -143,8 +144,7 @@ public class GameUi extends VBox {
     statsPanel.setAlignment(Pos.CENTER);
     statsPanel.setPadding(new Insets(10, 50, 10, 50));
     statsPanel.setBackground(
-        new Background(
-            new BackgroundFill(StyleManager.GREY_BOX, new CornerRadii(5), Insets.EMPTY)));
+        new Background(new BackgroundFill(StyleManager.GREY_BOX, CornerRadii.EMPTY, Insets.EMPTY)));
     statsPanel.setBorder(
         new Border(
             new BorderStroke(
@@ -152,19 +152,43 @@ public class GameUi extends VBox {
                 BorderStrokeStyle.SOLID,
                 CornerRadii.EMPTY,
                 new BorderWidths(1))));
-    wpmLabel = new Label("WPM: 0");
+
+    Label wpmLabel = new Label();
+    DoubleProperty wpmProperty =
+        viewController.getPlayerWpmProperty(viewController.getCurrentPlayerId());
+    wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
     wpmLabel.setAlignment(Pos.CENTER_LEFT);
-    errorsLabel = new Label("Errors: 0");
-    errorsLabel.setAlignment(Pos.CENTER_RIGHT);
+
+    Label accuracyLabel = new Label();
+    accuracyLabel
+        .textProperty()
+        .bind(
+            viewController
+                .getPlayerAccuracyProperty(viewController.getCurrentPlayerId())
+                .multiply(100)
+                .asString("%.2f%% Accuracy"));
+    accuracyLabel.setAlignment(Pos.CENTER);
+
+    ProgressBar progressBar = new ProgressBar();
+    progressBar
+        .progressProperty()
+        .bind(viewController.getPlayerProgressProperty(viewController.getCurrentPlayerId()));
+    progressBar.setPrefWidth(200);
+
     HBox leftContainer = new HBox(wpmLabel);
     leftContainer.setAlignment(Pos.CENTER_LEFT);
-    leftContainer.setPadding(new Insets(0, 0, 0, 10));
-    HBox.setHgrow(leftContainer, Priority.ALWAYS);
-    HBox rightContainer = new HBox(errorsLabel);
+    leftContainer.setPadding(new Insets(0, 20, 0, 0));
+
+    HBox centerContainer = new HBox(accuracyLabel);
+    centerContainer.setAlignment(Pos.CENTER);
+    centerContainer.setPadding(new Insets(0, 20, 0, 0));
+
+    HBox rightContainer = new HBox(progressBar);
     rightContainer.setAlignment(Pos.CENTER_RIGHT);
-    rightContainer.setPadding(new Insets(0, 10, 0, 0));
-    HBox.setHgrow(rightContainer, Priority.ALWAYS);
-    statsPanel.getChildren().addAll(leftContainer, rightContainer);
+    rightContainer.setPadding(new Insets(0, 0, 0, 20));
+
+    statsPanel.getChildren().addAll(leftContainer, centerContainer, rightContainer);
+
     VBox.setMargin(statsPanel, new Insets(10, 50, 10, 50));
     getChildren().add(statsPanel);
   }
@@ -184,12 +208,33 @@ public class GameUi extends VBox {
                 BorderStrokeStyle.SOLID,
                 CornerRadii.EMPTY,
                 BorderWidths.DEFAULT)));
-    topPlayersLabel = new Label("Top players: 1. A, 2. B, 3. C");
+    topPlayersLabel = new Label();
     topPlayersLabel.setAlignment(Pos.CENTER);
     topPlayersLabel.setFont(StyleManager.STANDARD_FONT);
     topPlayersPanel.getChildren().add(topPlayersLabel);
     getChildren().add(topPlayersPanel);
+    topPlayersLabel
+        .textProperty()
+        .bind(createTopPlayersBinding(viewController.topPlayersProperty()));
     VBox.setMargin(topPlayersPanel, new Insets(10, 50, 10, 50));
+  }
+
+  /**
+   * Creates a StringBinding to bind the top players list to a display label.
+   *
+   * @param topPlayers The list of top players.
+   * @return A StringBinding representing the top players.
+   */
+  private StringBinding createTopPlayersBinding(ListProperty<String> topPlayers) {
+    return Bindings.createStringBinding(
+        () -> {
+          if (topPlayers.isEmpty()) {
+            return "Top players: None";
+          } else {
+            return "Top players: " + topPlayers.stream().collect(Collectors.joining(", "));
+          }
+        },
+        topPlayers);
   }
 
   /**
@@ -230,42 +275,6 @@ public class GameUi extends VBox {
                 viewController.switchToGameResultUi();
               }
             });
-  }
-
-  /**
-   * Updates the display text area with the given text.
-   *
-   * @param text The text to display.
-   */
-  public void updateText(String text) {
-    displayText.setText(text);
-  }
-
-  /**
-   * Updates the WPM (words per minute) label with the given WPM value.
-   *
-   * @param wpm The new WPM value to display.
-   */
-  public void updateWpm(double wpm) {
-    wpmLabel.setText(String.format("WPM: %.2f", wpm));
-  }
-
-  /**
-   * Updates the errors label with the given number of errors.
-   *
-   * @param errors The new error count to display.
-   */
-  public void updateErrors(int errors) {
-    errorsLabel.setText(String.format("Errors: %d", errors));
-  }
-
-  /**
-   * Updates the top players label with the given list of players.
-   *
-   * @param players The formatted string of top players to display.
-   */
-  public void updateTopPlayers(String players) {
-    topPlayersLabel.setText("Top players: " + players);
   }
 
   /**
