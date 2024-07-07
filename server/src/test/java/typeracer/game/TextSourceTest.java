@@ -29,7 +29,7 @@ class TextSourceTest {
 
   @Test
   void testDefaultTextFromFile() throws IOException {
-    textSource.setDefaultTextFromFile();
+    textSource.setTextFromDefaultFile();
 
     assertEquals(expectedDefaultText, textSource.getCurrentText());
   }

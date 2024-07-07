@@ -1,5 +1,6 @@
 package typeracer.game;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import typeracer.communication.messages.server.GameStateNotification;
@@ -10,7 +11,7 @@ import typeracer.server.session.Session;
 import typeracer.server.utils.TypingResult;
 
 /** The main class for the game, managing states and providing an interface for the server. */
-public class TypeRacerGame {
+public final class TypeRacerGame { // made final to prevent finalizer attacks in constructor
 
   private final GameState state;
   private long gameStartTime;
@@ -36,7 +37,11 @@ public class TypeRacerGame {
    */
   public TypeRacerGame(Session session) {
     TextSource textSource = new TextSource();
-    textSource.setDefaultText();
+    try {
+      textSource.setRandomTextFromDefaultFiles();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
     state = new GameState(textSource);
     this.session = session;
     notifier = PlayerStateNotifier.create(this);
