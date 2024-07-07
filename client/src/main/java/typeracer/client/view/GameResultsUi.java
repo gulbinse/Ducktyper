@@ -2,6 +2,7 @@ package typeracer.client.view;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -103,7 +104,7 @@ public class GameResultsUi extends VBox {
     Label wpmLabel = new Label();
     DoubleProperty wpmProperty =
         viewController.getPlayerWpmProperty(viewController.getCurrentPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
+    wpmLabel.textProperty().bind(Bindings.format("WPM: %.2f", wpmProperty));
     wpmLabel.setFont(StyleManager.STANDARD_FONT);
 
     Label accuracyLabel = new Label();
@@ -113,10 +114,16 @@ public class GameResultsUi extends VBox {
             viewController
                 .getPlayerAccuracyProperty(viewController.getCurrentPlayerId())
                 .multiply(100)
-                .asString("%.2f%% Accuracy"));
+                .asString("Accuracy: %.2f%%"));
     accuracyLabel.setFont(StyleManager.STANDARD_FONT);
 
-    statsBox.getChildren().addAll(statsLabel, wpmLabel, accuracyLabel);
+    Label errorLabel = new Label();
+    IntegerProperty errorProperty =
+        viewController.getPlayerErrorsProperty(viewController.getCurrentPlayerId());
+    errorLabel.textProperty().bind(Bindings.format("Errors: %d", errorProperty));
+    errorLabel.setFont(StyleManager.STANDARD_FONT);
+
+    statsBox.getChildren().addAll(statsLabel, wpmLabel, accuracyLabel, errorLabel);
     VBox.setMargin(statsBox, new Insets(10, 200, 10, 200));
     VBox.setMargin(statsLabel, new Insets(0, 0, 10, 0));
 

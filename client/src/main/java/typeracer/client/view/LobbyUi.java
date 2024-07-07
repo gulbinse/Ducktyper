@@ -114,9 +114,14 @@ public class LobbyUi extends VBox {
                 if (empty || item == null) {
                   setGraphic(null);
                 } else {
-                  nameLabel.setText(item.split(" - ")[0]);
-                  String status = item.split(" - ")[1];
-                  statusCircle.setFill("Active".equals(status) ? Color.GREEN : Color.RED);
+                  String[] parts = item.split(" - ");
+                  if (parts.length > 1) {
+                    nameLabel.setText(parts[0]);
+                    statusCircle.setFill("Active".equals(parts[1]) ? Color.GREEN : Color.RED);
+                  } else {
+                    nameLabel.setText(parts[0]);
+                    statusCircle.setFill(Color.GRAY);
+                  }
                   setGraphic(cellLayout);
                 }
               }
@@ -126,5 +131,6 @@ public class LobbyUi extends VBox {
   /** Called when the view is shown to the user. Sets the username label. */
   public void onViewShown() {
     updateUsernameLabel();
+    playerList.refresh();
   }
 }

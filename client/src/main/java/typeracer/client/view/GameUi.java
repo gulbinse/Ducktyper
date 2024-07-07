@@ -4,6 +4,7 @@ import java.util.stream.Collectors;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -51,6 +52,10 @@ public class GameUi extends VBox {
 
   /** The label that displays the username of the current user. */
   private Label usernameLabel;
+
+  private int currentCharIndex = 0;
+
+  private String gameText;
 
   /**
    * Constructs a new GameUi and initializes its user interface.
@@ -131,8 +136,26 @@ public class GameUi extends VBox {
     inputText.setMaxWidth(Double.MAX_VALUE);
     inputText.setPadding(new Insets(10));
     inputText.setStyle("-fx-alignment: top-left;");
+    inputText.setOnKeyTyped(event -> handleTyping(event.getCharacter()));
     panel.getChildren().add(inputText);
     getChildren().add(panel);
+  }
+
+  private void handleTyping(String typedCharacter) {
+    int currentPlayerId = viewController.getCurrentPlayerId();
+    char expectedCharacter = getCurrentExpectedCharacter();
+
+    if (typedCharacter.isEmpty() || typedCharacter.charAt(0) != expectedCharacter) {
+      IntegerProperty errorsProperty = viewController.getPlayerErrorsProperty(currentPlayerId);
+      errorsProperty.set(errorsProperty.get() + 1);
+    }
+  }
+
+  private char getCurrentExpectedCharacter() {
+    if (gameText == null || gameText.isEmpty() || currentCharIndex >= gameText.length()) {
+      return '\0';
+    }
+    return gameText.charAt(currentCharIndex);
   }
 
   /**
@@ -140,7 +163,7 @@ public class GameUi extends VBox {
    * positioned within the UI.
    */
   private void addStatsPanel() {
-    HBox statsPanel = new HBox(10);
+    HBox statsPanel = new HBox(30);
     statsPanel.setAlignment(Pos.CENTER);
     statsPanel.setPadding(new Insets(10, 50, 10, 50));
     statsPanel.setBackground(
@@ -169,25 +192,26 @@ public class GameUi extends VBox {
                 .asString("%.2f%% Accuracy"));
     accuracyLabel.setAlignment(Pos.CENTER);
 
+    Label errorsLabel = new Label();
+    IntegerProperty errorsProperty =
+        viewController.getPlayerErrorsProperty(viewController.getCurrentPlayerId());
+    errorsLabel.textProperty().bind(Bindings.format("Errors: %d", errorsProperty));
+    errorsLabel.setAlignment(Pos.CENTER_RIGHT);
+
     ProgressBar progressBar = new ProgressBar();
     progressBar
         .progressProperty()
         .bind(viewController.getPlayerProgressProperty(viewController.getCurrentPlayerId()));
     progressBar.setPrefWidth(200);
 
-    HBox leftContainer = new HBox(wpmLabel);
-    leftContainer.setAlignment(Pos.CENTER_LEFT);
-    leftContainer.setPadding(new Insets(0, 20, 0, 0));
+    VBox wpmContainer = new VBox(wpmLabel);
+    VBox accuracyContainer = new VBox(accuracyLabel);
+    VBox progressBarContainer = new VBox(progressBar);
+    VBox errorsContainer = new VBox(errorsLabel);
 
-    HBox centerContainer = new HBox(accuracyLabel);
-    centerContainer.setAlignment(Pos.CENTER);
-    centerContainer.setPadding(new Insets(0, 20, 0, 0));
-
-    HBox rightContainer = new HBox(progressBar);
-    rightContainer.setAlignment(Pos.CENTER_RIGHT);
-    rightContainer.setPadding(new Insets(0, 0, 0, 20));
-
-    statsPanel.getChildren().addAll(leftContainer, centerContainer, rightContainer);
+    statsPanel
+        .getChildren()
+        .addAll(wpmContainer, accuracyContainer, progressBarContainer, errorsContainer);
 
     VBox.setMargin(statsPanel, new Insets(10, 50, 10, 50));
     getChildren().add(statsPanel);

@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -62,9 +64,14 @@ public class ViewController {
   /** A map of player IDs to their progress properties. */
   private Map<Integer, DoubleProperty> playerProgresses = new HashMap<>();
 
+  /** A map of player IDs to their error count properties. */
+  private Map<Integer, IntegerProperty> playerErrors = new HashMap<>();
+
+  /** A list property of the top players' usernames. */
   private ListProperty<String> topPlayers =
       new SimpleListProperty<>(FXCollections.observableArrayList());
 
+  /** The game text property. */
   private static StringProperty gameText = new SimpleStringProperty();
 
   /** An observable list of player usernames. */
@@ -78,7 +85,7 @@ public class ViewController {
    * @throws IOException If an I/O error occurs when attempting to connect to the server.
    */
   public void connectToServer(String ip, int port) throws IOException {
-    // client.connect(ip, port);
+    client.connect(ip, port);
     System.out.println("Connected to server at " + ip + ":" + port);
   }
 
@@ -95,6 +102,11 @@ public class ViewController {
     this.client = client;
     initializeViews();
     initializeTopPlayers();
+  }
+
+  /** Sends the current username to the server using the client. */
+  public void sendUsernameToServer() {
+    client.sendUsername(username);
   }
 
   /** Enum representing the different views available in the TypeRacer game application. */
@@ -186,11 +198,6 @@ public class ViewController {
     switchToGameResultUi();
   }
 
-  /**
-   * Returns the game text property, which is used to bind and observe changes to the game text.
-   *
-   * @return The game text property.
-   */
   public StringProperty gameTextProperty() {
     return gameText;
   }
@@ -303,17 +310,35 @@ public class ViewController {
         });
   }
 
+  /**
+   * Returns the error count property for the specified player ID.
+   *
+   * @param playerId The ID of the player.
+   * @return The error count property for the player.
+   */
+  public IntegerProperty getPlayerErrorsProperty(int playerId) {
+    return playerErrors.computeIfAbsent(playerId, k -> new SimpleIntegerProperty());
+  }
+
+  /**
+   * Updates the error count for the specified player ID.
+   *
+   * @param playerId The ID of the player.
+   * @param errors The new error count to set.
+   */
+  public void updatePlayerErrors(int playerId, int errors) {
+    Platform.runLater(
+        () -> {
+          playerErrors.computeIfAbsent(playerId, k -> new SimpleIntegerProperty()).set(errors);
+        });
+  }
+
   /** Initializes the list of top players. */
   private void initializeTopPlayers() {
     List<String> players = client.getTopPlayers();
     topPlayers.set(FXCollections.observableArrayList(players));
   }
 
-  /**
-   * Bind the list property of top players.
-   *
-   * @return A list property containing the usernames of the top players.
-   */
   public ListProperty<String> topPlayersProperty() {
     return topPlayers;
   }

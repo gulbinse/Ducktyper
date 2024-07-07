@@ -5,7 +5,6 @@ import javafx.animation.RotateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -65,12 +64,9 @@ public class InitialPromptUi extends VBox {
 
     setIconImage(stage);
     VBox titlePanel = createImagePanel();
-    HBox inputPanel = createInputPanel();
-    HBox serverPanel = createServerInputPanel();
+    VBox inputPanel = createInputPanel();
 
-    Button submitButton = createSubmitButton();
-
-    this.getChildren().addAll(titlePanel, inputPanel, serverPanel, submitButton);
+    this.getChildren().addAll(titlePanel, inputPanel);
   }
 
   /**
@@ -79,73 +75,67 @@ public class InitialPromptUi extends VBox {
    *
    * @return An HBox containing the username input field and submit image.
    */
-  private HBox createInputPanel() {
-    HBox inputPanel = new HBox(10);
+  private VBox createInputPanel() {
+    VBox inputPanel = new VBox(10);
     inputPanel.setAlignment(Pos.CENTER);
     inputPanel.setPadding(new Insets(10));
     inputPanel.setBackground(
         new Background(
             new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
+    HBox usernameAndButtonPanel = new HBox(10);
+    usernameAndButtonPanel.setAlignment(Pos.CENTER);
+
     usernameField = new TextField();
-    usernameField.setMaxWidth(600);
+    usernameField.setMaxWidth(300);
     usernameField.getStyleClass().add("username-field");
     usernameField.setPromptText("Enter your username");
     usernameField.setFocusTraversable(false);
 
+    ImageView submitImage = createSubmitImage();
+    usernameAndButtonPanel.getChildren().addAll(usernameField, submitImage);
+
+    ipField = new TextField();
+    ipField.setMaxWidth(150);
+    ipField.setPromptText("Server IP");
+    ipField.setFocusTraversable(false);
+
+    portField = new TextField();
+    portField.setMaxWidth(150);
+    portField.setPromptText("Port");
+    ipField.setFocusTraversable(false);
+
+    inputPanel.getChildren().addAll(usernameAndButtonPanel, ipField, portField);
+
+    return inputPanel;
+  }
+
+  /**
+   * Creates an ImageView for the submit button with styling and click animations.
+   *
+   * @return An ImageView configured as a submit button.
+   */
+  private ImageView createSubmitImage() {
     ImageView submitImage =
         new ImageView(new Image(getClass().getResourceAsStream("/images/button.png")));
     submitImage.setFitHeight(50);
     submitImage.setFitWidth(50);
     submitImage.setEffect(new DropShadow());
 
-    submitImage.setOnMousePressed(e -> submitImage.setScaleX(0.9));
-    submitImage.setOnMousePressed(e -> submitImage.setScaleY(0.9));
-    submitImage.setOnMouseReleased(e -> submitImage.setScaleX(1.0));
-    submitImage.setOnMouseReleased(e -> submitImage.setScaleY(1.0));
+    submitImage.setOnMousePressed(
+        e -> {
+          submitImage.setScaleX(0.9);
+          submitImage.setScaleY(0.9);
+        });
+    submitImage.setOnMouseReleased(
+        e -> {
+          submitImage.setScaleX(1.0);
+          submitImage.setScaleY(1.0);
+        });
 
     submitImage.setOnMouseClicked(e -> submitAction());
 
-    inputPanel.getChildren().addAll(usernameField, submitImage);
-
-    return inputPanel;
-  }
-
-  /**
-   * Creates the submit button for connecting to the server. The button is styled and an action
-   * listener is added for handling the submit action.
-   *
-   * @return A Button configured for submitting the connection details.
-   */
-  private Button createSubmitButton() {
-    Button submitButton =
-        StyleManager.createStyledButton(
-            "connect", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
-    submitButton.setOnAction(e -> submitAction());
-    return submitButton;
-  }
-
-  /**
-   * Creates the server input panel containing text fields for IP address and port number. The panel
-   * is styled and positioned within the UI.
-   *
-   * @return An HBox containing the IP address and port number input fields.
-   */
-  private HBox createServerInputPanel() {
-    HBox serverPanel = new HBox(10);
-    serverPanel.setAlignment(Pos.CENTER);
-    serverPanel.setPadding(new Insets(10));
-
-    ipField = new TextField();
-    ipField.setPromptText("Server IP");
-    ipField.setMaxWidth(120);
-
-    portField = new TextField();
-    portField.setPromptText("Port");
-    portField.setMaxWidth(80);
-
-    serverPanel.getChildren().addAll(ipField, portField);
-    return serverPanel;
+    return submitImage;
   }
 
   /**
@@ -221,18 +211,35 @@ public class InitialPromptUi extends VBox {
     String ip = ipField.getText().trim();
     String port = portField.getText().trim();
 
+    if (username.isEmpty()) {
+      showAlert("Please enter a username.");
+      return;
+    }
+
     try {
       int portNumber = Integer.parseInt(port);
+      if (portNumber < 1 || portNumber > 65535) {
+        showAlert("Please enter a valid port number (1-65535).");
+        return;
+      }
       viewController.connectToServer(ip, portNumber);
       viewController.setUsername(username);
+      viewController.sendUsernameToServer();
       ViewController.switchToMainMenu();
     } catch (NumberFormatException e) {
-      Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter a valid port number.");
-      alert.showAndWait();
+      showAlert("Please enter a valid port number.");
     } catch (Exception e) {
-      Alert alert =
-          new Alert(Alert.AlertType.ERROR, "Could not connect to the server: " + e.getMessage());
-      alert.showAndWait();
+      showAlert("Could not connect to the server: " + e.getMessage());
     }
+  }
+
+  /**
+   * Displays an error alert with the specified message.
+   *
+   * @param message The message to display in the alert.
+   */
+  private void showAlert(String message) {
+    Alert alert = new Alert(Alert.AlertType.ERROR, message);
+    alert.showAndWait();
   }
 }
