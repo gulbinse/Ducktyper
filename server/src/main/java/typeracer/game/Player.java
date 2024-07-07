@@ -8,6 +8,7 @@ public class Player {
   private final PlayerState state;
   private static final long MINUTES_TO_NANO_SECONDS_FACTOR = 10 ^ 9;
   private long gameStartTime;
+  private int typingAttempts = 0;
 
   /**
    * Creates a new Player with the given username.
@@ -35,6 +36,15 @@ public class Player {
    */
   public double getProgress() {
     return state.getProgress();
+  }
+
+  /**
+   * Returns this Player's current accuracy.
+   *
+   * @return this Player's current accuracy
+   */
+  public double getAccuracy() {
+    return state.getAccuracy();
   }
 
   /**
@@ -97,6 +107,7 @@ public class Player {
   synchronized TypingResult typeCharacter(
       char typedCharacter, String textToType, long gameStartTime) {
     this.gameStartTime = gameStartTime;
+    typingAttempts++;
     int currentTextIndex = state.getCurrentTextIndex();
     char correctCharacter = textToType.charAt(currentTextIndex);
 
@@ -121,6 +132,10 @@ public class Player {
       }
       return TypingResult.CORRECT;
     }
+    double accuracy =
+        (double) state.getCurrentTextIndex() // current text index = correctly typed characters
+            / typingAttempts;
+    state.setAccuracy(accuracy);
     return TypingResult.INCORRECT;
   }
 
