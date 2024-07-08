@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import org.jetbrains.annotations.NotNull;
 
 /** Provides a text to use as prompt for the game. */
 public class TextSource {
@@ -26,8 +30,12 @@ public class TextSource {
 
   private String currentText;
 
+  private final Random random;
+
   /** The default constructor of this class. */
-  public TextSource() {}
+  public TextSource() {
+    random = new Random();
+  }
 
   /** Sets a default text to test the game. */
   public void setDefaultText() {
@@ -35,11 +43,11 @@ public class TextSource {
   }
 
   /**
-   * Sets the current text to a default text read from a file.
+   * Sets the current text to the default text read from the file {@value DEFAULT_TEXT_FILE}.
    *
    * @throws IOException when exceptions with reading the file occur
    */
-  public void setDefaultTextFromFile() throws IOException {
+  public void setTextFromDefaultFile() throws IOException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     URL textFileUrl = classLoader.getResource(DEFAULT_TEXT_FILE_PATH);
     assert textFileUrl != null;
@@ -47,6 +55,25 @@ public class TextSource {
       setTextFromFile(new File(textFileUrl.toURI()));
     } catch (URISyntaxException e) {
       throw new RuntimeException("Error with converting default text file URL to URI");
+    }
+  }
+
+  /**
+   * Sets a text randomly from one of the files in the default folder {@value TEXT_SOURCE_FOLDER}.
+   *
+   * @throws IOException when exceptions with reading the file occur
+   */
+  public void setRandomTextFromDefaultFiles() throws IOException {
+    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    URL textFolderUrl = classLoader.getResource(TEXT_SOURCE_FOLDER);
+    assert textFolderUrl != null;
+    try {
+      File[] files = new File(textFolderUrl.toURI()).listFiles();
+      assert files != null;
+      List<File> fileList = Arrays.stream(files).filter(file -> !file.isDirectory()).toList();
+      setRandomTextFromFiles(fileList);
+    } catch (URISyntaxException e) {
+      throw new RuntimeException("Error with converting default text folder URL to URI");
     }
   }
 
@@ -67,6 +94,19 @@ public class TextSource {
       }
       currentText = textBuilder.toString();
     }
+  }
+
+  /**
+   * Sets the current text randomly to the contents of one of the given files.
+   *
+   * @param files a nonempty list of the files, one of which the text will be taken from
+   * @throws IOException when exceptions with reading the file occur
+   */
+  public void setRandomTextFromFiles(@NotNull List<File> files) throws IOException {
+    assert !files.isEmpty();
+    int fileNum = random.nextInt(files.size());
+    File file = files.get(fileNum);
+    setTextFromFile(file);
   }
 
   /**

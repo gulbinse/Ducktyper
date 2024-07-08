@@ -32,7 +32,7 @@ public class ReadyRequestHandler implements MessageHandler {
     if (message instanceof ReadyRequest readyRequest) {
       Session session = SessionManager.getInstance().getSessionByClientId(clientId);
       if (session != null) {
-        boolean success = session.setReady(clientId, readyRequest.isReady());
+        boolean success = session.updateReadiness(clientId, readyRequest.isReady());
         ReadyResponse response;
         if (success) {
           response = new ReadyResponse(PermissionStatus.ACCEPTED, Reason.SUCCESS);
@@ -40,6 +40,10 @@ public class ReadyRequestHandler implements MessageHandler {
           response = new ReadyResponse(PermissionStatus.DENIED, Reason.UNKNOWN);
         }
         ConnectionManager.getInstance().sendMessage(response, clientId);
+
+        if (session.isEveryoneReady()) {
+          session.startGame();
+        }
       }
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, clientId);

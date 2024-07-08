@@ -5,6 +5,7 @@ import typeracer.server.message.handlers.CharacterRequestHandler;
 import typeracer.server.message.handlers.CreateSessionRequestHandler;
 import typeracer.server.message.handlers.HandshakeRequestHandler;
 import typeracer.server.message.handlers.JoinSessionRequestHandler;
+import typeracer.server.message.handlers.LeaveSessionRequestHandler;
 import typeracer.server.message.handlers.ReadyRequestHandler;
 
 /** Creates a chain of responsibility for messages. */
@@ -22,6 +23,7 @@ public class MessageHandlerChain {
    *   <li>{@link CreateSessionRequestHandler}
    *   <li>{@link JoinSessionRequestHandler}
    *   <li>{@link ReadyRequestHandler}
+   *   <li>{@link LeaveSessionRequestHandler}
    * </ul>
    */
   public MessageHandlerChain() {
@@ -35,7 +37,10 @@ public class MessageHandlerChain {
                 .setNext(
                     new CreateSessionRequestHandler()
                         .setNext(
-                            new JoinSessionRequestHandler().setNext(new ReadyRequestHandler()))));
+                            new JoinSessionRequestHandler()
+                                .setNext(
+                                    new ReadyRequestHandler()
+                                        .setNext(new LeaveSessionRequestHandler())))));
   }
 
   /**

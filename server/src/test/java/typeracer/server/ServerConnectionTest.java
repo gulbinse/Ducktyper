@@ -24,6 +24,7 @@ public class ServerConnectionTest {
 
   private static final String USER1 = "User1";
   private static final String USER2 = "User2";
+  private static final String USER3 = "User3";
 
   private void assertThatContainsNKeyValuePairs(String message, int numberOfPairsExpected) {
     assertThat(message).matches("[^:]*:[^:]*".repeat(numberOfPairsExpected));
@@ -197,7 +198,7 @@ public class ServerConnectionTest {
         "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
     String createSessionRequest = "{\"messageType\":\"CreateSessionRequest\"}";
     String readyRequest = "{\"messageType\":\"ReadyRequest\",\"ready\":true}";
-    String characterRequest = "{\"messageType\":\"CharacterRequest\",\"character\":\"a\"}";
+    String characterRequest = "{\"messageType\":\"CharacterRequest\",\"character\":\"A\"}";
     MockInputStream networkIn =
         getNetworkIn(
             handshakeRequest
@@ -283,6 +284,81 @@ public class ServerConnectionTest {
       }
     }
     Assertions.fail("No PlayerLeftNotification for player " + USER2);
+  }
+
+  @Test
+  public void testServer_clientLeavesSessionAndJoinsAnother()
+      throws IOException, InterruptedException {
+    final int sessionId1 = 69;
+    final int sessionId2 = 420;
+    String handshakeRequest1 =
+        "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER1 + "\"}";
+    String handshakeRequest2 =
+        "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER2 + "\"}";
+    String handshakeRequest3 =
+        "{\"messageType\":\"HandshakeRequest\",\"playerName\":\"" + USER3 + "\"}";
+    String joinSessionRequest1 =
+        "{\"messageType\":\"JoinSessionRequest\",\"sessionId\":" + sessionId1 + "}";
+    String joinSessionRequest2 =
+        "{\"messageType\":\"JoinSessionRequest\",\"sessionId\":" + sessionId2 + "}";
+    String leaveSessionRequest = "{\"messageType\":\"LeaveSessionRequest\"}";
+    MockInputStream networkIn1 =
+        getNetworkIn(handshakeRequest1 + System.lineSeparator() + joinSessionRequest1);
+    MockInputStream networkIn2 =
+        getNetworkIn(handshakeRequest2 + System.lineSeparator() + joinSessionRequest2);
+    MockInputStream networkIn3 =
+        getNetworkIn(
+            handshakeRequest3
+                + System.lineSeparator()
+                + joinSessionRequest1
+                + System.lineSeparator()
+                + leaveSessionRequest
+                + System.lineSeparator()
+                + joinSessionRequest2);
+    ByteArrayOutputStream networkOut1 = getNetworkOut();
+    ByteArrayOutputStream networkOut2 = getNetworkOut();
+    ByteArrayOutputStream networkOut3 = getNetworkOut();
+    MockSocket mockSocket1 = new MockSocket(networkIn1, networkOut1);
+    MockSocket mockSocket2 = new MockSocket(networkIn2, networkOut2);
+    MockSocket mockSocket3 = new MockSocket(networkIn3, networkOut3);
+    List<MockInputStream> inputs = List.of(networkIn1, networkIn2, networkIn3);
+    MockServerSocket serverSocket =
+        new MockServerSocket(List.of(mockSocket1, mockSocket2, mockSocket3));
+
+    SessionManager.getInstance().createNewSession(sessionId1);
+    SessionManager.getInstance().createNewSession(sessionId2);
+    TestUtils.startServer(serverSocket);
+    do {
+      Thread.sleep(10);
+    } while (!TestUtils.areDone(inputs));
+    Thread.sleep(Sleep.BEFORE_TESTING.getMillis());
+
+    // Test session1
+    boolean test1 = false;
+    String sent1 = networkOut1.toString(StandardCharsets.UTF_8);
+    String[] jsonMessages1 = sent1.split(System.lineSeparator());
+    for (String message : jsonMessages1) {
+      if (message.matches(".*\"messageType\":\"PlayerLeftNotification\".*")) {
+        test1 = true;
+        break;
+      }
+    }
+
+    // Test session2
+    boolean test2 = false;
+    String sent2 = networkOut2.toString(StandardCharsets.UTF_8);
+    String[] jsonMessages2 = sent2.split(System.lineSeparator());
+    for (String message : jsonMessages2) {
+      if (message.matches(".*\"messageType\":\"PlayerJoinedNotification\".*")
+          && message.matches(".*\"playerName\":\"" + USER3 + "\".*")) {
+        test2 = true;
+        break;
+      }
+    }
+
+    if (!test1 || !test2) {
+      Assertions.fail("Player " + USER3 + " cannot jump from session to session");
+    }
   }
 
   @Test

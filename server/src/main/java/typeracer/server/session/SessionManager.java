@@ -94,7 +94,7 @@ public final class SessionManager {
       return OperationStatus.SESSION_FULL;
     }
 
-    session.addPlayer(clientId);
+    session.handlePlayer(clientId);
     sessionIdByClientId.put(clientId, sessionId);
     return OperationStatus.SUCCESS;
   }
@@ -104,19 +104,23 @@ public final class SessionManager {
    * session does not exist, nothing happens.
    *
    * @param clientId the id of the client attempting to leave the session
+   * @return <code>true</code> if leaving was successful, <code>false</code> otherwise
    */
-  public synchronized void leaveSession(int clientId) {
+  public synchronized boolean leaveSession(int clientId) {
     int sessionId = sessionIdByClientId.getOrDefault(clientId, -1);
     Session session = sessionBySessionId.getOrDefault(sessionId, null);
     if (session != null) {
-      session.removePlayer(clientId);
+      session.unhandlePlayer(clientId);
       sessionIdByClientId.remove(clientId);
 
       // Delete empty sessions
       if (session.isEmpty()) {
         closeSession(sessionId);
       }
+
+      return true;
     }
+    return false;
   }
 
   /**

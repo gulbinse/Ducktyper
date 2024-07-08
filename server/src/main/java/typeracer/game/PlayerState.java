@@ -2,6 +2,7 @@ package typeracer.game;
 
 /** Manages the state of a single player. */
 public class PlayerState {
+  private double accuracy = 0;
   private double progress = 0; // Ranging from 0.0 to 1.0 according to the protocol
   private double wordsPerMinute = 0;
   private double charactersPerMinute = 0;
@@ -135,5 +136,23 @@ public class PlayerState {
    */
   public void setIsFinished(boolean isFinished) {
     this.isFinished = isFinished;
+  }
+
+  /**
+   * Returns the current accuracy.
+   *
+   * @return the current accuracy
+   */
+  double getAccuracy() {
+    return accuracy;
+  }
+
+  /**
+   * Sets the current accuracy to the specified value.
+   *
+   * @param accuracy the new accuracy
+   */
+  void setAccuracy(double accuracy) {
+    this.accuracy = accuracy;
   }
 }

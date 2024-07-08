@@ -1,8 +1,10 @@
 package typeracer.game;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -29,7 +31,7 @@ class TextSourceTest {
 
   @Test
   void testDefaultTextFromFile() throws IOException {
-    textSource.setDefaultTextFromFile();
+    textSource.setTextFromDefaultFile();
 
     assertEquals(expectedDefaultText, textSource.getCurrentText());
   }
@@ -42,5 +44,14 @@ class TextSourceTest {
     textSource.setTextFromFile(new File(textFileUrl.toURI()));
 
     assertEquals(expectedDefaultText, textSource.getCurrentText());
+  }
+
+  @Test
+  void testTextFromWrongPath() {
+    assertThrows(
+        FileNotFoundException.class,
+        () ->
+            textSource.setTextFromFile(
+                new File("server/src/main/resources/text_sources/dasIstKeineValideURL.txt")));
   }
 }

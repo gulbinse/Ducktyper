@@ -3,7 +3,6 @@ package typeracer.client;
 import java.util.List;
 import java.util.Map;
 import typeracer.client.view.Main;
-import typeracer.game.GameState;
 
 /**
  * Entry point class for the TypeRacer game application. This class contains the main method which
@@ -93,15 +92,6 @@ public class Client {
    */
   public String fetchNewGameText() {
     return ""; // Implementation goes here
-  }
-
-  /**
-   * Returns the current game state.
-   *
-   * @return The current game state.
-   */
-  public GameState getCurrentGameState() {
-    return null; // Implementation goes here
   }
 
   /**
