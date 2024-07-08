@@ -42,6 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Removed
 - `null` values from protocol (#35)
 - Unused observer pattern
+- Faulty getCurrentGameState method from client (#46)
 
 ## [0.1.0] - 2024-06-23
 
