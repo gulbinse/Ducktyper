@@ -30,7 +30,7 @@ public class TextNotificationHandler implements MessageHandler {
   @Override
   public void handleMessage(Message message, Client client) {
     if (message instanceof TextNotification textNotification) {
-      client.setNewGameText(textNotification);
+      viewController.setNewText(textNotification.getText());
     } else {
       nextHandler.handleMessage(message, client);
     }

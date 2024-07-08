@@ -1,7 +1,7 @@
 package typeracer.client.messagehandling;
 
 import typeracer.client.Client;
-import typeracer.client.ViewController;
+//import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.CreateSessionResponse;
 
@@ -13,7 +13,7 @@ import typeracer.communication.messages.server.CreateSessionResponse;
 public class CreateSessionResponseHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
-  private ViewController viewController;
+  //private ViewController viewController;
 
   /**
    * Constructor with the next handler in chain.
@@ -35,7 +35,7 @@ public class CreateSessionResponseHandler implements MessageHandler {
     if (message instanceof CreateSessionResponse createSessionResponse && createSessionResponse.getSessionId() != 0) {
       // switches to the lobby scene if the message contains an ID for the session
       ViewController.switchToLobbyUi();
-      client.setSessionID(createSessionResponse);
+      viewController.setSessionID(createSessionResponse.getSessionId());
       } else if (message instanceof CreateSessionResponse createSessionResponse
         && createSessionResponse.getReason() != null) {
       // reason why the session couldn't be created

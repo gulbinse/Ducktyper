@@ -31,7 +31,8 @@ public class PlayerStateNotificationHandler implements MessageHandler {
   @Override
   public void handleMessage(Message message, Client client) {
     if (message instanceof PlayerStateNotification playerStateNotification) {
-      client.updatePlayerState(playerStateNotification);
+      viewController.updatePlayerState(playerStateNotification.getPlayerId(), playerStateNotification.getAccuracy(),
+          playerStateNotification.getProgress(), playerStateNotification.getWpm());
 
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, client);

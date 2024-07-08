@@ -32,9 +32,8 @@ public class PlayerJoinedNotificationHandler implements MessageHandler {
   @Override
   public void handleMessage(Message message, Client client) {
     if (message instanceof PlayerJoinedNotification playerJoinedNotification) {
-      System.out.println("Player " + playerJoinedNotification.getPlayerName() + " joined the game");
-      System.out.println("There are " + playerJoinedNotification.getNumPlayers() + " are in the lobby");
-
+      // set number of the current players
+      viewController.setNumPlayers(playerJoinedNotification.getNumPlayers());
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, client);
     }
