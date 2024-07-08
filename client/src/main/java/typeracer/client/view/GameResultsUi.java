@@ -130,13 +130,12 @@ public class GameResultsUi extends VBox {
     return statsBox;
   }
 
-  /**
+  /*
    * Creates the leaderboard panel displaying player rankings.
    *
    * @return A VBox containing the leaderboard.
    */
-
-  /**
+  /*
    * private VBox createLeaderboard() { VBox leaderboardBox = new VBox(10);
    * leaderboardBox.setAlignment(Pos.CENTER); leaderboardBox.setPadding(new Insets(10));
    * leaderboardBox.setStyle( "-fx-background-color: " +

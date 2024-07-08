@@ -54,7 +54,9 @@ public class LobbyUi extends VBox {
     }
   }
 
-  /** Initializes the UI components and layout. */
+  /**
+   * Initializes the UI components and layout.
+   */
   private void initializeUi() {
     this.setAlignment(Pos.CENTER);
     this.setSpacing(20);
@@ -99,36 +101,38 @@ public class LobbyUi extends VBox {
     this.getChildren().addAll(titleImageView, playerList, modeSelection, buttonBox);
   }
 
-  /** Customizes the player list by setting a custom cell factory to display player statuses. */
+  /**
+   * Customizes the player list by setting a custom cell factory to display player statuses.
+   */
   private void customizePlayerList() {
-    playerList.setCellFactory(
-        lv ->
-            new ListCell<String>() {
-              private final Circle statusCircle = new Circle(5);
-              private final Label nameLabel = new Label();
-              private final HBox cellLayout = new HBox(10, statusCircle, nameLabel);
+    playerList.setCellFactory(lv -> new ListCell<String>() {
+      private final Circle statusCircle = new Circle(5);
+      private final Label nameLabel = new Label();
+      private final HBox cellLayout = new HBox(10, statusCircle, nameLabel);
 
-              @Override
-              protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                  setGraphic(null);
-                } else {
-                  String[] parts = item.split(" - ");
-                  if (parts.length > 1) {
-                    nameLabel.setText(parts[0]);
-                    statusCircle.setFill("Active".equals(parts[1]) ? Color.GREEN : Color.RED);
-                  } else {
-                    nameLabel.setText(parts[0]);
-                    statusCircle.setFill(Color.GRAY);
-                  }
-                  setGraphic(cellLayout);
-                }
-              }
-            });
+      @Override
+      protected void updateItem(String item, boolean empty) {
+        super.updateItem(item, empty);
+        if (empty || item == null) {
+          setGraphic(null);
+        } else {
+          String[] parts = item.split(" - ");
+          if (parts.length > 1) {
+            nameLabel.setText(parts[0]);
+            statusCircle.setFill("Active".equals(parts[1]) ? Color.GREEN : Color.RED);
+          } else {
+            nameLabel.setText(parts[0]);
+            statusCircle.setFill(Color.GRAY);
+          }
+          setGraphic(cellLayout);
+        }
+      }
+    });
   }
 
-  /** Called when the view is shown to the user. Sets the username label. */
+  /**
+   * Called when the view is shown to the user. Sets the username label.
+   */
   public void onViewShown() {
     updateUsernameLabel();
     playerList.refresh();

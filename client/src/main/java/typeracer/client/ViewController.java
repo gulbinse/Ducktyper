@@ -85,7 +85,7 @@ public class ViewController {
    * @throws IOException If an I/O error occurs when attempting to connect to the server.
    */
   public void connectToServer(String ip, int port) throws IOException {
-    //client.connect(ip, port);
+    // client.connect(ip, port);
     System.out.println("Connected to server at " + ip + ":" + port);
   }
 
@@ -106,7 +106,7 @@ public class ViewController {
 
   /** Sends the current username to the server using the client. */
   public void sendUsernameToServer() {
-    //client.sendUsername(username);
+    // client.sendUsername(username);
   }
 
   /** Enum representing the different views available in the TypeRacer game application. */
