@@ -1,5 +1,8 @@
 package typeracer.client.view;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -14,7 +17,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
-import javafx.stage.Stage;
+import typeracer.client.ViewController;
 
 /**
  * Represents the game results user interface for the TypeRacer game. This class sets up the GUI
@@ -22,49 +25,57 @@ import javafx.stage.Stage;
  */
 public class GameResultsUi extends VBox {
 
-  /** Constructs a GameResultsUi pane. Initializes the layout with specified spacing. */
-  public GameResultsUi() {
+  /** The controller managing views and handling interactions. */
+  private ViewController viewController;
+
+  /**
+   * Constructs a new GameResultsUi and initializes its user interface.
+   *
+   * @param viewController The controller to manage views and handle interactions.
+   */
+  public GameResultsUi(ViewController viewController) {
     super(10);
+    this.viewController = viewController;
     initializeUi();
   }
 
   /** Initializes the UI elements of the GameResultsUi pane. */
   private void initializeUi() {
     this.setAlignment(Pos.CENTER);
-    this.setPadding(new Insets(20));
-    this.setStyle(
-        "-fx-background-color: " + StyleManager.colorToHex(StyleManager.BACKGROUND_COLOR) + ";");
+    this.setSpacing(20);
+    this.setBackground(
+        new Background(
+            new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
     Label titleLabel = new Label("Game Results");
     titleLabel.setFont(StyleManager.BOLD_FONT);
     titleLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: black;");
 
     VBox statsBox = createStatsBox();
-    VBox leaderboardPanel = createLeaderboard();
-    leaderboardPanel.setPadding(new Insets(20, 0, 20, 0));
+    // VBox leaderboardPanel = createLeaderboard();
+    // leaderboardPanel.setPadding(new Insets(20, 0, 20, 0));
 
     Button playAgainButton =
         StyleManager.createStyledButton(
             "play again", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
-    Button exitButton =
+    Button mainMenuButton =
         StyleManager.createStyledButton(
-            "exit", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
+            "main menu", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
 
-    HBox buttonBox = new HBox(20, playAgainButton, exitButton);
+    HBox buttonBox = new HBox(20, playAgainButton, mainMenuButton);
     buttonBox.setAlignment(Pos.CENTER);
 
-    this.getChildren().addAll(titleLabel, statsBox, leaderboardPanel, buttonBox);
+    this.getChildren().addAll(titleLabel, statsBox, buttonBox);
 
-    playAgainButton.setOnAction(
-        e -> StyleManager.switchToGameUi((Stage) this.getScene().getWindow()));
-    exitButton.setOnAction(e -> closeWindow());
+    playAgainButton.setOnAction(e -> ViewController.switchToLobbyUi());
+    mainMenuButton.setOnAction(e -> ViewController.switchToMainMenu());
 
     StyleManager.applyFadeInAnimation(titleLabel, 1000);
     StyleManager.applyFadeInAnimation(statsBox, 1200);
-    StyleManager.applyFadeInAnimation(leaderboardPanel, 1400);
+    // StyleManager.applyFadeInAnimation(leaderboardPanel, 1400);
     StyleManager.applyFadeInAnimation(buttonBox, 1600);
 
-    StyleManager.applyButtonHoverAnimation(playAgainButton, exitButton);
+    StyleManager.applyButtonHoverAnimation(playAgainButton, mainMenuButton);
   }
 
   /**
@@ -90,15 +101,32 @@ public class GameResultsUi extends VBox {
     Label statsLabel = new Label("Your Stats:");
     statsLabel.setFont(StyleManager.ITALIC_FONT);
 
-    Label wpmLabel = new Label("WPM: 0");
+    Label wpmLabel = new Label();
+    DoubleProperty wpmProperty =
+        viewController.getPlayerWpmProperty(viewController.getCurrentPlayerId());
+    wpmLabel.textProperty().bind(Bindings.format("WPM: %.2f", wpmProperty));
     wpmLabel.setFont(StyleManager.STANDARD_FONT);
 
-    Label errorsLabel = new Label("Errors: 0");
-    errorsLabel.setFont(StyleManager.STANDARD_FONT);
+    Label accuracyLabel = new Label();
+    accuracyLabel
+        .textProperty()
+        .bind(
+            viewController
+                .getPlayerAccuracyProperty(viewController.getCurrentPlayerId())
+                .multiply(100)
+                .asString("Accuracy: %.2f%%"));
+    accuracyLabel.setFont(StyleManager.STANDARD_FONT);
 
-    statsBox.getChildren().addAll(statsLabel, wpmLabel, errorsLabel);
+    Label errorLabel = new Label();
+    IntegerProperty errorProperty =
+        viewController.getPlayerErrorsProperty(viewController.getCurrentPlayerId());
+    errorLabel.textProperty().bind(Bindings.format("Errors: %d", errorProperty));
+    errorLabel.setFont(StyleManager.STANDARD_FONT);
+
+    statsBox.getChildren().addAll(statsLabel, wpmLabel, accuracyLabel, errorLabel);
     VBox.setMargin(statsBox, new Insets(10, 200, 10, 200));
     VBox.setMargin(statsLabel, new Insets(0, 0, 10, 0));
+
     return statsBox;
   }
 
@@ -107,36 +135,23 @@ public class GameResultsUi extends VBox {
    *
    * @return A VBox containing the leaderboard.
    */
-  private VBox createLeaderboard() {
-    VBox leaderboardBox = new VBox(10);
-    leaderboardBox.setAlignment(Pos.CENTER);
-    leaderboardBox.setPadding(new Insets(10));
-    leaderboardBox.setStyle(
-        "-fx-background-color: "
-            + StyleManager.colorToHex(StyleManager.GREY_BOX)
-            + "; -fx-border-color: black; -fx-border-width: 1px;");
 
-    Label leaderboardTitle = new Label("Leaderboard:");
-    leaderboardTitle.setFont(StyleManager.ITALIC_FONT);
-
-    VBox.setMargin(leaderboardTitle, new Insets(0, 0, 10, 0));
-
-    Label playerA = new Label("1. Player A - WPM: 0, Errors: 0");
-    Label playerB = new Label("2. Player B - WPM: 0, Errors: 0");
-    Label playerC = new Label("3. Player C - WPM: 0, Errors: 0");
-
-    playerA.setFont(StyleManager.STANDARD_FONT);
-    playerB.setFont(StyleManager.STANDARD_FONT);
-    playerC.setFont(StyleManager.STANDARD_FONT);
-
-    leaderboardBox.getChildren().addAll(leaderboardTitle, playerA, playerB, playerC);
-    VBox.setMargin(leaderboardBox, new Insets(10, 200, 50, 200));
-    return leaderboardBox;
-  }
-
-  /** Closes the current window. */
-  private void closeWindow() {
-    Stage stage = (Stage) this.getScene().getWindow();
-    stage.close();
-  }
+  /**
+   * private VBox createLeaderboard() { VBox leaderboardBox = new VBox(10);
+   * leaderboardBox.setAlignment(Pos.CENTER); leaderboardBox.setPadding(new Insets(10));
+   * leaderboardBox.setStyle( "-fx-background-color: " +
+   * StyleManager.colorToHex(StyleManager.GREY_BOX) + "; -fx-border-color: black; -fx-border-width:
+   * 1px;");
+   *
+   * <p>Label leaderboardTitle = new Label("Leaderboard:");
+   * leaderboardTitle.setFont(StyleManager.ITALIC_FONT);
+   *
+   * <p>VBox.setMargin(leaderboardTitle, new Insets(0, 0, 10, 0));
+   *
+   * <p>ListView<String> leaderboardListView = new ListView<>();
+   * leaderboardListView.setItems(viewController.topPlayersProperty());
+   *
+   * <p>leaderboardBox.getChildren().addAll(leaderboardTitle, leaderboardListView);
+   * VBox.setMargin(leaderboardBox, new Insets(10, 200, 50, 200)); return leaderboardBox; }*
+   */
 }

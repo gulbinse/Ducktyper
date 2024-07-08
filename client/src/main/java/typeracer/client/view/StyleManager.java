@@ -3,13 +3,11 @@ package typeracer.client.view;
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
@@ -18,8 +16,12 @@ import javafx.util.Duration;
  * application.
  */
 public class StyleManager {
-  /** Background color for the UI. */
-  public static final Color BACKGROUND_COLOR = Color.web("#F5F5F5");
+
+  /**
+   * The color used for the start screen background. This color is defined as a web color with the
+   * hex code "#2374AB".
+   */
+  public static final Color START_SCREEN = Color.web("#2374AB");
 
   /** Color for green buttons. */
   public static final Color GREEN_BUTTON = Color.web("#009900");
@@ -63,13 +65,14 @@ public class StyleManager {
     String defaultStyle =
         "-fx-background-color: "
             + hexColor
-            + "; -fx-text-fill: white; "
-            + "-fx-border-width: 0; -fx-border-color: transparent;";
+            + "; -fx-text-fill: white; -fx-border-width: "
+            + "0; -fx-border-color: transparent;";
     String hoverStyle =
         "-fx-background-color: "
             + hexColor
-            + "; -fx-text-fill: white; "
-            + "-fx-border-color: white; -fx-border-width: 2px;";
+            + "; -fx-text-fill: white; -fx-border-color: "
+            + "white; -fx-border-width: 2px;";
+
     button.setStyle(defaultStyle);
     button.setFont(font);
     button.setOnMouseEntered(
@@ -87,6 +90,15 @@ public class StyleManager {
           scaleDown.setToX(1.0);
           scaleDown.setToY(1.0);
           scaleDown.play();
+        });
+    button.setOnMouseClicked(
+        e -> {
+          ScaleTransition clickScale = new ScaleTransition(Duration.millis(100), button);
+          clickScale.setToX(0.9);
+          clickScale.setToY(0.9);
+          clickScale.setCycleCount(2);
+          clickScale.setAutoReverse(true);
+          clickScale.play();
         });
     button.setMinSize(120, 40);
     button.setMaxSize(120, 40);
@@ -106,72 +118,6 @@ public class StyleManager {
         (int) (color.getRed() * 255),
         (int) (color.getGreen() * 255),
         (int) (color.getBlue() * 255));
-  }
-
-  /**
-   * Switches the scene of the given stage.
-   *
-   * @param stage The stage on which to set the scene.
-   * @param scene The scene to display on the stage.
-   */
-  public static void switchToScene(Stage stage, Scene scene) {
-    stage.setScene(scene);
-    stage.show();
-  }
-
-  /**
-   * Switches to the main menu scene.
-   *
-   * @param stage The stage on which to set the main menu scene.
-   */
-  public static void switchToMainMenu(Stage stage) {
-    MainMenuUi mainMenuUi = new MainMenuUi();
-    Scene scene = new Scene(mainMenuUi, 400, 450);
-    switchToScene(stage, scene);
-  }
-
-  /**
-   * Switches to the game UI scene.
-   *
-   * @param stage The stage on which to set the game UI scene.
-   */
-  public static void switchToGameUi(Stage stage) {
-    GameUi gameUi = new GameUi();
-    Scene scene = new Scene(gameUi, 800, 600);
-    switchToScene(stage, scene);
-  }
-
-  /**
-   * Switches to the game results UI scene.
-   *
-   * @param stage The stage on which to set the game results UI scene.
-   */
-  public static void switchToGameResultUi(Stage stage) {
-    GameResultsUi gameResultUi = new GameResultsUi();
-    Scene scene = new Scene(gameResultUi, stage.getWidth(), stage.getHeight());
-    switchToScene(stage, scene);
-  }
-
-  /**
-   * Switches to the player statistics UI scene.
-   *
-   * @param stage The stage on which to set the player statistics UI scene.
-   */
-  public static void switchToStatsUi(Stage stage) {
-    PlayerStatsUi statsUi = new PlayerStatsUi();
-    Scene scene = new Scene(statsUi, 400.0, 450.0);
-    switchToScene(stage, scene);
-  }
-
-  /**
-   * Switches to the profile settings UI scene.
-   *
-   * @param stage The stage on which to set the profile settings UI scene.
-   */
-  public static void switchToProfileSettingsUi(Stage stage) {
-    ProfileSettingsUi profileSettingsUi = new ProfileSettingsUi();
-    Scene scene = new Scene(profileSettingsUi, 400.0, 450.0);
-    switchToScene(stage, scene);
   }
 
   /**
