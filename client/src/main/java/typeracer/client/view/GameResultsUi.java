@@ -119,7 +119,7 @@ public class GameResultsUi extends VBox {
 
     Label errorLabel = new Label();
     IntegerProperty errorProperty =
-        viewController.getPlayerErrorsProperty(viewController.getCurrentPlayerId());
+        viewController.getPlayerErrorsProperty();
     errorLabel.textProperty().bind(Bindings.format("Errors: %d", errorProperty));
     errorLabel.setFont(StyleManager.STANDARD_FONT);
 

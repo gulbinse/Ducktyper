@@ -1,6 +1,7 @@
 package typeracer.client.view;
 
 import java.util.stream.Collectors;
+import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
@@ -24,6 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.util.Duration;
 import typeracer.client.ViewController;
 
 /**
@@ -41,12 +43,6 @@ public class GameUi extends VBox {
   /** The text field where the user inputs their typing. */
   private TextField inputText;
 
-  /** The label displaying the current words per minute (WPM). */
-  private Label wpmLabel;
-
-  /** The label displaying the current number of errors. */
-  private Label errorsLabel;
-
   /** The label displaying the top players. */
   private Label topPlayersLabel;
 
@@ -56,6 +52,8 @@ public class GameUi extends VBox {
   private int currentCharIndex = 0;
 
   private String gameText;
+
+  private ImageView gooseImage;
 
   /**
    * Constructs a new GameUi and initializes its user interface.
@@ -79,6 +77,7 @@ public class GameUi extends VBox {
     addDisplayPanel();
     addInputPanel();
     addStatsPanel();
+    addGooseAnimation();
     addTopPlayersPanel();
     addButtonPanel();
   }
@@ -145,8 +144,9 @@ public class GameUi extends VBox {
     int currentPlayerId = viewController.getCurrentPlayerId();
     char expectedCharacter = getCurrentExpectedCharacter();
 
-    if (typedCharacter.isEmpty() || typedCharacter.charAt(0) != expectedCharacter) {
-      IntegerProperty errorsProperty = viewController.getPlayerErrorsProperty(currentPlayerId);
+    //TODO: Display wrong or correct character maybe by color
+    if (typedCharacter != expectedCharacter) {
+      IntegerProperty errorsProperty = viewController.getPlayerErrorsProperty();
       errorsProperty.set(errorsProperty.get() + 1);
     }
   }
@@ -194,7 +194,7 @@ public class GameUi extends VBox {
 
     Label errorsLabel = new Label();
     IntegerProperty errorsProperty =
-        viewController.getPlayerErrorsProperty(viewController.getCurrentPlayerId());
+        viewController.getPlayerErrorsProperty();
     errorsLabel.textProperty().bind(Bindings.format("Errors: %d", errorsProperty));
     errorsLabel.setAlignment(Pos.CENTER_RIGHT);
 
@@ -216,6 +216,35 @@ public class GameUi extends VBox {
     VBox.setMargin(statsPanel, new Insets(10, 50, 10, 50));
     getChildren().add(statsPanel);
   }
+
+  private void addGooseAnimation() {
+    Image gooseImg = new Image(getClass().getResourceAsStream("/images/gooseanimation.gif"));
+    gooseImage = new ImageView(gooseImg);
+    gooseImage.setVisible(false);
+    gooseImage.setFitHeight(50);
+    gooseImage.setPreserveRatio(true);
+    getChildren().add(gooseImage);
+  }
+
+  private void startGooseAnimation(int trackLength) {
+    gooseImage.setVisible(true);
+    double startX = -gooseImage.getBoundsInLocal().getWidth();
+    double endX = trackLength;
+
+    TranslateTransition transition = new TranslateTransition(Duration.seconds(5), gooseImage);
+    transition.setFromX(startX);
+    transition.setToX(endX);
+    transition.setOnFinished(event -> gooseImage.setVisible(false));
+    transition.play();
+  }
+
+  private void checkAndStartGooseAnimation() {
+    int maxPlayers = viewController.getMaxPlayers();
+    if (maxPlayers > 3) {
+      startGooseAnimation((int) inputText.getWidth());
+    }
+  }
+
 
   /** Adds a panel to display the top players. The panel is styled and positioned within the UI. */
   private void addTopPlayersPanel() {
@@ -308,6 +337,7 @@ public class GameUi extends VBox {
   public void onViewShown() {
     if (usernameLabel != null) {
       usernameLabel.setText(viewController.getUsername());
+      //checkAndStartGooseAnimation();
     }
   }
 }
