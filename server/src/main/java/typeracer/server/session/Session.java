@@ -97,7 +97,7 @@ public final class Session {
    * @param character the input character
    * @return <code>true</code> if the typed character is correct, <code>false</code> otherwise
    */
-  public TypingResult validateCharacter(int playerId, char character) {
+  public TypingResult validateCharacter(int playerId, char character) throws IllegalArgumentException {
     return game.typeCharacter(playerId, character);
   }
 
