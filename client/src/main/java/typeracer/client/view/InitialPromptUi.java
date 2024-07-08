@@ -5,6 +5,7 @@ import javafx.animation.RotateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -37,6 +38,8 @@ public class InitialPromptUi extends VBox {
 
   /** The primary stage of the application. */
   private Stage stage;
+
+  private ComboBox<String> modeDropdown;
 
   /**
    * Constructs a new InitialPromptUi and initializes its user interface components.
@@ -105,7 +108,12 @@ public class InitialPromptUi extends VBox {
     portField.setPromptText("Port");
     ipField.setFocusTraversable(false);
 
-    inputPanel.getChildren().addAll(usernameAndButtonPanel, ipField, portField);
+    modeDropdown = new ComboBox<>();
+    modeDropdown.getItems().addAll("1", "2", "3");
+    modeDropdown.setPromptText("Select max players");
+    modeDropdown.setMaxWidth(150);
+
+    inputPanel.getChildren().addAll(usernameAndButtonPanel, ipField, portField, modeDropdown);
 
     return inputPanel;
   }
@@ -160,7 +168,7 @@ public class InitialPromptUi extends VBox {
 
     Image titleImage = new Image(getClass().getResourceAsStream("/images/title.png"));
     ImageView titleImageView = new ImageView(titleImage);
-    titleImageView.setFitWidth(350);
+    titleImageView.setFitWidth(400);
     titleImageView.setPreserveRatio(true);
     imagePanel.getChildren().add(titleImageView);
 
@@ -210,22 +218,17 @@ public class InitialPromptUi extends VBox {
     String username = usernameField.getText().trim();
     String ip = ipField.getText().trim();
     String port = portField.getText().trim();
+    int maxPlayers = getPlayerCount();
 
-    if (username.isEmpty()) {
-      showAlert("Please enter a username.");
+    if (username.isEmpty() || ip.isEmpty() || port.isEmpty() || maxPlayers == -1) {
+      showAlert("Please fill in all fields correctly.");
       return;
     }
 
     try {
       int portNumber = Integer.parseInt(port);
-      if (portNumber < 1 || portNumber > 65535) {
-        showAlert("Please enter a valid port number (1-65535).");
-        return;
-      }
-      viewController.connectToServer(ip, portNumber);
-      viewController.setUsername(username);
-      viewController.sendUsernameToServer();
-      ViewController.switchToMainMenu();
+      viewController.connectToServer(ip, portNumber, username);
+      viewController.switchToMainMenu();
     } catch (NumberFormatException e) {
       showAlert("Please enter a valid port number.");
     } catch (Exception e) {
@@ -242,4 +245,18 @@ public class InitialPromptUi extends VBox {
     Alert alert = new Alert(Alert.AlertType.ERROR, message);
     alert.showAndWait();
   }
+
+  public int getPlayerCount() {
+    if (modeDropdown.getValue() != null && !modeDropdown.getValue().isEmpty()) {
+      try {
+        return Integer.parseInt(modeDropdown.getValue());
+      } catch (NumberFormatException e) {
+        showAlert("Please select a valid number for max players.");
+      }
+    } else {
+      showAlert("Please select the maximum number of players.");
+    }
+    return -1;
+  }
+
 }

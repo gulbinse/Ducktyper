@@ -55,6 +55,8 @@ public class ViewController {
   /** The username of the current user. */
   private String username;
 
+  private InitialPromptUi initialPromptUi;
+
   /** A map of player IDs to their WPM properties. */
   private Map<Integer, DoubleProperty> playerWpms = new HashMap<>();
 
@@ -77,17 +79,7 @@ public class ViewController {
   /** An observable list of player usernames. */
   private ObservableList<String> playerUsernames = FXCollections.observableArrayList();
 
-  /**
-   * Connects to the server with the given IP address and port number.
-   *
-   * @param ip The IP address of the server.
-   * @param port The port number of the server.
-   * @throws IOException If an I/O error occurs when attempting to connect to the server.
-   */
-  public void connectToServer(String ip, int port) throws IOException {
-    //client.connect(ip, port);
-    System.out.println("Connected to server at " + ip + ":" + port);
-  }
+  private IntegerProperty maxPlayers = new SimpleIntegerProperty();
 
   /**
    * Constructs a ViewController with a given stage and client. Initializes the view mappings and
@@ -104,9 +96,44 @@ public class ViewController {
     initializeTopPlayers();
   }
 
+
+  /**
+   * Connects to the server with the given IP address and port number.
+   *
+   * @param ip The IP address of the server.
+   * @param port The port number of the server.
+   * @throws IOException If an I/O error occurs when attempting to connect to the server.
+   */
+  public void connectToServer(String ip, int port, String username) throws IOException {
+    //TODO: add Logic, that makes Client connect to Server and transfer username
+    System.out.println("Connected to server at " + ip + ":" + port + " with max players: "
+            + maxPlayers);
+  }
+
+  public static void setPlayerReady(boolean isReady){
+    //TODO: add Logic, that makes Client send a ReadyRequest to Server
+  }
+
+  public void handleCharacterTyped(char character){
+    //TODO: add Logic, that makes Client send a CharacterRequest to Server
+  }
+
+  public void handleCharacterAnswer(boolean isCorrect){
+    //TODO: add Logic to display in GameUi whether the typed character was correct or not
+  }
+
+  /**
+   * Attempts to create a new session with a specified number of maximum players.
+   */
+  public void createSession() {
+      int maxPlayers = initialPromptUi.getPlayerCount();
+      client.createNewSession(maxPlayers);
+      System.out.println("Session created with a max of " + maxPlayers + " players.");
+  }
+
   /** Sends the current username to the server using the client. */
   public void sendUsernameToServer() {
-    //client.sendUsername(username);
+    client.sendUsername(username);
   }
 
   /** Enum representing the different views available in the TypeRacer game application. */
@@ -187,8 +214,6 @@ public class ViewController {
 
   /** Starts a new game by fetching the game text and updating the UI accordingly. */
   public static void startNewGame() {
-    String gameText = client.fetchNewGameText();
-    updateGameText(gameText);
     handleResetStats();
     switchToGameUi();
   }
@@ -313,10 +338,9 @@ public class ViewController {
   /**
    * Returns the error count property for the specified player ID.
    *
-   * @param playerId The ID of the player.
    * @return The error count property for the player.
    */
-  public IntegerProperty getPlayerErrorsProperty(int playerId) {
+  public IntegerProperty getPlayerErrorsProperty() {
     return playerErrors.computeIfAbsent(playerId, k -> new SimpleIntegerProperty());
   }
 
@@ -331,6 +355,14 @@ public class ViewController {
         () -> {
           playerErrors.computeIfAbsent(playerId, k -> new SimpleIntegerProperty()).set(errors);
         });
+  }
+
+  public int getMaxPlayers() {
+    return maxPlayers.get();
+  }
+
+  public IntegerProperty maxPlayersProperty() {
+    return maxPlayers;
   }
 
   /** Initializes the list of top players. */
