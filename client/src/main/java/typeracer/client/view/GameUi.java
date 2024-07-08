@@ -113,7 +113,7 @@ public class GameUi extends VBox {
     displayText.setWrapText(true);
     displayText.setPrefHeight(150);
     displayText.setMaxWidth(Double.MAX_VALUE);
-    displayText.textProperty().bind(viewController.gameTextProperty());
+    displayText.setText(viewController.getGameTextProperty());
     VBox panel = new VBox();
     panel.setAlignment(Pos.CENTER);
     panel.setPadding(new Insets(10, 50, 10, 50));
@@ -135,13 +135,13 @@ public class GameUi extends VBox {
     inputText.setMaxWidth(Double.MAX_VALUE);
     inputText.setPadding(new Insets(10));
     inputText.setStyle("-fx-alignment: top-left;");
-    inputText.setOnKeyTyped(event -> handleTyping(event.getCharacter()));
+    inputText.setOnKeyTyped(event -> handleTyping(event.getCharacter().charAt(0))); //TODO: eine Methode um char zurückzugeben
     panel.getChildren().add(inputText);
     getChildren().add(panel);
   }
 
-  private void handleTyping(String typedCharacter) {
-    int currentPlayerId = viewController.getCurrentPlayerId();
+  private void handleTyping(char typedCharacter) {
+    viewController.handleCharacterTyped(typedCharacter);
     char expectedCharacter = getCurrentExpectedCharacter();
 
     //TODO: Display wrong or correct character maybe by color

@@ -223,8 +223,8 @@ public class ViewController {
     switchToGameResultUi();
   }
 
-  public StringProperty gameTextProperty() {
-    return gameText;
+  public String getGameTextProperty() {
+    return String.valueOf(gameText);
   }
 
   /**
@@ -232,7 +232,7 @@ public class ViewController {
    *
    * @param newText The new game text to set.
    */
-  public static void updateGameText(String newText) {
+  public void updateGameText(String newText) {
     gameText.set(newText);
   }
 
@@ -333,15 +333,6 @@ public class ViewController {
         () -> {
           playerProgresses.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(progress);
         });
-  }
-
-  /**
-   * Returns the error count property for the specified player ID.
-   *
-   * @return The error count property for the player.
-   */
-  public IntegerProperty getPlayerErrorsProperty() {
-    return playerErrors.computeIfAbsent(playerId, k -> new SimpleIntegerProperty());
   }
 
   /**
