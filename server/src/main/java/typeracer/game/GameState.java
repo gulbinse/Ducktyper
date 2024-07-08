@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import typeracer.communication.statuscodes.GameStatus;
 
 /**
  * The class stores the current state of the {@link TypeRacerGame} game, including the game status,
@@ -11,17 +12,7 @@ import java.util.Set;
  */
 public class GameState {
 
-  /** Represents the Status of the TypeWriter game. */
-  public enum GameStatus {
-    /** Game is still running. */
-    RUNNING,
-    /** Game is over because all players have finished their text. */
-    FINISHED,
-    /** Game hasn't started yet because not every player is ready yet. */
-    WAITING_FOR_READY
-  }
-
-  private GameStatus gameStatus = GameStatus.WAITING_FOR_READY;
+  private GameStatus gameStatus = GameStatus.WAITING_FOR_PLAYERS;
 
   private final String textToType;
 
@@ -30,7 +21,7 @@ public class GameState {
   /**
    * A constructor which creates a new default GameState.
    *
-   * <p>Initially the GameStatus is set to {@link GameStatus#WAITING_FOR_READY}.
+   * <p>Initially the GameStatus is set to {@link GameStatus#WAITING_FOR_PLAYERS}.
    *
    * @param textSource from which the text of the game should come from
    */
@@ -79,7 +70,7 @@ public class GameState {
    * Returns the status of the current game.
    *
    * <p>Possible status are: {@link GameStatus#RUNNING}, {@link GameStatus#FINISHED}, {@link
-   * GameStatus#WAITING_FOR_READY}
+   * GameStatus#WAITING_FOR_PLAYERS}
    *
    * @return current status
    */

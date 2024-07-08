@@ -1,31 +1,22 @@
 package typeracer.game;
 
+import typeracer.server.utils.TypingResult;
+
 /** Represents a player of the game. */
 public class Player {
-  private String username;
+  private final int id;
   private final PlayerState state;
   private static final long MINUTES_TO_NANO_SECONDS_FACTOR = 10 ^ 9;
   private long gameStartTime;
-
-  /** A result of trying to type a character. */
-  public enum TypingResult {
-    /** The typing was correct. */
-    CORRECT,
-
-    /** The typing was incorrect. */
-    INCORRECT,
-
-    /** This Player has already finished the game. */
-    PLAYER_FINISHED_ALREADY
-  }
+  private int typingAttempts = 0;
 
   /**
    * Creates a new Player with the given username.
    *
-   * @param username The username of the player
+   * @param id The unique ID of the player
    */
-  public Player(String username) {
-    this.username = username;
+  public Player(int id) {
+    this.id = id;
     state = new PlayerState();
   }
 
@@ -34,8 +25,8 @@ public class Player {
    *
    * @return this Player's username
    */
-  public String getUsername() {
-    return username;
+  public int getId() {
+    return id;
   }
 
   /**
@@ -48,11 +39,21 @@ public class Player {
   }
 
   /**
+   * Returns this Player's current accuracy.
+   *
+   * @return this Player's current accuracy
+   */
+  public double getAccuracy() {
+    return state.getAccuracy();
+  }
+
+  /**
    * Returns this Player's current words per minute.
    *
    * @return this Player's current words per minute
    */
   public double getWordsPerMinute() {
+    updateWordsPerMinute();
     return state.getWordsPerMinute();
   }
 
@@ -107,6 +108,7 @@ public class Player {
   synchronized TypingResult typeCharacter(
       char typedCharacter, String textToType, long gameStartTime) {
     this.gameStartTime = gameStartTime;
+    typingAttempts++;
     int currentTextIndex = state.getCurrentTextIndex();
     char correctCharacter = textToType.charAt(currentTextIndex);
 
@@ -131,10 +133,15 @@ public class Player {
       }
       return TypingResult.CORRECT;
     }
+    double accuracy =
+        (double) state.getCurrentTextIndex() // current text index = correctly typed characters
+            / typingAttempts;
+    state.setAccuracy(accuracy);
     return TypingResult.INCORRECT;
   }
 
-  private synchronized void updateAllTypingSpeeds() {
+  /** Updates the typing speeds (e.g. words per minute) of this player. */
+  public void updateAllTypingSpeeds() {
     updateWordsPerMinute();
     updateCharactersPerMinute();
   }

@@ -16,7 +16,6 @@ plugins {
 
 dependencies {
     implementation project(':communication')
-    implementation project(':game')
 }
 
 application {
