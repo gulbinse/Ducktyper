@@ -30,7 +30,7 @@ public class LobbyUi extends VBox {
   private Button backButton;
   private ViewController viewController;
   private Label usernameLabel;
-  private boolean isReady  = false;
+  private boolean isReady = false;
   private ClientSideSessionData clientSideSessionData;
 
   /**
@@ -46,13 +46,12 @@ public class LobbyUi extends VBox {
   }
 
   /**
-   * Populates the player list with names retrieved from client-side session data.
-   * The list includes all player names, with the active user's name prepended by " - Active".
+   * Populates the player list with names retrieved from client-side session data. The list includes
+   * all player names, with the active user's name prepended by " - Active".
    */
   private void populatePlayerList() {
-    ObservableList<String> playerNames = FXCollections.observableArrayList(
-            clientSideSessionData.getPlayerNameById().values()
-    );
+    ObservableList<String> playerNames =
+        FXCollections.observableArrayList(clientSideSessionData.getPlayerNameById().values());
     playerNames.add(0, clientSideSessionData.getUsername() + " - Active");
     playerList.setItems(playerNames);
   }
@@ -62,11 +61,12 @@ public class LobbyUi extends VBox {
     this.setAlignment(Pos.CENTER);
     this.setSpacing(20);
     this.setPadding(new Insets(45));
-    this.setBackground(new Background(
+    this.setBackground(
+        new Background(
             new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
-    ImageView titleImageView = new ImageView(new Image(getClass().getResourceAsStream(
-            "/images/title.png")));
+    ImageView titleImageView =
+        new ImageView(new Image(getClass().getResourceAsStream("/images/title.png")));
     titleImageView.setFitWidth(350);
     titleImageView.setPreserveRatio(true);
 
@@ -77,10 +77,12 @@ public class LobbyUi extends VBox {
     playerList.setPrefHeight(200);
     customizePlayerList();
 
-    readyButton = StyleManager.createStyledButton("ready", StyleManager.GREEN_BUTTON,
-            StyleManager.STANDARD_FONT);
-    backButton = StyleManager.createStyledButton("back", StyleManager.BLUE_BUTTON,
-            StyleManager.STANDARD_FONT);
+    readyButton =
+        StyleManager.createStyledButton(
+            "ready", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
+    backButton =
+        StyleManager.createStyledButton(
+            "back", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
     readyButton.setOnAction(e -> toggleReadyState());
     backButton.setOnAction(e -> ViewController.switchToMainMenu());
 
@@ -92,9 +94,9 @@ public class LobbyUi extends VBox {
   }
 
   /**
-   * Toggles the player's ready state and updates the UI accordingly.
-   * This method inverts the current ready state, updates the view controller
-   * with the new state, repopulates the player list, and switches the UI to the game view.
+   * Toggles the player's ready state and updates the UI accordingly. This method inverts the
+   * current ready state, updates the view controller with the new state, repopulates the player
+   * list, and switches the UI to the game view.
    */
   private void toggleReadyState() {
     isReady = !isReady;
@@ -104,29 +106,31 @@ public class LobbyUi extends VBox {
   }
 
   /**
-   * Customizes the player list to display player names with a status indicator.
-   * Each list cell contains a circle representing the player's status (green for active,
-   * gray for inactive) and a label with the player's name.
+   * Customizes the player list to display player names with a status indicator. Each list cell
+   * contains a circle representing the player's status (green for active, gray for inactive) and a
+   * label with the player's name.
    */
   private void customizePlayerList() {
-    playerList.setCellFactory(lv -> new ListCell<String>() {
-      private final Circle statusCircle = new Circle(5);
-      private final Label nameLabel = new Label();
-      private final HBox cellLayout = new HBox(10, statusCircle, nameLabel);
+    playerList.setCellFactory(
+        lv ->
+            new ListCell<String>() {
+              private final Circle statusCircle = new Circle(5);
+              private final Label nameLabel = new Label();
+              private final HBox cellLayout = new HBox(10, statusCircle, nameLabel);
 
-      @Override
-      protected void updateItem(String item, boolean empty) {
-        super.updateItem(item, empty);
-        if (empty || item == null) {
-          setGraphic(null);
-        } else {
-          nameLabel.setText(item.split(" - ")[0]);
-          String status = item.contains("Active") ? "Active" : "Inactive";
-          statusCircle.setFill("Active".equals(status) ? Color.GREEN : Color.GRAY);
-          setGraphic(cellLayout);
-        }
-      }
-    });
+              @Override
+              protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                  setGraphic(null);
+                } else {
+                  nameLabel.setText(item.split(" - ")[0]);
+                  String status = item.contains("Active") ? "Active" : "Inactive";
+                  statusCircle.setFill("Active".equals(status) ? Color.GREEN : Color.GRAY);
+                  setGraphic(cellLayout);
+                }
+              }
+            });
   }
 
   /** Called in ViewController when the view is shown to the user. Sets the username label. */
