@@ -16,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import typeracer.client.ClientSideSessionData;
 import typeracer.client.ViewController;
 
 /**
@@ -35,6 +36,8 @@ public class InitialPromptUi extends VBox {
   /** The controller to manage views and handle interactions. */
   private ViewController viewController;
 
+  private ClientSideSessionData clientSideSessionData;
+
   /** The primary stage of the application. */
   private Stage stage;
 
@@ -46,6 +49,7 @@ public class InitialPromptUi extends VBox {
    */
   public InitialPromptUi(ViewController viewController, Stage stage) {
     this.viewController = viewController;
+    this.clientSideSessionData = new ClientSideSessionData();
     this.stage = stage;
     initializeUi();
   }
@@ -160,7 +164,7 @@ public class InitialPromptUi extends VBox {
 
     Image titleImage = new Image(getClass().getResourceAsStream("/images/title.png"));
     ImageView titleImageView = new ImageView(titleImage);
-    titleImageView.setFitWidth(350);
+    titleImageView.setFitWidth(400);
     titleImageView.setPreserveRatio(true);
     imagePanel.getChildren().add(titleImageView);
 
@@ -211,21 +215,16 @@ public class InitialPromptUi extends VBox {
     String ip = ipField.getText().trim();
     String port = portField.getText().trim();
 
-    if (username.isEmpty()) {
-      showAlert("Please enter a username.");
+    if (username.isEmpty() || ip.isEmpty() || port.isEmpty()) {
+      showAlert("Please fill in all fields correctly.");
       return;
     }
 
     try {
-      int portNumber = Integer.parseInt(port);
-      if (portNumber < 1 || portNumber > 65535) {
-        showAlert("Please enter a valid port number (1-65535).");
-        return;
-      }
-      viewController.connectToServer(ip, portNumber);
-      viewController.setUsername(username);
-      viewController.sendUsernameToServer();
-      ViewController.switchToMainMenu();
+      ClientSideSessionData.getInstance().setUsername(username);
+      // int portNumber = Integer.parseInt(port);
+      // viewController.connectToServer(username, ip, portNumber);
+      viewController.switchToMainMenu();
     } catch (NumberFormatException e) {
       showAlert("Please enter a valid port number.");
     } catch (Exception e) {

@@ -3,6 +3,7 @@ package typeracer.client.view;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -17,6 +18,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
+import typeracer.client.ClientSideSessionData;
 import typeracer.client.ViewController;
 
 /**
@@ -43,6 +45,8 @@ public class PlayerStatsUi extends VBox {
   /** Label for displaying the average accuracy. */
   private Label averageAccuracyLabel;
 
+  private ClientSideSessionData clientSideSessionData;
+
   /**
    * Constructs a new PlayerStatsUi and initializes its user interface.
    *
@@ -50,6 +54,7 @@ public class PlayerStatsUi extends VBox {
    */
   public PlayerStatsUi(ViewController viewController) {
     this.viewController = viewController;
+    this.clientSideSessionData = new ClientSideSessionData();
     initializeUi();
   }
 
@@ -111,16 +116,24 @@ public class PlayerStatsUi extends VBox {
     Label wpmLabel = new Label();
     Label accuracyLabel = new Label();
 
-    DoubleProperty wpmProperty =
-        viewController.getPlayerWpmProperty(viewController.getCurrentPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
-    accuracyLabel
-        .textProperty()
-        .bind(
-            viewController
-                .getPlayerAccuracyProperty(viewController.getCurrentPlayerId())
-                .multiply(100)
-                .asString("%.2f%% Accuracy"));
+    IntegerProperty wpmProperty =
+        clientSideSessionData.getPlayerWpms().get(clientSideSessionData.getId());
+    DoubleProperty accuracyProperty =
+        clientSideSessionData.getPlayerAccuracies().get(clientSideSessionData.getId());
+
+    if (wpmProperty != null) {
+      wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
+    } else {
+      wpmLabel.setText("WPM: N/A");
+    }
+
+    if (accuracyProperty != null) {
+      accuracyLabel
+          .textProperty()
+          .bind(Bindings.format("%.2f%% Accuracy", Bindings.multiply(accuracyProperty, 100.0)));
+    } else {
+      accuracyLabel.setText("Accuracy: N/A");
+    }
 
     wpmLabel.setAlignment(Pos.CENTER_LEFT);
     accuracyLabel.setAlignment(Pos.CENTER_RIGHT);

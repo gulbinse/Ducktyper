@@ -1,11 +1,12 @@
 package typeracer.client.view;
 
-import java.util.stream.Collectors;
+import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -24,6 +25,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.util.Duration;
+import typeracer.client.ClientSideSessionData;
 import typeracer.client.ViewController;
 
 /**
@@ -41,12 +44,6 @@ public class GameUi extends VBox {
   /** The text field where the user inputs their typing. */
   private TextField inputText;
 
-  /** The label displaying the current words per minute (WPM). */
-  private Label wpmLabel;
-
-  /** The label displaying the current number of errors. */
-  private Label errorsLabel;
-
   /** The label displaying the top players. */
   private Label topPlayersLabel;
 
@@ -57,12 +54,19 @@ public class GameUi extends VBox {
 
   private String gameText;
 
+  private ImageView gooseImage;
+
+  private Label feedbackLabel;
+
+  private ClientSideSessionData clientSideSessionData;
+
   /**
    * Constructs a new GameUi and initializes its user interface.
    *
    * @param viewController The controller to manage views and handle interactions.
    */
   public GameUi(ViewController viewController) {
+    this.clientSideSessionData = new ClientSideSessionData();
     this.viewController = viewController;
     initUi();
   }
@@ -78,14 +82,22 @@ public class GameUi extends VBox {
     addUserLabel();
     addDisplayPanel();
     addInputPanel();
+    addFeedbackLabel();
     addStatsPanel();
+    addGooseAnimation();
     addTopPlayersPanel();
     addButtonPanel();
   }
 
   /** Adds a label to display the username. The label is styled and positioned within the UI. */
   private void addUserLabel() {
-    usernameLabel = new Label("Default User");
+    String username = ClientSideSessionData.getInstance().getUsername();
+
+    if (username == null || username.isEmpty()) {
+      username = "Default User";
+    }
+
+    usernameLabel = new Label(username);
     usernameLabel.setFont(StyleManager.BOLD_FONT);
     usernameLabel.setPadding(new Insets(5, 10, 5, 10));
     usernameLabel.setBackground(
@@ -114,7 +126,7 @@ public class GameUi extends VBox {
     displayText.setWrapText(true);
     displayText.setPrefHeight(150);
     displayText.setMaxWidth(Double.MAX_VALUE);
-    displayText.textProperty().bind(viewController.gameTextProperty());
+    displayText.setText(clientSideSessionData.getGameText());
     VBox panel = new VBox();
     panel.setAlignment(Pos.CENTER);
     panel.setPadding(new Insets(10, 50, 10, 50));
@@ -136,18 +148,55 @@ public class GameUi extends VBox {
     inputText.setMaxWidth(Double.MAX_VALUE);
     inputText.setPadding(new Insets(10));
     inputText.setStyle("-fx-alignment: top-left;");
-    inputText.setOnKeyTyped(event -> handleTyping(event.getCharacter()));
+    inputText.setOnKeyTyped(
+        event ->
+            handleTyping(
+                event.getCharacter().charAt(0))); // TODO: eine Methode um char zurückzugeben
     panel.getChildren().add(inputText);
     getChildren().add(panel);
   }
 
-  private void handleTyping(String typedCharacter) {
-    int currentPlayerId = viewController.getCurrentPlayerId();
+  /** Adds the feedback label to the UI */
+  private void addFeedbackLabel() {
+    feedbackLabel = new Label();
+    feedbackLabel.setTextFill(Color.RED);
+    feedbackLabel.setFont(StyleManager.STANDARD_FONT);
+    feedbackLabel.setAlignment(Pos.CENTER);
+    feedbackLabel.setPadding(new Insets(5, 0, 5, 0));
+    getChildren().add(feedbackLabel);
+  }
+
+  /**
+   * Method to display feedback about the typing accuracy.
+   *
+   * @param isCorrect Whether the typed character was correct.
+   */
+  public void displayTypingFeedback(boolean isCorrect) {
+    if (isCorrect) {
+      feedbackLabel.setText("Correct!");
+      feedbackLabel.setTextFill(Color.GREEN);
+    } else {
+      feedbackLabel.setText("Incorrect!");
+      feedbackLabel.setTextFill(Color.RED);
+    }
+  }
+
+  private void handleTyping(char typedCharacter) {
+    viewController.handleCharacterTyped(typedCharacter);
     char expectedCharacter = getCurrentExpectedCharacter();
 
-    if (typedCharacter.isEmpty() || typedCharacter.charAt(0) != expectedCharacter) {
-      IntegerProperty errorsProperty = viewController.getPlayerErrorsProperty(currentPlayerId);
+    int currentPlayerId = clientSideSessionData.getId();
+
+    IntegerProperty errorsProperty = clientSideSessionData.getPlayerErrors().get(currentPlayerId);
+    if (errorsProperty == null) {
+      errorsProperty = new SimpleIntegerProperty(0);
+      clientSideSessionData.getPlayerErrors().put(currentPlayerId, errorsProperty);
+    }
+    if (typedCharacter != expectedCharacter) {
       errorsProperty.set(errorsProperty.get() + 1);
+      displayTypingFeedback(false);
+    } else {
+      displayTypingFeedback(true);
     }
   }
 
@@ -176,32 +225,51 @@ public class GameUi extends VBox {
                 CornerRadii.EMPTY,
                 new BorderWidths(1))));
 
+    int currentPlayerId = clientSideSessionData.getId();
+
+    // WPM Label
     Label wpmLabel = new Label();
-    DoubleProperty wpmProperty =
-        viewController.getPlayerWpmProperty(viewController.getCurrentPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
+    SimpleIntegerProperty wpmProperty = clientSideSessionData.getPlayerWpms().get(currentPlayerId);
+    if (wpmProperty != null) {
+      wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
+    } else {
+      wpmLabel.setText("WPM: N/A");
+    }
     wpmLabel.setAlignment(Pos.CENTER_LEFT);
 
     Label accuracyLabel = new Label();
-    accuracyLabel
-        .textProperty()
-        .bind(
-            viewController
-                .getPlayerAccuracyProperty(viewController.getCurrentPlayerId())
-                .multiply(100)
-                .asString("%.2f%% Accuracy"));
+    DoubleProperty accuracyProperty =
+        clientSideSessionData.getPlayerAccuracies().get(currentPlayerId);
+    if (accuracyProperty != null) {
+      accuracyLabel
+          .textProperty()
+          .bind(
+              Bindings.createStringBinding(
+                  () -> String.format("%.2f%% Accuracy", accuracyProperty.get() * 100),
+                  accuracyProperty));
+    } else {
+      accuracyLabel.setText("Accuracy: N/A");
+    }
     accuracyLabel.setAlignment(Pos.CENTER);
 
+    // Errors Label
     Label errorsLabel = new Label();
-    IntegerProperty errorsProperty =
-        viewController.getPlayerErrorsProperty(viewController.getCurrentPlayerId());
-    errorsLabel.textProperty().bind(Bindings.format("Errors: %d", errorsProperty));
+    IntegerProperty errorsProperty = clientSideSessionData.getPlayerErrors().get(currentPlayerId);
+    if (errorsProperty != null) {
+      errorsLabel.textProperty().bind(Bindings.format("Errors: %d", errorsProperty));
+    } else {
+      errorsLabel.setText("Errors: N/A");
+    }
     errorsLabel.setAlignment(Pos.CENTER_RIGHT);
 
     ProgressBar progressBar = new ProgressBar();
-    progressBar
-        .progressProperty()
-        .bind(viewController.getPlayerProgressProperty(viewController.getCurrentPlayerId()));
+    DoubleProperty progressProperty =
+        clientSideSessionData.getPlayerProgresses().get(currentPlayerId);
+    if (progressProperty != null) {
+      progressBar.progressProperty().bind(progressProperty);
+    } else {
+      progressBar.setProgress(0);
+    }
     progressBar.setPrefWidth(200);
 
     VBox wpmContainer = new VBox(wpmLabel);
@@ -212,9 +280,29 @@ public class GameUi extends VBox {
     statsPanel
         .getChildren()
         .addAll(wpmContainer, accuracyContainer, progressBarContainer, errorsContainer);
-
     VBox.setMargin(statsPanel, new Insets(10, 50, 10, 50));
     getChildren().add(statsPanel);
+  }
+
+  private void addGooseAnimation() {
+    Image gooseImg = new Image(getClass().getResourceAsStream("/images/gooseanimation.gif"));
+    gooseImage = new ImageView(gooseImg);
+    gooseImage.setVisible(false);
+    gooseImage.setFitHeight(50);
+    gooseImage.setPreserveRatio(true);
+    getChildren().add(gooseImage);
+  }
+
+  private void startGooseAnimation(int trackLength) {
+    gooseImage.setVisible(true);
+    double startX = -gooseImage.getBoundsInLocal().getWidth();
+    double endX = trackLength;
+
+    TranslateTransition transition = new TranslateTransition(Duration.seconds(5), gooseImage);
+    transition.setFromX(startX);
+    transition.setToX(endX);
+    transition.setOnFinished(event -> gooseImage.setVisible(false));
+    transition.play();
   }
 
   /** Adds a panel to display the top players. The panel is styled and positioned within the UI. */
@@ -239,7 +327,7 @@ public class GameUi extends VBox {
     getChildren().add(topPlayersPanel);
     topPlayersLabel
         .textProperty()
-        .bind(createTopPlayersBinding(viewController.topPlayersProperty()));
+        .bind(createTopPlayersBinding(clientSideSessionData.topPlayersProperty()));
     VBox.setMargin(topPlayersPanel, new Insets(10, 50, 10, 50));
   }
 
@@ -255,10 +343,10 @@ public class GameUi extends VBox {
           if (topPlayers.isEmpty()) {
             return "Top players: None";
           } else {
-            return "Top players: " + topPlayers.stream().collect(Collectors.joining(", "));
+            return "Top players: " + String.join(", ", topPlayers.get());
           }
         },
-        topPlayers);
+        topPlayers); // This binding will now properly observe changes to the list property
   }
 
   /**
@@ -306,8 +394,12 @@ public class GameUi extends VBox {
    * view controller.
    */
   public void onViewShown() {
-    if (usernameLabel != null) {
-      usernameLabel.setText(viewController.getUsername());
+    String currentUsername = clientSideSessionData.getUsername();
+    if (currentUsername != null && !currentUsername.isEmpty()) {
+      usernameLabel.setText(currentUsername);
+    } else {
+      usernameLabel.setText("Default User");
+      // checkAndStartGooseAnimation();
     }
   }
 }

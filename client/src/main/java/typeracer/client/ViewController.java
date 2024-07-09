@@ -2,19 +2,8 @@ package typeracer.client;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import typeracer.client.view.GameResultsUi;
@@ -29,19 +18,19 @@ import typeracer.client.view.ProfileSettingsUi;
 public class ViewController {
 
   /** The width of the application window. */
-  private static final int WINDOW_WIDTH = 800;
+  private static final int WINDOW_WIDTH = 2200;
 
   /** The height of the application window. */
-  private static final int WINDOW_HEIGHT = 600;
+  private static final int WINDOW_HEIGHT = 2000;
 
   /** The width of the lobby window. */
-  private static final int LOBBY_WIDTH = 600;
+  private static final int LOBBY_WIDTH = 800;
 
   /** The height of the lobby window. */
-  private static final int LOBBY_HEIGHT = 400;
+  private static final int LOBBY_HEIGHT = 600;
 
   /** A map of view names to their corresponding scenes. */
-  private static Map<ViewName, Scene> views;
+  private static Map<ViewName, Scene> views = new HashMap<>();
 
   /** The primary stage of the application. */
   private static Stage stage;
@@ -49,45 +38,9 @@ public class ViewController {
   /** The client handling the backend communication. */
   private static Client client;
 
-  /** The ID of the current player. */
-  private int currentPlayerId;
+  private GameUi gameUi;
 
-  /** The username of the current user. */
-  private String username;
-
-  /** A map of player IDs to their WPM properties. */
-  private Map<Integer, DoubleProperty> playerWpms = new HashMap<>();
-
-  /** A map of player IDs to their accuracy properties. */
-  private Map<Integer, DoubleProperty> playerAccuracies = new HashMap<>();
-
-  /** A map of player IDs to their progress properties. */
-  private Map<Integer, DoubleProperty> playerProgresses = new HashMap<>();
-
-  /** A map of player IDs to their error count properties. */
-  private Map<Integer, IntegerProperty> playerErrors = new HashMap<>();
-
-  /** A list property of the top players' usernames. */
-  private ListProperty<String> topPlayers =
-      new SimpleListProperty<>(FXCollections.observableArrayList());
-
-  /** The game text property. */
-  private static StringProperty gameText = new SimpleStringProperty();
-
-  /** An observable list of player usernames. */
-  private ObservableList<String> playerUsernames = FXCollections.observableArrayList();
-
-  /**
-   * Connects to the server with the given IP address and port number.
-   *
-   * @param ip The IP address of the server.
-   * @param port The port number of the server.
-   * @throws IOException If an I/O error occurs when attempting to connect to the server.
-   */
-  public void connectToServer(String ip, int port) throws IOException {
-    //client.connect(ip, port);
-    System.out.println("Connected to server at " + ip + ":" + port);
-  }
+  private ClientSideSessionData sessionData = new ClientSideSessionData();
 
   /**
    * Constructs a ViewController with a given stage and client. Initializes the view mappings and
@@ -98,15 +51,54 @@ public class ViewController {
    */
   public ViewController(Stage stage, Client client) {
     this.stage = stage;
+    this.gameUi = new GameUi(this);
     views = new HashMap<>();
     this.client = client;
     initializeViews();
-    initializeTopPlayers();
   }
 
-  /** Sends the current username to the server using the client. */
-  public void sendUsernameToServer() {
-    //client.sendUsername(username);
+  public static void setPlayerReady(boolean isReady) {
+    if (client != null) {
+      client.sendReadyState(isReady);
+    } else {
+      System.out.println("Client is not initialized.");
+    }
+  }
+
+  /**
+   * Connects to the server with the given IP address and port number.
+   *
+   * @param ip The IP address of the server.
+   * @param port The port number of the server.
+   * @throws IOException If an I/O error occurs when attempting to connect to the server.
+   */
+  public void connectToServer(String username, String ip, int port) throws IOException {
+    // TODO: add Logic, that makes Client connect to Server and transfer username
+    // client.sendUsername(username);
+    // client.connect(ip, port);
+    System.out.println("Connected to server at " + ip + ":" + port);
+  }
+
+  public void handleCharacterTyped(char character) {
+    // TODO: add Logic, that makes Client send a CharacterRequest to Server
+    if (client != null) {
+      client.sendCharacter(character);
+    } else {
+      System.out.println("Error: Client is not initialized.");
+    }
+  }
+
+  /**
+   * Handles the response from the server about the character typed.
+   *
+   * @param isCorrect whether the character typed was correct
+   */
+  public void handleCharacterAnswer(boolean isCorrect) {
+    // TODO: add Logic to display in GameUi whether the typed character was correct or not
+    Platform.runLater(
+        () -> { // Update the Game UI with feedback
+          gameUi.displayTypingFeedback(isCorrect);
+        });
   }
 
   /** Enum representing the different views available in the TypeRacer game application. */
@@ -133,42 +125,6 @@ public class ViewController {
     LOBBY
   }
 
-  /**
-   * Sets the username for the current session.
-   *
-   * @param username The username of the player.
-   */
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  /**
-   * Returns the current username.
-   *
-   * @return The username of the player.
-   */
-  public String getUsername() {
-    return username;
-  }
-
-  /**
-   * Returns the current player's ID.
-   *
-   * @return The ID of the current player.
-   */
-  public int getCurrentPlayerId() {
-    return currentPlayerId;
-  }
-
-  /**
-   * Returns an observable list of player usernames.
-   *
-   * @return An observable list containing the usernames of the players.
-   */
-  public ObservableList<String> getPlayerUsernames() {
-    return playerUsernames;
-  }
-
   /** Initializes the different views used in the application. */
   private void initializeViews() {
     views.put(
@@ -185,162 +141,9 @@ public class ViewController {
     views.put(ViewName.LOBBY, new Scene(new LobbyUi(this), LOBBY_WIDTH, LOBBY_HEIGHT));
   }
 
-  /** Starts a new game by fetching the game text and updating the UI accordingly. */
-  public static void startNewGame() {
-    String gameText = client.fetchNewGameText();
-    updateGameText(gameText);
-    handleResetStats();
-    switchToGameUi();
-  }
-
   /** Ends the current game, updates stats, and switches the UI to display game results. */
   public void endGame() {
     switchToGameResultUi();
-  }
-
-  public StringProperty gameTextProperty() {
-    return gameText;
-  }
-
-  /**
-   * Updates the game text with the specified new text.
-   *
-   * @param newText The new game text to set.
-   */
-  public static void updateGameText(String newText) {
-    gameText.set(newText);
-  }
-
-  /**
-   * Returns the WPM property for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @return The WPM property for the player.
-   */
-  public DoubleProperty getPlayerWpmProperty(int playerId) {
-    return playerWpms.computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
-  }
-
-  /**
-   * Returns the accuracy property for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @return The accuracy property for the player.
-   */
-  public DoubleProperty getPlayerAccuracyProperty(int playerId) {
-    return playerAccuracies.computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
-  }
-
-  /**
-   * Returns the progress property for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @return The progress property for the player.
-   */
-  public DoubleProperty getPlayerProgressProperty(int playerId) {
-    return playerProgresses.computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
-  }
-
-  /**
-   * Sets the WPM value for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @param wpm The WPM value to set.
-   */
-  public void setPlayerWpm(int playerId, double wpm) {
-    getPlayerWpmProperty(playerId).set(wpm);
-  }
-
-  /**
-   * Sets the accuracy value for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @param accuracy The accuracy value to set.
-   */
-  public void setPlayerAccuracy(int playerId, double accuracy) {
-    getPlayerAccuracyProperty(playerId).set(accuracy);
-  }
-
-  /**
-   * Sets the progress value for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @param progress The progress value to set.
-   */
-  public void setPlayerProgress(int playerId, double progress) {
-    getPlayerProgressProperty(playerId).set(progress);
-  }
-
-  /**
-   * Updates the WPM value for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @param wpm The new WPM value to set.
-   */
-  public void updatePlayerWpm(int playerId, double wpm) {
-    Platform.runLater(
-        () -> {
-          playerWpms.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(wpm);
-        });
-  }
-
-  /**
-   * Updates the accuracy value for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @param accuracy The new accuracy value to set.
-   */
-  public void updatePlayerAccuracy(int playerId, double accuracy) {
-    Platform.runLater(
-        () -> {
-          playerAccuracies.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(accuracy);
-        });
-  }
-
-  /**
-   * Updates the progress value for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @param progress The new progress value to set.
-   */
-  public void updatePlayerProgress(int playerId, double progress) {
-    Platform.runLater(
-        () -> {
-          playerProgresses.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(progress);
-        });
-  }
-
-  /**
-   * Returns the error count property for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @return The error count property for the player.
-   */
-  public IntegerProperty getPlayerErrorsProperty(int playerId) {
-    return playerErrors.computeIfAbsent(playerId, k -> new SimpleIntegerProperty());
-  }
-
-  /**
-   * Updates the error count for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @param errors The new error count to set.
-   */
-  public void updatePlayerErrors(int playerId, int errors) {
-    Platform.runLater(
-        () -> {
-          playerErrors.computeIfAbsent(playerId, k -> new SimpleIntegerProperty()).set(errors);
-        });
-  }
-
-  /** Initializes the list of top players. */
-  private void initializeTopPlayers() {
-    List<String> players = client.getTopPlayers();
-    topPlayers.set(FXCollections.observableArrayList(players));
-  }
-
-  public ListProperty<String> topPlayersProperty() {
-    return topPlayers;
   }
 
   /**
