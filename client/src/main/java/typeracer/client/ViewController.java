@@ -114,7 +114,7 @@ public class ViewController {
 
 
 
-    private ClientSidePlayerData playerData;
+    private ClientSidePlayerData playerData = new ClientSidePlayerData();
     /**
      * Constructs a ViewController with a given stage and client. Initializes the view mappings and
      * sets up the initial views.
@@ -128,7 +128,6 @@ public class ViewController {
         this.client = client;
         initializeViews();
         initializeTopPlayers();
-        playerData = new ClientSidePlayerData();
     }
 
     /**
@@ -215,9 +214,25 @@ public class ViewController {
     /**
      * Starts a new game by fetching the game text and updating the UI accordingly.
      */
-    //TODO: This method should be called by view on receiving a GameStateNotification with GameStatus == Running
-    public static void startNewGame() {
+    //TODO: This method should be called by Client on receiving a GameStateNotification with GameStatus == Running
+    public void startNewGame() {
         switchToGameUi();
+    }
+
+    /**
+     * Adds a player to the game on client side
+     *
+     * @param playerId of joined player
+     * @param playerName of joined player
+     */
+    //TODO: this method should be called by Client on receiving a PlayerJoinedNotification
+    public void addPlayerToGame(int playerId, String playerName) {
+        playerData.addPlayer(playerId, playerName);
+    }
+
+    //TODO: this method should be called by Client on receiving a PlayerLeftNotification
+    public void removePlayerFromGame(int playerId){
+        playerData.removePlayer(playerId);
     }
 
     /**

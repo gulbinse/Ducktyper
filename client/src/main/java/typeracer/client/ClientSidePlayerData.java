@@ -26,7 +26,7 @@ public class ClientSidePlayerData {
     private Map<Integer, IntegerProperty> playerErrors = new HashMap<>();
     private ListProperty<String> topPlayers =
             new SimpleListProperty<>(FXCollections.observableArrayList());
-    String gameText;
+    String gameText = "Text";
 
     public String getUsername() {
         return username;
@@ -104,4 +104,25 @@ public class ClientSidePlayerData {
         this.gameText = gameText;
     }
 
+    public void addPlayer(int playerId, String playerName) {
+        playerNameById.put(playerId, playerName);
+        playerReady.put(playerId, new SimpleBooleanProperty(false));
+        playerWpms.put(playerId, new SimpleIntegerProperty(0));
+        playerAccuracies.put(playerId, new SimpleDoubleProperty(0));
+        playerProgresses.put(playerId, new SimpleDoubleProperty(0));
+        playerErrors.put(playerId, new SimpleIntegerProperty(0));
+    }
+
+    public void removePlayer(int playerId) {
+        playerNameById.remove(playerId);
+        playerReady.remove(playerId);
+        playerWpms.remove(playerId);
+        playerAccuracies.remove(playerId);
+        playerProgresses.remove(playerId);
+        playerErrors.remove(playerId);
+        String playerName = playerNameById.get(playerId);
+        if (topPlayers.get().contains(playerName)) {
+            topPlayers.remove(playerName);
+        }
+    }
 }
