@@ -1,9 +1,10 @@
 package typeracer.client.view;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -16,6 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import typeracer.client.ClientSideSessionData;
 import typeracer.client.ViewController;
 
 /**
@@ -26,9 +28,10 @@ public class LobbyUi extends VBox {
   private ListView<String> playerList;
   private Button readyButton;
   private Button backButton;
-  private ComboBox<String> modeDropdown;
   private ViewController viewController;
   private Label usernameLabel;
+  private boolean isReady  = false;
+  private ClientSideSessionData clientSideSessionData;
 
   /**
    * Constructor to initialize the Lobby UI.
@@ -37,34 +40,33 @@ public class LobbyUi extends VBox {
    */
   public LobbyUi(ViewController viewController) {
     this.viewController = viewController;
+    this.clientSideSessionData = ClientSideSessionData.getInstance();
     initializeUi();
-    updateUsernameLabel();
+    populatePlayerList();
   }
 
   /**
-   * Updates the username label based on the current user's username. If the username is not set or
-   * is empty, the label will display a default message.
+   * Populates the player list with names retrieved from client-side session data.
+   * The list includes all player names, with the active user's name prepended by " - Active".
    */
-  private void updateUsernameLabel() {
-    String username = viewController.getUsername();
-    if (username != null && !username.isEmpty()) {
-      usernameLabel.setText(username);
-    } else {
-      usernameLabel.setText("No username set");
-    }
+  private void populatePlayerList() {
+    ObservableList<String> playerNames = FXCollections.observableArrayList(
+            clientSideSessionData.getPlayerNameById().values()
+    );
+    playerNames.add(0, clientSideSessionData.getUsername() + " - Active");
+    playerList.setItems(playerNames);
   }
 
   /** Initializes the UI components and layout. */
   private void initializeUi() {
     this.setAlignment(Pos.CENTER);
     this.setSpacing(20);
-    this.setPadding(new Insets(15));
-    this.setBackground(
-        new Background(
+    this.setPadding(new Insets(45));
+    this.setBackground(new Background(
             new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
-    Image titleImage = new Image(getClass().getResourceAsStream("/images/title.png"));
-    ImageView titleImageView = new ImageView(titleImage);
+    ImageView titleImageView = new ImageView(new Image(getClass().getResourceAsStream(
+            "/images/title.png")));
     titleImageView.setFitWidth(350);
     titleImageView.setPreserveRatio(true);
 
@@ -73,64 +75,64 @@ public class LobbyUi extends VBox {
 
     playerList = new ListView<>();
     playerList.setPrefHeight(200);
-    playerList.setItems(viewController.getPlayerUsernames());
     customizePlayerList();
 
-    modeDropdown = new ComboBox<>();
-    modeDropdown.getItems().addAll("Trial", "Duo", "Trio");
-    modeDropdown.setPromptText("Select game mode");
-
-    VBox modeSelection = new VBox(10);
-    modeSelection.getChildren().addAll(modeDropdown);
-
-    readyButton =
-        StyleManager.createStyledButton(
-            "ready", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
-    backButton =
-        StyleManager.createStyledButton(
-            "back", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
-    readyButton.setOnAction(e -> ViewController.startNewGame());
+    readyButton = StyleManager.createStyledButton("ready", StyleManager.GREEN_BUTTON,
+            StyleManager.STANDARD_FONT);
+    backButton = StyleManager.createStyledButton("back", StyleManager.BLUE_BUTTON,
+            StyleManager.STANDARD_FONT);
+    readyButton.setOnAction(e -> toggleReadyState());
     backButton.setOnAction(e -> ViewController.switchToMainMenu());
 
     HBox buttonBox = new HBox(10);
     buttonBox.setAlignment(Pos.CENTER);
     buttonBox.getChildren().addAll(backButton, readyButton);
 
-    this.getChildren().addAll(titleImageView, playerList, modeSelection, buttonBox);
+    this.getChildren().addAll(titleImageView, usernameLabel, playerList, buttonBox);
   }
 
-  /** Customizes the player list by setting a custom cell factory to display player statuses. */
+  /**
+   * Toggles the player's ready state and updates the UI accordingly.
+   * This method inverts the current ready state, updates the view controller
+   * with the new state, repopulates the player list, and switches the UI to the game view.
+   */
+  private void toggleReadyState() {
+    isReady = !isReady;
+    viewController.setPlayerReady(isReady);
+    populatePlayerList();
+    viewController.switchToGameUi();
+  }
+
+  /**
+   * Customizes the player list to display player names with a status indicator.
+   * Each list cell contains a circle representing the player's status (green for active,
+   * gray for inactive) and a label with the player's name.
+   */
   private void customizePlayerList() {
-    playerList.setCellFactory(
-        lv ->
-            new ListCell<String>() {
-              private final Circle statusCircle = new Circle(5);
-              private final Label nameLabel = new Label();
-              private final HBox cellLayout = new HBox(10, statusCircle, nameLabel);
+    playerList.setCellFactory(lv -> new ListCell<String>() {
+      private final Circle statusCircle = new Circle(5);
+      private final Label nameLabel = new Label();
+      private final HBox cellLayout = new HBox(10, statusCircle, nameLabel);
 
-              @Override
-              protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                  setGraphic(null);
-                } else {
-                  String[] parts = item.split(" - ");
-                  if (parts.length > 1) {
-                    nameLabel.setText(parts[0]);
-                    statusCircle.setFill("Active".equals(parts[1]) ? Color.GREEN : Color.RED);
-                  } else {
-                    nameLabel.setText(parts[0]);
-                    statusCircle.setFill(Color.GRAY);
-                  }
-                  setGraphic(cellLayout);
-                }
-              }
-            });
+      @Override
+      protected void updateItem(String item, boolean empty) {
+        super.updateItem(item, empty);
+        if (empty || item == null) {
+          setGraphic(null);
+        } else {
+          nameLabel.setText(item.split(" - ")[0]);
+          String status = item.contains("Active") ? "Active" : "Inactive";
+          statusCircle.setFill("Active".equals(status) ? Color.GREEN : Color.GRAY);
+          setGraphic(cellLayout);
+        }
+      }
+    });
   }
 
-  /** Called when the view is shown to the user. Sets the username label. */
+  /** Called in ViewController when the view is shown to the user. Sets the username label. */
   public void onViewShown() {
-    updateUsernameLabel();
+    populatePlayerList();
+    ClientSideSessionData.getInstance().getUsername();
     playerList.refresh();
   }
 }
