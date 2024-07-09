@@ -34,7 +34,7 @@ public class InitialPromptUi extends VBox {
   private TextField portField;
 
   /** The controller to manage views and handle interactions. */
-  private ViewController viewController;
+  private final ViewController viewController;
 
   /** The primary stage of the application. */
   private Stage stage;

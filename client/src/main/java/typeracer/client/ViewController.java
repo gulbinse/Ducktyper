@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
@@ -96,10 +97,6 @@ public class ViewController {
      */
     private static Client client;
 
-    /**
-     * The ID of the current player.
-     */
-    private int currentPlayerId;
 
     /**
      * The username of the current user.
@@ -108,25 +105,6 @@ public class ViewController {
 
     private InitialPromptUi initialPromptUi;
 
-    /**
-     * A map of player IDs to their WPM properties.
-     */
-    private Map<Integer, SimpleIntegerProperty> playerWpms = new HashMap<>();
-
-    /**
-     * A map of player IDs to their accuracy properties.
-     */
-    private Map<Integer, DoubleProperty> playerAccuracies = new HashMap<>();
-
-    /**
-     * A map of player IDs to their progress properties.
-     */
-    private Map<Integer, DoubleProperty> playerProgresses = new HashMap<>();
-
-    /**
-     * A map of player IDs to their error count properties.
-     */
-    private Map<Integer, IntegerProperty> playerErrors = new HashMap<>();
 
     /**
      * A list property of the top players' usernames.
@@ -134,18 +112,9 @@ public class ViewController {
     private ListProperty<String> topPlayers =
             new SimpleListProperty<>(FXCollections.observableArrayList());
 
-    /**
-     * The game text property.
-     */
-    private String gameText;
 
-    /**
-     * An observable list of player usernames.
-     */
-    private ObservableList<String> playerUsernames = FXCollections.observableArrayList();
 
-    private IntegerProperty maxPlayers = new SimpleIntegerProperty();
-
+    private ClientSidePlayerData playerData;
     /**
      * Constructs a ViewController with a given stage and client. Initializes the view mappings and
      * sets up the initial views.
@@ -159,8 +128,8 @@ public class ViewController {
         this.client = client;
         initializeViews();
         initializeTopPlayers();
+        playerData = new ClientSidePlayerData();
     }
-
 
     /**
      * Connects to the server with the given IP address and port number.
@@ -171,8 +140,8 @@ public class ViewController {
      */
     public void connectToServer(String ip, int port, String username) throws IOException {
         //TODO: add Logic, that makes Client connect to Server and transfer username
-        System.out.println("Connected to server at " + ip + ":" + port + " with max players: "
-                + maxPlayers);
+        System.out.println("Connected to server at " + ip + ":" + port);
+        this.username = username;
     }
 
     public static void setPlayerReady(boolean isReady) {
@@ -202,7 +171,7 @@ public class ViewController {
      * @return The username of the player.
      */
     public String getUsername() {
-        return username;
+        return playerData.getUsername();
     }
 
     /**
@@ -211,7 +180,7 @@ public class ViewController {
      * @return The ID of the current player.
      */
     public int getCurrentPlayerId() {
-        return currentPlayerId;
+        return playerData.getId();
     }
 
     /**
@@ -220,7 +189,7 @@ public class ViewController {
      * @return An observable list containing the usernames of the players.
      */
     public ObservableList<String> getPlayerUsernames() {
-        return playerUsernames;
+        return FXCollections.observableArrayList(playerData.getPlayerNameById().values());
     }
 
     /**
@@ -248,7 +217,6 @@ public class ViewController {
      */
     //TODO: This method should be called by view on receiving a GameStateNotification with GameStatus == Running
     public static void startNewGame() {
-        handleResetStats();
         switchToGameUi();
     }
 
@@ -261,7 +229,7 @@ public class ViewController {
     }
 
     public String getGameText() {
-        return String.valueOf(gameText);
+        return playerData.getGameText();
     }
 
     /**
@@ -271,7 +239,7 @@ public class ViewController {
      */
     //TODO: This method should be called by view on receiving a TextNotification. We have to make sure, that we always have a text when the game starts
     public void setGameText(String newText) {
-        this.gameText = newText;
+        playerData.setGameText(newText);
     }
 
     /**
@@ -281,7 +249,7 @@ public class ViewController {
      * @return The WPM property for the player.
      */
     public IntegerProperty getPlayerWpmProperty(int playerId) {
-        return playerWpms.computeIfAbsent(playerId, k -> new SimpleIntegerProperty());
+        return playerData.getPlayerWpms().computeIfAbsent(playerId, k -> new SimpleIntegerProperty());
     }
 
     /**
@@ -291,7 +259,7 @@ public class ViewController {
      * @return The accuracy property for the player.
      */
     public DoubleProperty getPlayerAccuracyProperty(int playerId) {
-        return playerAccuracies.computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
+        return playerData.getPlayerAccuracies().computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
     }
 
     /**
@@ -301,97 +269,21 @@ public class ViewController {
      * @return The progress property for the player.
      */
     public DoubleProperty getPlayerProgressProperty(int playerId) {
-        return playerProgresses.computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
+        return playerData.getPlayerProgresses().computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
     }
 
     /**
-     * Sets the WPM value for the specified player ID.
      *
-     * @param playerId The ID of the player.
-     * @param wpm      The WPM value to set.
+     * @param playerId
+     * @param playerWpm
+     * @param playerAccuracy
+     * @param playerProgress
      */
-    public void setPlayerWpm(int playerId, int wpm) {
-        getPlayerWpmProperty(playerId).set(wpm);
-    }
-
-    /**
-     * Sets the accuracy value for the specified player ID.
-     *
-     * @param playerId The ID of the player.
-     * @param accuracy The accuracy value to set.
-     */
-    public void setPlayerAccuracy(int playerId, double accuracy) {
-        getPlayerAccuracyProperty(playerId).set(accuracy);
-    }
-
-    /**
-     * Sets the progress value for the specified player ID.
-     *
-     * @param playerId The ID of the player.
-     * @param progress The progress value to set.
-     */
-    public void setPlayerProgress(int playerId, double progress) {
-        getPlayerProgressProperty(playerId).set(progress);
-    }
-
-    /**
-     * Updates the WPM value for the specified player ID.
-     *
-     * @param playerId The ID of the player.
-     * @param wpm      The new WPM value to set.
-     */
-    public void updatePlayerWpm(int playerId, int wpm) {
-        Platform.runLater(
-                () -> {
-                    playerWpms.computeIfAbsent(playerId, k -> new SimpleIntegerProperty()).set(wpm);
-                });
-    }
-
-    /**
-     * Updates the accuracy value for the specified player ID.
-     *
-     * @param playerId The ID of the player.
-     * @param accuracy The new accuracy value to set.
-     */
-    public void updatePlayerAccuracy(int playerId, double accuracy) {
-        Platform.runLater(
-                () -> {
-                    playerAccuracies.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(accuracy);
-                });
-    }
-
-    /**
-     * Updates the progress value for the specified player ID.
-     *
-     * @param playerId The ID of the player.
-     * @param progress The new progress value to set.
-     */
-    public void updatePlayerProgress(int playerId, double progress) {
-        Platform.runLater(
-                () -> {
-                    playerProgresses.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(progress);
-                });
-    }
-
-    /**
-     * Updates the error count for the specified player ID.
-     *
-     * @param playerId The ID of the player.
-     * @param errors   The new error count to set.
-     */
-    public void updatePlayerErrors(int playerId, int errors) {
-        Platform.runLater(
-                () -> {
-                    playerErrors.computeIfAbsent(playerId, k -> new SimpleIntegerProperty()).set(errors);
-                });
-    }
-
-    public int getMaxPlayers() {
-        return maxPlayers.get();
-    }
-
-    public IntegerProperty maxPlayersProperty() {
-        return maxPlayers;
+    //TODO: This method should be called by Client, when it receives a PlayerStateNotification
+    public void updatePlayerStateInformation(int playerId, int playerWpm, double playerAccuracy, double playerProgress) {
+        playerData.setPlayerWpms(playerId, playerWpm);
+        playerData.setPlayerAccuracies(playerId, playerAccuracy);
+        playerData.setPlayerProgresses(playerId, playerProgress);
     }
 
     /**
@@ -467,6 +359,7 @@ public class ViewController {
     /**
      * Switches the current scene to the lobby UI.
      */
+    // Was ist der Unterschied zwischen der Methode und startGame(); ?
     public static void switchToLobbyUi() {
         showView(ViewName.LOBBY);
         LobbyUi lobbyUi = (LobbyUi) views.get(ViewName.LOBBY).getRoot();
@@ -501,7 +394,7 @@ public class ViewController {
      * @param favoriteText The favorite text of the user.
      */
     public void saveUserSettings(String username, int wpmGoal, String favoriteText) {
-        client.saveSettings(username, wpmGoal, favoriteText);
+//        client.saveSettings(username, wpmGoal, favoriteText);
         showView(ViewName.MAIN_MENU);
     }
 

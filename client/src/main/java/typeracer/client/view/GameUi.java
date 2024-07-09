@@ -231,10 +231,10 @@ public class GameUi extends VBox {
   }
 
   private void checkAndStartGooseAnimation() {
-    int maxPlayers = viewController.getMaxPlayers();
-    if (maxPlayers > 3) {
-      startGooseAnimation((int) inputText.getWidth());
-    }
+//    int maxPlayers = viewController.getMaxPlayers();
+//    if (maxPlayers > 3) {
+//      startGooseAnimation((int) inputText.getWidth());
+//    }
   }
 
 
