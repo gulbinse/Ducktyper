@@ -102,9 +102,9 @@ public class GameResultsUi extends VBox {
     statsLabel.setFont(StyleManager.ITALIC_FONT);
 
     Label wpmLabel = new Label();
-    DoubleProperty wpmProperty =
+    IntegerProperty wpmProperty =
         viewController.getPlayerWpmProperty(viewController.getCurrentPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("WPM: %.2f", wpmProperty));
+    wpmLabel.textProperty().bind(Bindings.format("WPM: %d", wpmProperty));
     wpmLabel.setFont(StyleManager.STANDARD_FONT);
 
     Label accuracyLabel = new Label();
@@ -117,13 +117,8 @@ public class GameResultsUi extends VBox {
                 .asString("Accuracy: %.2f%%"));
     accuracyLabel.setFont(StyleManager.STANDARD_FONT);
 
-    Label errorLabel = new Label();
-    IntegerProperty errorProperty =
-        viewController.getPlayerErrorsProperty();
-    errorLabel.textProperty().bind(Bindings.format("Errors: %d", errorProperty));
-    errorLabel.setFont(StyleManager.STANDARD_FONT);
 
-    statsBox.getChildren().addAll(statsLabel, wpmLabel, accuracyLabel, errorLabel);
+    statsBox.getChildren().addAll(statsLabel, wpmLabel, accuracyLabel);
     VBox.setMargin(statsBox, new Insets(10, 200, 10, 200));
     VBox.setMargin(statsLabel, new Insets(0, 0, 10, 0));
 

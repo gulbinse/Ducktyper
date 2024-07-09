@@ -3,6 +3,7 @@ package typeracer.client.view;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -111,9 +112,9 @@ public class PlayerStatsUi extends VBox {
     Label wpmLabel = new Label();
     Label accuracyLabel = new Label();
 
-    DoubleProperty wpmProperty =
+    IntegerProperty wpmProperty =
         viewController.getPlayerWpmProperty(viewController.getCurrentPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
+    wpmLabel.textProperty().bind(Bindings.format("%d WPM", wpmProperty));
     accuracyLabel
         .textProperty()
         .bind(

@@ -108,12 +108,7 @@ public class InitialPromptUi extends VBox {
     portField.setPromptText("Port");
     ipField.setFocusTraversable(false);
 
-    modeDropdown = new ComboBox<>();
-    modeDropdown.getItems().addAll("1", "2", "3");
-    modeDropdown.setPromptText("Select max players");
-    modeDropdown.setMaxWidth(150);
-
-    inputPanel.getChildren().addAll(usernameAndButtonPanel, ipField, portField, modeDropdown);
+    inputPanel.getChildren().addAll(usernameAndButtonPanel, ipField, portField);
 
     return inputPanel;
   }
@@ -206,7 +201,7 @@ public class InitialPromptUi extends VBox {
   private void applyFadeInAnimation(ImageView imageView) {
     RotateTransition rotate = new RotateTransition(Duration.seconds(2), imageView);
     rotate.setByAngle(360);
-    rotate.setCycleCount(3);
+    rotate.setCycleCount(1);
     rotate.play();
   }
 
@@ -218,9 +213,8 @@ public class InitialPromptUi extends VBox {
     String username = usernameField.getText().trim();
     String ip = ipField.getText().trim();
     String port = portField.getText().trim();
-    int maxPlayers = getPlayerCount();
 
-    if (username.isEmpty() || ip.isEmpty() || port.isEmpty() || maxPlayers == -1) {
+    if (username.isEmpty() || ip.isEmpty() || port.isEmpty()) {
       showAlert("Please fill in all fields correctly.");
       return;
     }
