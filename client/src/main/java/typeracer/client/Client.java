@@ -2,7 +2,6 @@ package typeracer.client;
 
 import java.util.List;
 import java.util.Map;
-import typeracer.client.view.Main;
 
 /**
  * Entry point class for the TypeRacer game application. This class contains the main method which
@@ -15,13 +14,11 @@ public class Client {
   public Client() {}
 
   /**
-   * The main method that starts the TypeRacer game application. It delegates the responsibility of
-   * initializing and displaying the GUI to the {@link Main} class.
+   * The main method that starts the TypeRacer game application.
    *
    * @param args Command line arguments passed to the program (not used in this application).
    */
   public static void main(String[] args) {
-    Main.main(args);
   }
 
   /**

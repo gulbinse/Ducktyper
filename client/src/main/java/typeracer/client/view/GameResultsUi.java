@@ -1,7 +1,6 @@
 package typeracer.client.view;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,7 +25,7 @@ import typeracer.client.ViewController;
 public class GameResultsUi extends VBox {
 
   /** The controller managing views and handling interactions. */
-  private ViewController viewController;
+  private final ViewController viewController;
 
   /**
    * Constructs a new GameResultsUi and initializes its user interface.
@@ -67,7 +66,7 @@ public class GameResultsUi extends VBox {
 
     this.getChildren().addAll(titleLabel, statsBox, buttonBox);
 
-    playAgainButton.setOnAction(e -> ViewController.switchToLobbyUi());
+    playAgainButton.setOnAction(e -> viewController.switchToLobbyUi());
     mainMenuButton.setOnAction(e -> viewController.switchToMainMenu());
 
     StyleManager.applyFadeInAnimation(titleLabel, 1000);
@@ -125,13 +124,13 @@ public class GameResultsUi extends VBox {
     return statsBox;
   }
 
-  /**
+  /*
    * Creates the leaderboard panel displaying player rankings.
    *
    * @return A VBox containing the leaderboard.
    */
 
-  /**
+  /*
    * private VBox createLeaderboard() { VBox leaderboardBox = new VBox(10);
    * leaderboardBox.setAlignment(Pos.CENTER); leaderboardBox.setPadding(new Insets(10));
    * leaderboardBox.setStyle( "-fx-background-color: " +

@@ -2,7 +2,6 @@ package typeracer.client.view;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,7 +14,6 @@ import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import typeracer.client.ViewController;
@@ -27,7 +25,7 @@ import typeracer.client.ViewController;
  */
 public class PlayerStatsUi extends VBox {
   /** The view controller to manage views and handle interactions. */
-  private ViewController viewController;
+  private final ViewController viewController;
 
   /** Label for displaying the number of games played. */
   private Label gamesPlayedLabel;
@@ -76,18 +74,10 @@ public class PlayerStatsUi extends VBox {
             "back", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
     backButton.setOnAction(e -> viewController.switchToMainMenu());
 
-    Button resetButton =
-        StyleManager.createStyledButton(
-            "reset stats", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
-    resetButton.setOnAction(e -> viewController.handleResetStats());
-
-    HBox buttonBar = new HBox(10, backButton, resetButton);
-    buttonBar.setAlignment(Pos.CENTER);
-
-    this.getChildren().addAll(statsBox, buttonBar);
+    this.getChildren().addAll(statsBox, backButton);
 
     StyleManager.applyFadeInAnimation(statsBox, 1000);
-    StyleManager.applyButtonHoverAnimation(backButton, resetButton);
+    StyleManager.applyButtonHoverAnimation(backButton);
   }
 
   /**

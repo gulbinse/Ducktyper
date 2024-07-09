@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
@@ -27,12 +29,12 @@ import typeracer.client.view.ProfileSettingsUi;
 /**
  * Manages the transition between different scenes and states in the TypeRacer game application.
  */
-public class ViewController {
+public class ViewController extends Application {
 
     /**
      * Enum representing the different views available in the TypeRacer game application.
      */
-    public enum ViewName {
+    public enum SceneName {
         /**
          * The initial prompt view.
          */
@@ -69,6 +71,9 @@ public class ViewController {
         LOBBY
     }
 
+  /** The path to the application's stylesheet. */
+  private static final String STYLESHEET_PATH = "/styles.css";
+
     /**
      * The width of the application window.
      */
@@ -78,31 +83,28 @@ public class ViewController {
      *
      * The height of the application window.
      */
-    private static final int DEFAULT_WINDOW_HEIGHT = 600;
+    private static final int DEFAULT_WINDOW_HEIGHT = 650;
 
     /**
      * A map of view names to their corresponding scenes.
      */
-    private static Map<ViewName, Scene> views;
+    private static Map<SceneName, Scene> scenes;
 
     /**
      * The primary stage of the application.
      */
-    private static Stage stage;
+    private Stage primaryStage;
 
     /**
      * The client handling the backend communication.
      */
-    private static Client client;
+    private final Client client;
 
 
     /**
      * The username of the current user.
      */
     private String username;
-
-    private InitialPromptUi initialPromptUi;
-
 
     /**
      * A list property of the top players' usernames.
@@ -117,17 +119,69 @@ public class ViewController {
      * Constructs a ViewController with a given stage and client. Initializes the view mappings and
      * sets up the initial views.
      *
-     * @param stage  The primary stage of the application.
      * @param client The client handling the backend communication.
      */
-    public ViewController(Stage stage, Client client) {
-        this.stage = stage;
-        views = new HashMap<>();
+    public ViewController(Client client) {
+        scenes = new HashMap<>();
         this.client = client;
-        initializeViews();
         initializeTopPlayers();
         addDummyPlayer();
     }
+
+  /**
+   * Starts the application by setting up the primary stage.
+   *
+   * @param primaryStage The primary stage for this application.
+   */
+  @Override
+  public void start(Stage primaryStage) {
+    this.primaryStage = primaryStage;
+    primaryStage.setTitle("Ducktyper");
+
+    initializeScenes(primaryStage);
+
+    Platform.runLater(() -> showScene(SceneName.INITIAL_PROMPT));
+    primaryStage.setResizable(true);
+    primaryStage.setOnCloseRequest(event -> System.exit(0));
+    primaryStage.show();
+  }
+
+  /**
+   * Initializes the scenes for different views in the application.
+   *
+   * @param stage The primary stage for this application.
+   */
+  private void initializeScenes(Stage stage) {
+    addScene(SceneName.INITIAL_PROMPT, new InitialPromptUi(this, stage));
+    addScene(SceneName.MAIN_MENU, new MainMenuUi(this));
+    addScene(SceneName.GAME, new GameUi(this));
+    addScene(SceneName.STATS, new PlayerStatsUi(this));
+    addScene(SceneName.PROFILE_SETTINGS, new ProfileSettingsUi(this));
+    addScene(SceneName.GAME_RESULTS, new GameResultsUi(this));
+    addScene(SceneName.LOBBY, new LobbyUi(this));
+  }
+
+  /**
+   * Helper method to add views to the map.
+   */
+  private void addScene(SceneName sceneName, Parent ui) {
+    Scene scene = new Scene(ui, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+    loadStylesheets(scene);
+    scenes.put(sceneName, scene);
+  }
+
+  /**
+   * Loads the stylesheet for the given scene.
+   *
+   * @param scene The scene to which the stylesheet will be applied.
+   */
+  private void loadStylesheets(Scene scene) {
+    try {
+      scene.getStylesheets().add(STYLESHEET_PATH);
+    } catch (Exception e) {
+      System.err.println("Error loading stylesheets: " + e.getMessage());
+    }
+  }
 
     private void addDummyPlayer() {
         addPlayerToGame(1, "dummyPlayer");
@@ -200,26 +254,6 @@ public class ViewController {
      */
     public ObservableList<String> getPlayerUsernames() {
         return FXCollections.observableArrayList(playerData.getPlayerNameById().values());
-    }
-
-    /**
-     * Initializes the different views used in the application.
-     */
-    private void initializeViews() {
-        addView(ViewName.INITIAL_PROMPT, new InitialPromptUi(this, stage));
-        addView(ViewName.MAIN_MENU, new MainMenuUi(this));
-        addView(ViewName.GAME, new GameUi(this));
-        addView(ViewName.STATS, new PlayerStatsUi(this));
-        addView(ViewName.PROFILE_SETTINGS, new ProfileSettingsUi(this));
-        addView(ViewName.GAME_RESULTS, new GameResultsUi(this));
-        addView(ViewName.LOBBY, new LobbyUi(this));
-    }
-
-    /**
-     * Helper method to add views to the map.
-     */
-    private void addView(ViewName viewName, Parent ui) {
-        views.put(viewName, new Scene(ui, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT));
     }
 
     /**
@@ -332,68 +366,58 @@ public class ViewController {
     /**
      * Changes the current scene to the specified view.
      *
-     * @param viewName The name of the view to display.
+     * @param sceneName The name of the view to display.
      */
-    public static void showView(ViewName viewName) {
-        Scene scene = views.get(viewName);
+    public void showScene(SceneName sceneName) {
+        Scene scene = scenes.get(sceneName);
         if (scene != null) {
-            stage.setScene(scene);
-            stage.show();
+            primaryStage.setScene(scene);
+            primaryStage.show();
             if (scene.getRoot() instanceof LobbyUi) {
                 ((LobbyUi) scene.getRoot()).onViewShown();
             } else if (scene.getRoot() instanceof GameUi) {
                 ((GameUi) scene.getRoot()).onViewShown();
             }
         } else {
-            System.err.println("View not found: " + viewName);
+            System.err.println("View not found: " + sceneName);
         }
-    }
-
-    /**
-     * Adds a scene to the views map with a specified name.
-     *
-     * @param name  The name to assign to the scene.
-     * @param scene The scene to add.
-     */
-    public void addScene(ViewName name, Scene scene) {
-        views.put(name, scene);
     }
 
     /**
      * Displays the lobby view.
      */
     public void startGame() {
-        showView(ViewName.LOBBY);
+        showScene(SceneName.LOBBY);
     }
 
     /**
      * Displays the statistics view.
      */
     public void viewStats() {
-        showView(ViewName.STATS);
+        showScene(SceneName.STATS);
     }
 
     /**
      * Displays the profile settings view.
      */
     public void editProfile() {
-        showView(ViewName.PROFILE_SETTINGS);
+        showScene(SceneName.PROFILE_SETTINGS);
     }
 
     /**
      * Switches the current scene to the main menu.
      */
     public void switchToMainMenu() {
-        showView(ViewName.MAIN_MENU);
+        showScene(SceneName.MAIN_MENU);
     }
 
     /**
      * Switches the current scene to the lobby UI.
      */
     // Was ist der Unterschied zwischen der Methode und startGame(); ?
-    public static void switchToLobbyUi() {
-        showView(ViewName.LOBBY);
-        LobbyUi lobbyUi = (LobbyUi) views.get(ViewName.LOBBY).getRoot();
+    public void switchToLobbyUi() {
+        showScene(SceneName.LOBBY);
+        LobbyUi lobbyUi = (LobbyUi) scenes.get(SceneName.LOBBY).getRoot();
         if (lobbyUi != null) {
             lobbyUi.onViewShown();
         }
@@ -402,9 +426,9 @@ public class ViewController {
     /**
      * Switches the current scene to the game UI.
      */
-    public static void switchToGameUi() {
-        showView(ViewName.GAME);
-        GameUi gameUi = (GameUi) views.get(ViewName.GAME).getRoot();
+    public void switchToGameUi() {
+        showScene(SceneName.GAME);
+        GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
         if (gameUi != null) {
             gameUi.onViewShown();
         }
@@ -413,8 +437,8 @@ public class ViewController {
     /**
      * Switches the current scene to the game results UI.
      */
-    public static void switchToGameResultUi() {
-        showView(ViewName.GAME_RESULTS);
+    public void switchToGameResultUi() {
+        showScene(SceneName.GAME_RESULTS);
     }
 
     /**
@@ -426,23 +450,14 @@ public class ViewController {
      */
     public void saveUserSettings(String username, int wpmGoal, String favoriteText) {
 //        client.saveSettings(username, wpmGoal, favoriteText);
-        showView(ViewName.MAIN_MENU);
+        showScene(SceneName.MAIN_MENU);
     }
 
     /**
      * Cancels any changes made in the settings and returns to the main menu.
      */
     public void cancelSettings() {
-        showView(ViewName.MAIN_MENU);
-    }
-
-    /**
-     * Resets the user's game statistics.
-     */
-    public static void handleResetStats() {
-        client.resetStats();
-        PlayerStatsUi statsUi = getPlayerStatsUi();
-        statsUi.clearDisplayedStats();
+        showScene(SceneName.MAIN_MENU);
     }
 
     /**
@@ -450,7 +465,7 @@ public class ViewController {
      *
      * @return PlayerStatsUi instance if available.
      */
-    private static PlayerStatsUi getPlayerStatsUi() {
-        return (PlayerStatsUi) views.get(ViewName.STATS).getRoot();
+    private PlayerStatsUi getPlayerStatsUi() {
+        return (PlayerStatsUi) scenes.get(SceneName.STATS).getRoot();
     }
 }
