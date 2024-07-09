@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ClientSidePlayerData {
+public class ClientSideSessionData {
 
     private String username;
     private int id;

@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
@@ -114,7 +112,7 @@ public class ViewController {
 
 
 
-    private ClientSidePlayerData playerData = new ClientSidePlayerData();
+    private ClientSideSessionData playerData = new ClientSideSessionData();
     /**
      * Constructs a ViewController with a given stage and client. Initializes the view mappings and
      * sets up the initial views.
@@ -128,6 +126,11 @@ public class ViewController {
         this.client = client;
         initializeViews();
         initializeTopPlayers();
+        addDummyPlayer();
+    }
+
+    private void addDummyPlayer() {
+        addPlayerToGame(1, "dummyPlayer");
     }
 
     /**
@@ -143,17 +146,25 @@ public class ViewController {
         this.username = username;
     }
 
-    public static void setPlayerReady(boolean isReady) {
+    public void joinLobby(int lobbyId){
+        //TODO: add Logic, that makes Client send a JoinLobbyRequest to Server
+        System.out.println("Request to join lobby " + lobbyId);
+        //For Testing purpose only:
+        startGame();
+    }
+
+    public void setPlayerReady(boolean isReady) {
+        System.out.println("Player wants to update his readyStatus to: " + isReady);
         //TODO: add Logic, that makes Client send a ReadyRequest to Server
+        //For Testing purpose only:
+        startNewGame();
     }
 
     public void handleCharacterTyped(char character) {
+        System.out.println("Character typed: " + character);
         //TODO: add Logic, that makes Client send a CharacterRequest to Server
     }
 
-    public void handleCharacterAnswer(boolean isCorrect) {
-        //TODO: add Logic to display in GameUi whether the typed character was correct or not
-    }
 
     /**
      * Sets the username for the current session.
@@ -243,6 +254,11 @@ public class ViewController {
         switchToGameResultUi();
     }
 
+    //TODO: This method should be called by view on receiving a CharacterResponse
+    public void handleCharacterAnswer(boolean isCorrect) {
+
+    }
+
     public String getGameText() {
         return playerData.getGameText();
     }
@@ -255,6 +271,20 @@ public class ViewController {
     //TODO: This method should be called by view on receiving a TextNotification. We have to make sure, that we always have a text when the game starts
     public void setGameText(String newText) {
         playerData.setGameText(newText);
+    }
+
+    /**
+     *
+     * @param playerId
+     * @param playerWpm
+     * @param playerAccuracy
+     * @param playerProgress
+     */
+    //TODO: This method should be called by Client, when it receives a PlayerStateNotification
+    public void updatePlayerStateInformation(int playerId, int playerWpm, double playerAccuracy, double playerProgress) {
+        playerData.setPlayerWpms(playerId, playerWpm);
+        playerData.setPlayerAccuracies(playerId, playerAccuracy);
+        playerData.setPlayerProgresses(playerId, playerProgress);
     }
 
     /**
@@ -285,20 +315,6 @@ public class ViewController {
      */
     public DoubleProperty getPlayerProgressProperty(int playerId) {
         return playerData.getPlayerProgresses().computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
-    }
-
-    /**
-     *
-     * @param playerId
-     * @param playerWpm
-     * @param playerAccuracy
-     * @param playerProgress
-     */
-    //TODO: This method should be called by Client, when it receives a PlayerStateNotification
-    public void updatePlayerStateInformation(int playerId, int playerWpm, double playerAccuracy, double playerProgress) {
-        playerData.setPlayerWpms(playerId, playerWpm);
-        playerData.setPlayerAccuracies(playerId, playerAccuracy);
-        playerData.setPlayerProgresses(playerId, playerProgress);
     }
 
     /**
@@ -367,7 +383,7 @@ public class ViewController {
     /**
      * Switches the current scene to the main menu.
      */
-    public static void switchToMainMenu() {
+    public void switchToMainMenu() {
         showView(ViewName.MAIN_MENU);
     }
 

@@ -74,7 +74,7 @@ public class PlayerStatsUi extends VBox {
     Button backButton =
         StyleManager.createStyledButton(
             "back", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
-    backButton.setOnAction(e -> ViewController.switchToMainMenu());
+    backButton.setOnAction(e -> viewController.switchToMainMenu());
 
     Button resetButton =
         StyleManager.createStyledButton(

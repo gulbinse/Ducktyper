@@ -68,7 +68,7 @@ public class GameResultsUi extends VBox {
     this.getChildren().addAll(titleLabel, statsBox, buttonBox);
 
     playAgainButton.setOnAction(e -> ViewController.switchToLobbyUi());
-    mainMenuButton.setOnAction(e -> ViewController.switchToMainMenu());
+    mainMenuButton.setOnAction(e -> viewController.switchToMainMenu());
 
     StyleManager.applyFadeInAnimation(titleLabel, 1000);
     StyleManager.applyFadeInAnimation(statsBox, 1200);
