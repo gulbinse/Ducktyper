@@ -1,23 +1,23 @@
 package typeracer.client;
 
-import java.util.List;
-import java.util.Map;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import typeracer.client.messagehandling.*;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.MoshiAdapter;
 import typeracer.communication.messages.client.HandshakeRequest;
 
-import java.io.*;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
-
 /**
- * Network client to play a Typeracer game.
- * Client connects to a server to play the game.
- * Users can join with a username, get notifications and type.
+ * Network client to play a Typeracer game. Client connects to a server to play the game. Users can
+ * join with a username, get notifications and type.
  */
 public class Client {
   private static int DEFAULT_PORT = 4441;
@@ -25,67 +25,18 @@ public class Client {
   private static final String DEFAULT_ADDRESS = "localhost";
   private MessageHandler messageHandlerChain;
   private final MoshiAdapter moshiAdapter = new MoshiAdapter();
-  private Socket socket = null;
+  private Socket socket;
   private final ViewController viewController;
+  private BufferedReader reader;
 
+  /** Constructor for the client. */
+  public Client(ViewController viewController) {
+    this.viewController = viewController;
+    // ViewController.launch();
 
-  /**
-   * Constructor for the client.
-   */
-  public Client() {
-    viewController = new ViewController(this);
-  }
-
-  /**
-   * Entry to <code>Client</code>.
-   *
-   * @param args command-line arguments
-   */
-  public static void main(String[] args) {
     String username = DEFAULT_USERNAME;
     String serverAddress = DEFAULT_ADDRESS;
     int port = DEFAULT_PORT;
-    for (int i = 0; i < args.length; ++i) {
-      switch (args[i]) {
-        case "--username": {
-          if (isLastArgument(i, args)) {
-            printErrorMessage("Please specify the username.");
-            return;
-          }
-          ++i;
-          username = args[i];
-          break;
-        }
-        case "--address": {
-          if (isLastArgument(i, args)) {
-            printErrorMessage("Please specify the server address.");
-            return;
-          }
-          ++i;
-          serverAddress = args[i];
-          break;
-        }
-        case "--port": {
-          if (isLastArgument(i, args)) {
-            printErrorMessage("Please specify the port number.");
-            return;
-          }
-          try {
-            ++i;
-            port = Integer.parseInt(args[i]);
-          } catch (NumberFormatException e) {
-            printErrorMessage("Invalid port number: " + args[i]);
-            return;
-          }
-          break;
-        }
-        case "--help":
-        default: {
-          printHelpMessage();
-          return;
-        }
-      }
-    }
 
     // check validity
     if (!isValidName(username)) {
@@ -107,9 +58,14 @@ public class Client {
       printErrorMessage("The port number should be in the range of 1024~65535.");
       return;
     }
-
-    Client client = new Client();
   }
+
+  /**
+   * Entry to <code>Client</code>.
+   *
+   * @param args command-line arguments
+   */
+  public static void main(String[] args) {}
 
   /**
    * Check if the given index is the last argument in the array.
@@ -142,9 +98,7 @@ public class Client {
     return username != null && !username.isBlank();
   }
 
-  /**
-   * Prints the help message for the server.
-   */
+  /** Prints the help message for the server. */
   public static void printHelpMessage() {
     System.out.println(
         "java Client [--username <String>] [--address <String>] [--port <int>] [--help]");
@@ -152,6 +106,7 @@ public class Client {
 
   /**
    * Prints error message with given string.
+   *
    * @param str error message string
    */
   private static void printErrorMessage(String str) {
@@ -162,11 +117,17 @@ public class Client {
    * Starts the client and listens to the server.
    *
    * @param username name of the user
-   * @param socket socket used to connect with the server
    */
-  public void start(String username, Socket socket) {
+  public void start(String username) {
     messageHandlerChain = createMessageHandlerChain();
 
+    try {
+      reader =
+          new BufferedReader(
+              new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+    } catch (IOException e) {
+      System.err.println("Client start not possible: " + e.getMessage());
+    }
     // new Thread to receive messages from the server
     new Thread(() -> receiveMessage(socket)).start();
     sendMessage(new HandshakeRequest(username));
@@ -176,7 +137,7 @@ public class Client {
     InetSocketAddress address = new InetSocketAddress(ip, port);
     try (Socket socket = new Socket(address.getAddress(), address.getPort())) {
       this.socket = socket;
-      start(username, socket);
+      start(username);
     } catch (IOException e) {
       System.out.println("Connection lost. Shutting down: " + e.getMessage());
     }
@@ -184,20 +145,28 @@ public class Client {
 
   private MessageHandler createMessageHandlerChain() {
     MessageHandler characterResponseHandler = new CharacterResponseHandler(null, viewController);
-    MessageHandler handShakeResponseHandler = new HandShakeResponseHandler(characterResponseHandler, viewController);
-    MessageHandler createSessionResponseHandler = new CreateSessionResponseHandler(handShakeResponseHandler, viewController);
-    MessageHandler readyResponseHandler = new ReadyResponseHandler(createSessionResponseHandler, viewController);
-    MessageHandler textNotificationHandler = new TextNotificationHandler(readyResponseHandler, viewController);
-    MessageHandler playerStateNotificationHandler = new PlayerStateNotificationHandler(textNotificationHandler, viewController);
-    MessageHandler gameStateNotificationHandler = new GameStateNotificationHandler(playerStateNotificationHandler, viewController);
-    MessageHandler playerLeftNotificationHandler = new PlayerLeftNotificationHandler(gameStateNotificationHandler, viewController);
-    MessageHandler playerJoinedNotificationHandler = new PlayerJoinedNotificationHandler(playerLeftNotificationHandler, viewController);
-    MessageHandler joinSessionResponseHandler = new JoinSessionResponseHandler(playerJoinedNotificationHandler, viewController);
+    MessageHandler handShakeResponseHandler =
+        new HandShakeResponseHandler(characterResponseHandler, viewController);
+    MessageHandler createSessionResponseHandler =
+        new CreateSessionResponseHandler(handShakeResponseHandler, viewController);
+    MessageHandler readyResponseHandler =
+        new ReadyResponseHandler(createSessionResponseHandler, viewController);
+    MessageHandler textNotificationHandler =
+        new TextNotificationHandler(readyResponseHandler, viewController);
+    MessageHandler playerStateNotificationHandler =
+        new PlayerStateNotificationHandler(textNotificationHandler, viewController);
+    MessageHandler gameStateNotificationHandler =
+        new GameStateNotificationHandler(playerStateNotificationHandler, viewController);
+    MessageHandler playerLeftNotificationHandler =
+        new PlayerLeftNotificationHandler(gameStateNotificationHandler, viewController);
+    MessageHandler playerJoinedNotificationHandler =
+        new PlayerJoinedNotificationHandler(playerLeftNotificationHandler, viewController);
+    MessageHandler joinSessionResponseHandler =
+        new JoinSessionResponseHandler(playerJoinedNotificationHandler, viewController);
     return new LeaveSessionResponseHandler(joinSessionResponseHandler, viewController);
   }
 
   public void handleMessage(Message message) throws IOException {
-    System.out.println("Received message: " + message);
     messageHandlerChain.handleMessage(message);
   }
 
@@ -214,26 +183,24 @@ public class Client {
       writer.println(json);
       System.out.println("Sent message: " + json);
     } catch (IOException e) {
+      System.out.println("Error in sendMessage " + e.getMessage());
       e.printStackTrace();
     }
   }
 
-  /**
-   * Receives the messages from the server through given socket.
-   *
-   * @param socket socket used for communication
-   */
+  /** Receives the messages from the server through given socket. */
   private void receiveMessage(Socket socket) {
     try {
-      InputStream Input = socket.getInputStream();
-      BufferedReader reader = new BufferedReader(new InputStreamReader(Input));
       String serverMessage;
-      while ((serverMessage = reader.readLine()) != null) {
+      while (socket.isConnected()
+          && !socket.isClosed()
+          && (serverMessage = reader.readLine()) != null) {
         Message message = moshiAdapter.fromJson(serverMessage);
         handleMessage(message);
         System.out.println("Received message: " + message);
       }
     } catch (IOException e) {
+      System.out.println("Error on receiveMessage " + e.getMessage());
       throw new RuntimeException(e);
     }
   }

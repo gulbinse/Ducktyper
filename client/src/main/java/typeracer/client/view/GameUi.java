@@ -4,7 +4,7 @@ import java.util.stream.Collectors;
 import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ListProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -181,8 +181,8 @@ public class GameUi extends VBox {
                 new BorderWidths(1))));
 
     Label wpmLabel = new Label();
-    IntegerProperty wpmProperty = viewController.getPlayerWpmProperty(viewController.getPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("%d WPM", wpmProperty));
+    DoubleProperty wpmProperty = viewController.getPlayerWpmProperty(viewController.getPlayerId());
+    wpmLabel.textProperty().bind(Bindings.format("%.2f%% WPM", wpmProperty));
     wpmLabel.setAlignment(Pos.CENTER_LEFT);
 
     Label accuracyLabel = new Label();

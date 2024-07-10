@@ -4,10 +4,9 @@ import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.GameStateNotification;
 
-
 /**
- * Handles GameStateNotification messages in a chain of responsibility pattern. If the message is not of
- * the specified type, it will be passed to the next handler in the chain, if any.
+ * Handles GameStateNotification messages in a chain of responsibility pattern. If the message is
+ * not of the specified type, it will be passed to the next handler in the chain, if any.
  */
 public class GameStateNotificationHandler implements MessageHandler {
 
@@ -35,12 +34,12 @@ public class GameStateNotificationHandler implements MessageHandler {
       if (message instanceof GameStateNotification gameStateNotification) {
         switch (gameStateNotification.getGameStatus()) {
           case RUNNING:
-            //viewController.startGame();
+            // viewController.startGame();
             break;
           case FINISHED:
             // ends the game
             viewController.endGame();
-            //viewController.getTopPlayers();
+            // viewController.getTopPlayers();
             break;
           case WAITING_FOR_PLAYERS:
             System.out.println("Game is waiting for players.");
@@ -55,5 +54,4 @@ public class GameStateNotificationHandler implements MessageHandler {
       throw new RuntimeException(e);
     }
   }
-
 }

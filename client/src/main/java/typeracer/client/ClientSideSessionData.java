@@ -20,11 +20,11 @@ public class ClientSideSessionData {
   private int id;
   private final Map<Integer, String> playerNameById = new ConcurrentHashMap<>();
   private final Map<Integer, SimpleBooleanProperty> playerReady = new HashMap<>();
-  private Map<Integer, SimpleIntegerProperty> playerWpms = new HashMap<>();
-  private Map<Integer, DoubleProperty> playerAccuracies = new HashMap<>();
-  private Map<Integer, DoubleProperty> playerProgresses = new HashMap<>();
+  private final Map<Integer, DoubleProperty> playerWpms = new HashMap<>();
+  private final Map<Integer, DoubleProperty> playerAccuracies = new HashMap<>();
+  private final Map<Integer, DoubleProperty> playerProgresses = new HashMap<>();
   private Map<Integer, IntegerProperty> playerErrors = new HashMap<>();
-  private ListProperty<String> topPlayers =
+  private final ListProperty<String> topPlayers =
       new SimpleListProperty<>(FXCollections.observableArrayList());
   String gameText = "Text";
 
@@ -52,12 +52,12 @@ public class ClientSideSessionData {
     return playerReady;
   }
 
-  public Map<Integer, SimpleIntegerProperty> getPlayerWpms() {
+  public Map<Integer, DoubleProperty> getPlayerWpms() {
     return playerWpms;
   }
 
-  public void setPlayerWpms(int playerId, int playerWpm) {
-    playerWpms.computeIfAbsent(playerId, k -> new SimpleIntegerProperty()).set(playerWpm);
+  public void setPlayerWpms(int playerId, double playerWpm) {
+    playerWpms.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(playerWpm);
   }
 
   public Map<Integer, DoubleProperty> getPlayerAccuracies() {
@@ -113,7 +113,7 @@ public class ClientSideSessionData {
   public void addPlayer(int playerId, String playerName) {
     playerNameById.put(playerId, playerName);
     playerReady.put(playerId, new SimpleBooleanProperty(false));
-    playerWpms.put(playerId, new SimpleIntegerProperty(0));
+    playerWpms.put(playerId, new SimpleDoubleProperty(0));
     playerAccuracies.put(playerId, new SimpleDoubleProperty(0));
     playerProgresses.put(playerId, new SimpleDoubleProperty(0));
     playerErrors.put(playerId, new SimpleIntegerProperty(0));

@@ -4,10 +4,9 @@ import typeracer.client.ViewController;
 import typeracer.communication.messages.*;
 import typeracer.communication.messages.server.ReadyResponse;
 
-
 /**
- * Handles ReadyResponse messages in a chain of responsibility pattern. If the message is not of
- * the specified type, it will be passed to the next handler in the chain, if any.
+ * Handles ReadyResponse messages in a chain of responsibility pattern. If the message is not of the
+ * specified type, it will be passed to the next handler in the chain, if any.
  */
 public class ReadyResponseHandler implements MessageHandler {
   private final MessageHandler nextHandler;
@@ -49,6 +48,5 @@ public class ReadyResponseHandler implements MessageHandler {
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }
-
   }
 }

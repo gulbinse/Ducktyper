@@ -105,5 +105,6 @@ public class ClientHandler implements Runnable {
     } catch (IOException e) {
       System.out.println("An error occurred trying to close the connection: " + e.getMessage());
     }
+    System.out.println("Connection with Client " + clientId + " closed");
   }
 }

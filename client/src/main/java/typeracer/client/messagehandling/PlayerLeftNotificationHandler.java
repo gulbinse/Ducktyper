@@ -5,8 +5,8 @@ import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.PlayerLeftNotification;
 
 /**
- * Handles PlayerLeftNotification messages in a chain of responsibility pattern. If the message is not of
- * the specified type, it will be passed to the next handler in the chain, if any.
+ * Handles PlayerLeftNotification messages in a chain of responsibility pattern. If the message is
+ * not of the specified type, it will be passed to the next handler in the chain, if any.
  */
 public class PlayerLeftNotificationHandler implements MessageHandler {
 

@@ -20,7 +20,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'typeracer.client.Client'
+    mainClass = 'typeracer.client.ViewController'
 }
 
 repositories {

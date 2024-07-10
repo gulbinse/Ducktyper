@@ -5,8 +5,8 @@ import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.JoinSessionResponse;
 
 /**
- * Handles JoinSessionResponse messages in a chain of responsibility pattern. If the message is not of
- * the specified type, it will be passed to the next handler in the chain, if any.
+ * Handles JoinSessionResponse messages in a chain of responsibility pattern. If the message is not
+ * of the specified type, it will be passed to the next handler in the chain, if any.
  */
 public class JoinSessionResponseHandler implements MessageHandler {
 
@@ -39,7 +39,8 @@ public class JoinSessionResponseHandler implements MessageHandler {
           viewController.switchToLobbyUi();
           break;
         case DENIED:
-          System.out.println("Player can't join because " + joinSessionResponse.getReason().getString() + ".");
+          System.out.println(
+              "Player can't join because " + joinSessionResponse.getReason().getString() + ".");
           break;
         default:
           if (nextHandler != null) {
@@ -51,7 +52,5 @@ public class JoinSessionResponseHandler implements MessageHandler {
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }
-
   }
 }
-

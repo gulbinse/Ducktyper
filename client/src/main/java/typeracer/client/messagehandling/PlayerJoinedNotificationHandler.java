@@ -4,11 +4,9 @@ import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.PlayerJoinedNotification;
 
-import java.io.IOException;
-
 /**
- * Handles PlayerJoinedNotification messages in a chain of responsibility pattern. If the message is not of
- * the specified type, it will be passed to the next handler in the chain, if any.
+ * Handles PlayerJoinedNotification messages in a chain of responsibility pattern. If the message is
+ * not of the specified type, it will be passed to the next handler in the chain, if any.
  */
 public class PlayerJoinedNotificationHandler implements MessageHandler {
 
@@ -20,7 +18,8 @@ public class PlayerJoinedNotificationHandler implements MessageHandler {
    *
    * @param nextHandler next handler in chain
    */
-  public PlayerJoinedNotificationHandler(MessageHandler nextHandler, ViewController viewController) {
+  public PlayerJoinedNotificationHandler(
+      MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;
     this.viewController = viewController;
   }
@@ -34,7 +33,8 @@ public class PlayerJoinedNotificationHandler implements MessageHandler {
   public void handleMessage(Message message) {
     if (message instanceof PlayerJoinedNotification playerJoinedNotification) {
       // set number of the current players
-      viewController.addPlayerToGame(playerJoinedNotification.getPlayerId(), playerJoinedNotification.getPlayerName());
+      viewController.addPlayerToGame(
+          playerJoinedNotification.getPlayerId(), playerJoinedNotification.getPlayerName());
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }

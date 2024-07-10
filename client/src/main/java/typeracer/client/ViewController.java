@@ -6,10 +6,8 @@ import java.util.Map;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,6 +21,8 @@ import typeracer.client.view.LobbyUi;
 import typeracer.client.view.MainMenuUi;
 import typeracer.client.view.PlayerStatsUi;
 import typeracer.client.view.ProfileSettingsUi;
+import typeracer.communication.messages.client.CreateSessionRequest;
+import typeracer.communication.messages.client.JoinSessionRequest;
 
 /** Manages the transition between different scenes and states in the TypeRacer game application. */
 public class ViewController extends Application {
@@ -64,12 +64,10 @@ public class ViewController extends Application {
   /**
    * Constructs a ViewController with a given stage and client. Initializes the view mappings and
    * sets up the initial views.
-   *
-   * @param client The client handling the backend communication.
    */
-  public ViewController(Client client) {
+  public ViewController() {
     scenes = new HashMap<>();
-    this.client = client;
+    this.client = new Client(this);
     addDummyPlayer();
   }
 
@@ -168,6 +166,7 @@ public class ViewController extends Application {
    */
   public void connectToServer(String ip, int port, String username) throws IOException {
     // TODO: add Logic, that makes Client connect to Server and transfer username
+    client.connect(ip, port, username);
     System.out.println("Connected to server at " + ip + ":" + port);
     playerData.setUsername(username);
   }
@@ -179,14 +178,13 @@ public class ViewController extends Application {
    */
   public void joinLobby(int lobbyId) {
     // TODO: add Logic, that makes Client send a JoinLobbyRequest to Server
+    client.sendMessage(new JoinSessionRequest(lobbyId));
     System.out.println("Request to join lobby " + lobbyId);
     // For Testing purpose only:
     showScene(SceneName.LOBBY);
   }
 
-  /**
-   * Called when User tries to create a lobby by pressing button in GUI.
-   **/
+  /** Called when User tries to create a lobby by pressing button in GUI. */
   public void createLobby() {
     // TODO: add Logic, that makes Client send a CreateSessionRequest to Server
     client.sendMessage(new CreateSessionRequest());
@@ -292,7 +290,7 @@ public class ViewController extends Application {
    */
   // TODO: This method should be called by Client, when it receives a PlayerStateNotification
   public void updatePlayerStateInformation(
-      int playerId, int playerWpm, double playerAccuracy, double playerProgress) {
+      int playerId, double playerWpm, double playerAccuracy, double playerProgress) {
     playerData.setPlayerWpms(playerId, playerWpm);
     playerData.setPlayerAccuracies(playerId, playerAccuracy);
     playerData.setPlayerProgresses(playerId, playerProgress);
@@ -340,8 +338,8 @@ public class ViewController extends Application {
    * @param playerId The ID of the player.
    * @return The WPM property for the player.
    */
-  public IntegerProperty getPlayerWpmProperty(int playerId) {
-    return playerData.getPlayerWpms().computeIfAbsent(playerId, k -> new SimpleIntegerProperty());
+  public DoubleProperty getPlayerWpmProperty(int playerId) {
+    return playerData.getPlayerWpms().computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
   }
 
   /**
