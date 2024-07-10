@@ -1,5 +1,8 @@
 package typeracer.client.view;
 
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -14,17 +17,39 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
-import javafx.stage.Stage;
+import typeracer.client.ViewController;
 
 /**
  * Represents the player statistics user interface for the TypeRacer game. This class sets up the
  * GUI elements that display the player's statistics, including total games played, average WPM,
- * total errors, best WPM, and average accuracy.
+ * total errors, the best WPM, and average accuracy.
  */
 public class PlayerStatsUi extends VBox {
+  /** The view controller to manage views and handle interactions. */
+  private ViewController viewController;
 
-  /** Constructs a new PlayerStatsUi and initializes its user interface. */
-  public PlayerStatsUi() {
+  /** Label for displaying the number of games played. */
+  private Label gamesPlayedLabel;
+
+  /** Label for displaying the average words per minute (WPM). */
+  private Label averageWpmLabel;
+
+  /** Label for displaying the total number of errors. */
+  private Label totalErrorsLabel;
+
+  /** Label for displaying the best words per minute (WPM) achieved. */
+  private Label bestWpmLabel;
+
+  /** Label for displaying the average accuracy. */
+  private Label averageAccuracyLabel;
+
+  /**
+   * Constructs a new PlayerStatsUi and initializes its user interface.
+   *
+   * @param viewController the controller to manage views and handle interactions.
+   */
+  public PlayerStatsUi(ViewController viewController) {
+    this.viewController = viewController;
     initializeUi();
   }
 
@@ -35,8 +60,9 @@ public class PlayerStatsUi extends VBox {
   private void initializeUi() {
     this.setAlignment(Pos.CENTER);
     this.setSpacing(10);
-    this.setPadding(new Insets(30));
-    this.setStyle("-fx-background-color: white;");
+    this.setBackground(
+        new Background(
+            new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
     Label titleLabel = new Label("Player Statistics");
     titleLabel.setFont(StyleManager.BOLD_FONT);
@@ -47,12 +73,12 @@ public class PlayerStatsUi extends VBox {
     Button backButton =
         StyleManager.createStyledButton(
             "back", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
-    backButton.setOnAction(e -> StyleManager.switchToMainMenu((Stage) this.getScene().getWindow()));
+    backButton.setOnAction(e -> ViewController.switchToMainMenu());
 
     Button resetButton =
         StyleManager.createStyledButton(
             "reset stats", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
-    resetButton.setOnAction(e -> resetStats());
+    resetButton.setOnAction(e -> viewController.handleResetStats());
 
     HBox buttonBar = new HBox(10, backButton, resetButton);
     buttonBar.setAlignment(Pos.CENTER);
@@ -82,38 +108,40 @@ public class PlayerStatsUi extends VBox {
                 CornerRadii.EMPTY,
                 new BorderWidths(1))));
 
-    statsBox.getChildren().add(createStatLabel("Total games played: ", "0"));
-    statsBox.getChildren().add(createStatLabel("Average WPM: ", "0"));
-    statsBox.getChildren().add(createStatLabel("Total errors: ", "0"));
-    statsBox.getChildren().add(createStatLabel("Best WPM: ", "0"));
-    statsBox.getChildren().add(createStatLabel("Average accuracy: ", "0%"));
+    Label wpmLabel = new Label();
+    Label accuracyLabel = new Label();
 
-    VBox.setMargin(statsBox, new Insets(10, 75, 30, 75));
+    DoubleProperty wpmProperty =
+        viewController.getPlayerWpmProperty(viewController.getCurrentPlayerId());
+    wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
+    accuracyLabel
+        .textProperty()
+        .bind(
+            viewController
+                .getPlayerAccuracyProperty(viewController.getCurrentPlayerId())
+                .multiply(100)
+                .asString("%.2f%% Accuracy"));
+
+    wpmLabel.setAlignment(Pos.CENTER_LEFT);
+    accuracyLabel.setAlignment(Pos.CENTER_RIGHT);
+
+    VBox.setMargin(wpmLabel, new Insets(10, 50, 10, 50));
+    VBox.setMargin(accuracyLabel, new Insets(10, 50, 10, 50));
+    VBox.setMargin(statsBox, new Insets(10, 200, 10, 200));
+
+    statsBox.getChildren().addAll(wpmLabel, accuracyLabel);
     return statsBox;
   }
 
-  /** Resets the player's statistics. This method should contain the logic to reset the stats. */
-  private void resetStats() {
-    // Logic to reset stats goes here
-  }
-
-  /**
-   * Creates a label with the specified text and value, laid out in a horizontal box.
-   *
-   * @param labelText The text for the label.
-   * @param valueText The label displaying the value.
-   * @return A HBox containing the label and value.
-   */
-  private HBox createStatLabel(String labelText, String valueText) {
-    Label label = new Label(labelText);
-    label.setFont(StyleManager.STANDARD_FONT);
-
-    Label valueLabel = new Label(valueText);
-    valueLabel.setFont(StyleManager.STANDARD_FONT);
-
-    HBox hbox = new HBox();
-    hbox.setSpacing(5);
-    hbox.getChildren().addAll(label, valueLabel);
-    return hbox;
+  /** Clears the displayed statistics, resetting all values to zero. */
+  public void clearDisplayedStats() {
+    Platform.runLater(
+        () -> {
+          gamesPlayedLabel.setText("Total games played: 0");
+          averageWpmLabel.setText("Average WPM: 0");
+          totalErrorsLabel.setText("Total errors: 0");
+          bestWpmLabel.setText("Best WPM: 0");
+          averageAccuracyLabel.setText("Average accuracy: 0%");
+        });
   }
 }

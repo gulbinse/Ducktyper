@@ -7,6 +7,7 @@ import typeracer.server.connection.ConnectionManager;
 import typeracer.server.message.MessageHandler;
 import typeracer.server.session.Session;
 import typeracer.server.session.SessionManager;
+import typeracer.server.utils.TypingResult;
 
 /**
  * Handles CharacterRequest messages in a chain of responsibility pattern. If the message is not of
@@ -27,14 +28,23 @@ public class CharacterRequestHandler implements MessageHandler {
 
   @Override
   public void handleMessage(Message message, int clientId) {
-    if (message instanceof CharacterRequest characterRequest) {
-      Session session = SessionManager.getInstance().getSessionByClientId(clientId);
-      if (session != null) {
-        boolean correct = session.validateCharacter(clientId, characterRequest.getCharacter());
-        ConnectionManager.getInstance().sendMessage(new CharacterResponse(correct), clientId);
+    try {
+      if (message instanceof CharacterRequest characterRequest) {
+        Session session = SessionManager.getInstance().getSessionByClientId(clientId);
+        if (session != null) {
+          TypingResult result =
+              session.validateCharacter(clientId, characterRequest.getCharacter());
+          if (result == TypingResult.CORRECT || result == TypingResult.INCORRECT) {
+            boolean returnValue = result == TypingResult.CORRECT;
+            ConnectionManager.getInstance()
+                .sendMessage(new CharacterResponse(returnValue), clientId);
+          }
+        }
+      } else if (nextHandler != null) {
+        nextHandler.handleMessage(message, clientId);
       }
-    } else if (nextHandler != null) {
-      nextHandler.handleMessage(message, clientId);
+    } catch (IllegalArgumentException e) {
+      System.err.println("Invalid character request: " + e.getMessage());
     }
   }
 

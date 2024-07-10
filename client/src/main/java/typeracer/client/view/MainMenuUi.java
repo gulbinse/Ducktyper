@@ -2,9 +2,14 @@ package typeracer.client.view;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import typeracer.client.ViewController;
 
 /**
  * Represents the main menu user interface for the TypeRacer game. This class sets up the GUI
@@ -12,6 +17,8 @@ import javafx.stage.Stage;
  * game, accessing profile settings, viewing stats, and exiting the game.
  */
 public class MainMenuUi extends VBox {
+
+  private ViewController viewController;
 
   /** Button to start a new game. */
   private Button startGameButton;
@@ -25,8 +32,13 @@ public class MainMenuUi extends VBox {
   /** Button to exit the game. */
   private Button exitButton;
 
-  /** Constructs a new MainMenuUi and initializes its user interface. */
-  public MainMenuUi() {
+  /**
+   * Constructs a new MainMenuUi and initializes its user interface.
+   *
+   * @param viewController The controller to manage views and handle interactions.
+   */
+  public MainMenuUi(ViewController viewController) {
+    this.viewController = viewController;
     initializeUi();
   }
 
@@ -37,12 +49,15 @@ public class MainMenuUi extends VBox {
   private void initializeUi() {
     this.setAlignment(Pos.CENTER);
     this.setSpacing(15);
-    this.setStyle(
-        "-fx-background-color: #" + StyleManager.BACKGROUND_COLOR.toString().substring(2) + ";");
+    this.setBackground(
+        new Background(new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, null)));
 
-    Label titleLabel = new Label("Typeracer");
-    titleLabel.setFont(StyleManager.BOLD_FONT);
-    titleLabel.setAlignment(Pos.CENTER);
+    VBox titlePanel = createTitlePanel();
+    this.getChildren().add(titlePanel);
+
+    Region spacer = new Region();
+    spacer.setPrefHeight(30);
+    this.getChildren().add(spacer);
 
     startGameButton =
         StyleManager.createStyledButton(
@@ -52,19 +67,16 @@ public class MainMenuUi extends VBox {
             "profile settings", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
     statsButton =
         StyleManager.createStyledButton(
-            "stats", StyleManager.ORANGE_BUTTON, StyleManager.STANDARD_FONT);
+            "view stats", StyleManager.ORANGE_BUTTON, StyleManager.STANDARD_FONT);
     exitButton =
         StyleManager.createStyledButton(
             "exit", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
 
-    startGameButton.setOnAction(
-        e -> StyleManager.switchToGameUi((Stage) this.getScene().getWindow()));
-    profileSettingButton.setOnAction(
-        e -> StyleManager.switchToProfileSettingsUi((Stage) this.getScene().getWindow()));
-    statsButton.setOnAction(e -> StyleManager.switchToStatsUi((Stage) this.getScene().getWindow()));
-    exitButton.setOnAction(e -> System.exit(0));
+    startGameButton.setOnAction(e -> viewController.startGame());
+    profileSettingButton.setOnAction(e -> viewController.editProfile());
+    statsButton.setOnAction(e -> viewController.viewStats());
+    exitButton.setOnAction(e -> exitApplication());
 
-    StyleManager.applyFadeInAnimation(titleLabel, 1500);
     StyleManager.applyFadeInAnimation(startGameButton, 1500);
     StyleManager.applyFadeInAnimation(profileSettingButton, 1500);
     StyleManager.applyFadeInAnimation(statsButton, 1500);
@@ -73,7 +85,23 @@ public class MainMenuUi extends VBox {
     StyleManager.applyButtonHoverAnimation(
         startGameButton, profileSettingButton, statsButton, exitButton);
 
-    this.getChildren()
-        .addAll(titleLabel, startGameButton, profileSettingButton, statsButton, exitButton);
+    this.getChildren().addAll(startGameButton, profileSettingButton, statsButton, exitButton);
+  }
+
+  /** Creates and returns a title panel with an image. */
+  private VBox createTitlePanel() {
+    VBox imagePanel = new VBox();
+    imagePanel.setAlignment(Pos.TOP_CENTER);
+    Image image = new Image(getClass().getResourceAsStream("/images/title.png"));
+    ImageView imageView = new ImageView(image);
+    imageView.setFitWidth(350);
+    imageView.setPreserveRatio(true);
+    imagePanel.getChildren().add(imageView);
+    return imagePanel;
+  }
+
+  /** Safely exits the application, ensuring all resources are released. */
+  private void exitApplication() {
+    System.exit(0);
   }
 }

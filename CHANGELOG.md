@@ -23,15 +23,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Implementation of `MessageHandler` classes
 - Connection & session logic (#23)
 - `LeaveSessionRequest` & `LeaveSessionResponse` classes (#40)
+- Accuracy support in game logic
+- Setting custom random texts (with 2 new texts!)
+- Connection between server and game logic: (#36)
+  - Periodic sending of update notifications
+  - Session as mediator between server and game
+- More extensive server & game logic tests
 
 ### Changed
 - "Lobby" to "Session" renamed
 - More consistent protocol
 - IDs look more random
 - Move `GameStatus` enum to communication status codes
+- Serverside ID usage instead of usernames
+- Extracted enums from specific classes
+- Combined server and game packages for better interconnection
 
 ### Removed
 - `null` values from protocol (#35)
+- Unused observer pattern
+- Faulty getCurrentGameState method from client (#46)
 
 ## [0.1.0] - 2024-06-23
 

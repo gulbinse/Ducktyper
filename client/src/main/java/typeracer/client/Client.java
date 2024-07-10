@@ -1,5 +1,7 @@
 package typeracer.client;
 
+import java.util.List;
+import java.util.Map;
 import typeracer.client.messagehandling.*;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.MoshiAdapter;
