@@ -31,7 +31,7 @@ public class LobbyUi extends VBox {
   private ViewController viewController;
   private Label usernameLabel;
   private boolean isReady = false;
-  private ClientSideSessionData clientSideSessionData;
+  private ClientSideSessionData playerData;
 
   /**
    * Constructor to initialize the Lobby UI.
@@ -40,7 +40,7 @@ public class LobbyUi extends VBox {
    */
   public LobbyUi(ViewController viewController) {
     this.viewController = viewController;
-    this.clientSideSessionData = ClientSideSessionData.getInstance();
+    this.playerData = new ClientSideSessionData();
     initializeUi();
     populatePlayerList();
   }
@@ -51,8 +51,8 @@ public class LobbyUi extends VBox {
    */
   private void populatePlayerList() {
     ObservableList<String> playerNames =
-        FXCollections.observableArrayList(clientSideSessionData.getPlayerNameById().values());
-    playerNames.add(0, clientSideSessionData.getUsername() + " - Active");
+        FXCollections.observableArrayList(playerData.getPlayerNameById().values());
+    playerNames.add(0, playerData.getUsername() + " - Active");
     playerList.setItems(playerNames);
   }
 
@@ -136,7 +136,7 @@ public class LobbyUi extends VBox {
   /** Called in ViewController when the view is shown to the user. Sets the username label. */
   public void onViewShown() {
     populatePlayerList();
-    ClientSideSessionData.getInstance().getUsername();
+    playerData.getUsername();
     playerList.refresh();
   }
 }
