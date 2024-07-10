@@ -31,7 +31,7 @@ public class LobbyUi extends VBox {
   private ViewController viewController;
   private Label usernameLabel;
   private boolean isReady = false;
-  private ClientSideSessionData clientSideSessionData;
+  private ClientSideSessionData playerData;
 
   /**
    * Constructor to initialize the Lobby UI.
@@ -40,7 +40,7 @@ public class LobbyUi extends VBox {
    */
   public LobbyUi(ViewController viewController) {
     this.viewController = viewController;
-    this.clientSideSessionData = ClientSideSessionData.getInstance();
+    this.playerData = new ClientSideSessionData();
     initializeUi();
     populatePlayerList();
   }
@@ -51,8 +51,8 @@ public class LobbyUi extends VBox {
    */
   private void populatePlayerList() {
     ObservableList<String> playerNames =
-        FXCollections.observableArrayList(clientSideSessionData.getPlayerNameById().values());
-    playerNames.add(0, clientSideSessionData.getUsername() + " - Active");
+            FXCollections.observableArrayList(playerData.getPlayerNameById().values());
+    playerNames.add(0, playerData.getUsername() + " - Active");
     playerList.setItems(playerNames);
   }
 
@@ -62,11 +62,11 @@ public class LobbyUi extends VBox {
     this.setSpacing(20);
     this.setPadding(new Insets(45));
     this.setBackground(
-        new Background(
-            new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+            new Background(
+                    new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
     ImageView titleImageView =
-        new ImageView(new Image(getClass().getResourceAsStream("/images/title.png")));
+            new ImageView(new Image(getClass().getResourceAsStream("/images/title.png")));
     titleImageView.setFitWidth(350);
     titleImageView.setPreserveRatio(true);
 
@@ -78,11 +78,11 @@ public class LobbyUi extends VBox {
     customizePlayerList();
 
     readyButton =
-        StyleManager.createStyledButton(
-            "ready", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
+            StyleManager.createStyledButton(
+                    "ready", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
     backButton =
-        StyleManager.createStyledButton(
-            "back", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
+            StyleManager.createStyledButton(
+                    "back", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
     readyButton.setOnAction(e -> toggleReadyState());
     backButton.setOnAction(e -> ViewController.switchToMainMenu());
 
@@ -112,31 +112,31 @@ public class LobbyUi extends VBox {
    */
   private void customizePlayerList() {
     playerList.setCellFactory(
-        lv ->
-            new ListCell<String>() {
-              private final Circle statusCircle = new Circle(5);
-              private final Label nameLabel = new Label();
-              private final HBox cellLayout = new HBox(10, statusCircle, nameLabel);
+            lv ->
+                    new ListCell<String>() {
+                      private final Circle statusCircle = new Circle(5);
+                      private final Label nameLabel = new Label();
+                      private final HBox cellLayout = new HBox(10, statusCircle, nameLabel);
 
-              @Override
-              protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                  setGraphic(null);
-                } else {
-                  nameLabel.setText(item.split(" - ")[0]);
-                  String status = item.contains("Active") ? "Active" : "Inactive";
-                  statusCircle.setFill("Active".equals(status) ? Color.GREEN : Color.GRAY);
-                  setGraphic(cellLayout);
-                }
-              }
-            });
+                      @Override
+                      protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                          setGraphic(null);
+                        } else {
+                          nameLabel.setText(item.split(" - ")[0]);
+                          String status = item.contains("Active") ? "Active" : "Inactive";
+                          statusCircle.setFill("Active".equals(status) ? Color.GREEN : Color.GRAY);
+                          setGraphic(cellLayout);
+                        }
+                      }
+                    });
   }
 
   /** Called in ViewController when the view is shown to the user. Sets the username label. */
   public void onViewShown() {
     populatePlayerList();
-    ClientSideSessionData.getInstance().getUsername();
+    playerData.getUsername();
     playerList.refresh();
   }
 }
