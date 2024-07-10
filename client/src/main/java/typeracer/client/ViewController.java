@@ -40,8 +40,6 @@ public class ViewController {
 
   private GameUi gameUi;
 
-  private ClientSideSessionData sessionData = new ClientSideSessionData();
-
   /**
    * Constructs a ViewController with a given stage and client. Initializes the view mappings and
    * sets up the initial views.
@@ -74,15 +72,15 @@ public class ViewController {
    */
   public void connectToServer(String username, String ip, int port) throws IOException {
     // TODO: add Logic, that makes Client connect to Server and transfer username
-    // client.sendUsername(username);
-    // client.connect(ip, port);
+    client.sendUsername(username);
+    client.connect(ip, port);
     System.out.println("Connected to server at " + ip + ":" + port);
   }
 
   public void handleCharacterTyped(char character) {
     // TODO: add Logic, that makes Client send a CharacterRequest to Server
     if (client != null) {
-      //client.sendCharacter(character);
+      // client.sendCharacter(character);
     } else {
       System.out.println("Error: Client is not initialized.");
     }

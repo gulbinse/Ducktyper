@@ -6,11 +6,18 @@ import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -60,6 +67,10 @@ public class GameUi extends VBox {
 
   private ClientSideSessionData playerData;
 
+  private int totalCharsTyped = 0;
+  private int correctCharsTyped = 0;
+  private long startTime;
+
   /**
    * Constructs a new GameUi and initializes its user interface.
    *
@@ -96,7 +107,6 @@ public class GameUi extends VBox {
     if (username == null || username.isEmpty()) {
       username = "Default User";
     }
-
     usernameLabel = new Label(username);
     usernameLabel.setFont(StyleManager.BOLD_FONT);
     usernameLabel.setPadding(new Insets(5, 10, 5, 10));
@@ -182,21 +192,75 @@ public class GameUi extends VBox {
   }
 
   private void handleTyping(char typedCharacter) {
-    viewController.handleCharacterTyped(typedCharacter);
+    if (currentCharIndex >= gameText.length()) {
+      return;
+    }
+
+    if (totalCharsTyped == 0) {
+      startTime = System.currentTimeMillis();
+    }
+    totalCharsTyped++;
     char expectedCharacter = getCurrentExpectedCharacter();
 
-    int currentPlayerId = playerData.getId();
-
-    IntegerProperty errorsProperty = playerData.getPlayerErrors().get(currentPlayerId);
-    if (errorsProperty == null) {
-      errorsProperty = new SimpleIntegerProperty(0);
-      playerData.getPlayerErrors().put(currentPlayerId, errorsProperty);
-    }
-    if (typedCharacter != expectedCharacter) {
-      errorsProperty.set(errorsProperty.get() + 1);
-      displayTypingFeedback(false);
-    } else {
+    if (typedCharacter == expectedCharacter) {
+      currentCharIndex++;
+      correctCharsTyped++;
+      updateProgress();
+      updateWPM();
+      updateAccuracy();
       displayTypingFeedback(true);
+    } else {
+      displayTypingFeedback(false);
+    }
+    updateErrors(typedCharacter != expectedCharacter);
+  }
+
+  private void updateAccuracy() {
+    if (totalCharsTyped == 0) return;
+    double accuracy = ((double) correctCharsTyped / totalCharsTyped) * 100;
+    DoubleProperty accProp = playerData.getPlayerAccuracies().get(playerData.getId());
+    if (accProp != null) {
+      accProp.set(accuracy);
+    } else {
+      playerData.getPlayerAccuracies().put(playerData.getId(), new SimpleDoubleProperty(accuracy));
+    }
+  }
+
+  private void updateWPM() {
+    long timeSpent = (System.currentTimeMillis() - startTime) / 1000;
+    if (timeSpent == 0) return;
+    int wordsTyped = currentCharIndex / 5;
+    double wpm = (wordsTyped / (double) timeSpent) * 60;
+    IntegerProperty wpmProp = playerData.getPlayerWpms().get(playerData.getId());
+    if (wpmProp != null) {
+      wpmProp.set((int) wpm);
+    } else {
+      playerData.getPlayerWpms().put(playerData.getId(), new SimpleIntegerProperty((int) wpm));
+    }
+  }
+
+  private void updateProgress() {
+    if (gameText == null || gameText.isEmpty()) {
+      return;
+    }
+    double progress = (double) currentCharIndex / gameText.length();
+    DoubleProperty progressProp = playerData.getPlayerProgresses().get(playerData.getId());
+    if (progressProp != null) {
+      progressProp.set(progress);
+    } else {
+      playerData.getPlayerProgresses().put(playerData.getId(), new SimpleDoubleProperty(progress));
+    }
+  }
+
+  private void updateErrors(boolean hasError) {
+    if (!hasError) {
+      return;
+    }
+    IntegerProperty errorsProp = playerData.getPlayerErrors().get(playerData.getId());
+    if (errorsProp != null) {
+      errorsProp.set(errorsProp.get() + 1);
+    } else {
+      playerData.getPlayerErrors().put(playerData.getId(), new SimpleIntegerProperty(1));
     }
   }
 
@@ -227,7 +291,6 @@ public class GameUi extends VBox {
 
     int currentPlayerId = playerData.getId();
 
-    // WPM Label
     Label wpmLabel = new Label();
     SimpleIntegerProperty wpmProperty = playerData.getPlayerWpms().get(currentPlayerId);
     if (wpmProperty != null) {
@@ -238,8 +301,7 @@ public class GameUi extends VBox {
     wpmLabel.setAlignment(Pos.CENTER_LEFT);
 
     Label accuracyLabel = new Label();
-    DoubleProperty accuracyProperty =
-        playerData.getPlayerAccuracies().get(currentPlayerId);
+    DoubleProperty accuracyProperty = playerData.getPlayerAccuracies().get(currentPlayerId);
     if (accuracyProperty != null) {
       accuracyLabel
           .textProperty()
@@ -252,7 +314,6 @@ public class GameUi extends VBox {
     }
     accuracyLabel.setAlignment(Pos.CENTER);
 
-    // Errors Label
     Label errorsLabel = new Label();
     IntegerProperty errorsProperty = playerData.getPlayerErrors().get(currentPlayerId);
     if (errorsProperty != null) {
@@ -263,8 +324,7 @@ public class GameUi extends VBox {
     errorsLabel.setAlignment(Pos.CENTER_RIGHT);
 
     ProgressBar progressBar = new ProgressBar();
-    DoubleProperty progressProperty =
-        playerData.getPlayerProgresses().get(currentPlayerId);
+    DoubleProperty progressProperty = playerData.getPlayerProgresses().get(currentPlayerId);
     if (progressProperty != null) {
       progressBar.progressProperty().bind(progressProperty);
     } else {
@@ -325,9 +385,7 @@ public class GameUi extends VBox {
     topPlayersLabel.setFont(StyleManager.STANDARD_FONT);
     topPlayersPanel.getChildren().add(topPlayersLabel);
     getChildren().add(topPlayersPanel);
-    topPlayersLabel
-        .textProperty()
-        .bind(createTopPlayersBinding(playerData.topPlayersProperty()));
+    topPlayersLabel.textProperty().bind(createTopPlayersBinding(playerData.topPlayersProperty()));
     VBox.setMargin(topPlayersPanel, new Insets(10, 50, 10, 50));
   }
 
@@ -346,7 +404,7 @@ public class GameUi extends VBox {
             return "Top players: " + String.join(", ", topPlayers.get());
           }
         },
-        topPlayers); // This binding will now properly observe changes to the list property
+        topPlayers);
   }
 
   /**

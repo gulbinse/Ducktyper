@@ -1,6 +1,5 @@
 package typeracer.client.view;
 
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -51,11 +50,9 @@ public class LobbyUi extends VBox {
    * all player names, with the active user's name prepended by " - Active".
    */
   private void populatePlayerList() {
-    ObservableList<String> playerNames = FXCollections.observableArrayList();
-    playerData.getPlayerNameById().forEach((id, name) -> {
-      String status = playerData.getPlayerReady().get(id).get() ? "Ready" : "Not Ready";
-      playerNames.add(name + " - " + status);
-    });
+    ObservableList<String> playerNames =
+        FXCollections.observableArrayList(playerData.getPlayerNameById().values());
+    playerNames.add(0, playerData.getUsername() + " - Active");
     playerList.setItems(playerNames);
   }
 
@@ -103,22 +100,9 @@ public class LobbyUi extends VBox {
    */
   private void toggleReadyState() {
     isReady = !isReady;
-    playerData.getPlayerReady().put(playerData.getId(), new SimpleBooleanProperty(isReady));
     viewController.setPlayerReady(isReady);
-    if (allPlayersReady()) {
-      viewController.switchToGameUi();
-    }
     populatePlayerList();
-  }
-
-  /**
-   * Checks if all players are ready.
-   *
-   * @return {@code true} if all players are ready, {@code false} otherwise.
-   */
-
-  private boolean allPlayersReady() {
-    return playerData.getPlayerReady().values().stream().allMatch(SimpleBooleanProperty::get);
+    viewController.switchToGameUi();
   }
 
   /**
@@ -152,7 +136,7 @@ public class LobbyUi extends VBox {
   /** Called in ViewController when the view is shown to the user. Sets the username label. */
   public void onViewShown() {
     populatePlayerList();
-    usernameLabel.setText(playerData.getUsername());
+    playerData.getUsername();
     playerList.refresh();
   }
 }

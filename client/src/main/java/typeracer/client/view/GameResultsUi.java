@@ -37,6 +37,7 @@ public class GameResultsUi extends VBox {
   public GameResultsUi(ViewController viewController) {
     super(10);
     this.viewController = viewController;
+    this.playerData = new ClientSideSessionData();
     initializeUi();
   }
 
@@ -89,8 +90,7 @@ public class GameResultsUi extends VBox {
     VBox statsBox = new VBox(10);
     statsBox.setAlignment(Pos.CENTER);
     statsBox.setBackground(
-        new Background(new BackgroundFill(StyleManager.GREY_BOX, CornerRadii.EMPTY,
-                Insets.EMPTY)));
+        new Background(new BackgroundFill(StyleManager.GREY_BOX, CornerRadii.EMPTY, Insets.EMPTY)));
     statsBox.setPadding(new Insets(15));
     statsBox.setBorder(
         new Border(
@@ -106,21 +106,33 @@ public class GameResultsUi extends VBox {
     int currentPlayerId = playerData.getId();
 
     Label wpmLabel = new Label();
-    wpmLabel.textProperty().bind(Bindings.format("WPM: %.2f", playerData.getPlayerWpms()
-            .get(currentPlayerId)));
+    if (playerData.getPlayerWpms().containsKey(currentPlayerId)) {
+      wpmLabel.textProperty().bind(Bindings.format("WPM: %.2f", playerData.getPlayerWpms()
+              .get(currentPlayerId)));
+    } else {
+      wpmLabel.setText("WPM: N/A");
+    }
     wpmLabel.setFont(StyleManager.STANDARD_FONT);
 
     Label accuracyLabel = new Label();
-    accuracyLabel.textProperty().bind(Bindings.createStringBinding(
-            () -> String.format("Accuracy: %.2f%%", playerData.
-                    getPlayerAccuracies().get(currentPlayerId).get() * 100),
-            playerData.getPlayerAccuracies().get(currentPlayerId)));
+    if (playerData.getPlayerAccuracies().containsKey(currentPlayerId)) {
+      accuracyLabel.textProperty().bind(
+              Bindings.createStringBinding(
+                      () -> String.format("Accuracy: %.2f%%", playerData.getPlayerAccuracies()
+                              .get(currentPlayerId).get() * 100),
+                      playerData.getPlayerAccuracies().get(currentPlayerId)));
+    } else {
+      accuracyLabel.setText("Accuracy: N/A");
+    }
     accuracyLabel.setFont(StyleManager.STANDARD_FONT);
 
-
     Label errorLabel = new Label();
-    errorLabel.textProperty().bind(Bindings.format("Errors: %d", playerData
-            .getPlayerErrors().get(currentPlayerId)));
+    if (playerData.getPlayerErrors().containsKey(currentPlayerId)) {
+      errorLabel.textProperty().bind(Bindings.format("Errors: %d", playerData.getPlayerErrors()
+              .get(currentPlayerId)));
+    } else {
+      errorLabel.setText("Errors: N/A");
+    }
     errorLabel.setFont(StyleManager.STANDARD_FONT);
 
     statsBox.getChildren().addAll(statsLabel, wpmLabel, accuracyLabel, errorLabel);
