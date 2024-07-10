@@ -31,21 +31,10 @@ public class CharacterResponseHandler implements MessageHandler {
   @Override
   public void handleMessage(Message message) {
     if (message instanceof CharacterResponse characterResponse) {
-      System.out.println("The typed character is " + characterResponse.isCorrect() + ".");
-      handleCharacterResponse((CharacterResponse) message);
+      viewController.handleCharacterAnswer(characterResponse.isCorrect());
 
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
-    }
-  }
-
-  private void handleCharacterResponse(CharacterResponse characterResponse) {
-    boolean correct = characterResponse.isCorrect();
-    if (!correct) {
-      System.out.println("The character is not correct.");
-    } else {
-      viewController.handleCharacterAnswer(characterResponse.isCorrect());
-      System.out.println("The character is correct.");
     }
   }
 }

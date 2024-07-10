@@ -34,17 +34,16 @@ public class GameStateNotificationHandler implements MessageHandler {
       if (message instanceof GameStateNotification gameStateNotification) {
         switch (gameStateNotification.getGameStatus()) {
           case RUNNING:
-            // viewController.startGame();
+            viewController.startNewGame();
             break;
           case FINISHED:
             // ends the game
             viewController.endGame();
-            // viewController.getTopPlayers();
             break;
           case WAITING_FOR_PLAYERS:
             System.out.println("Game is waiting for players.");
           default:
-            nextHandler.handleMessage(message);
+            break;
         }
 
       } else if (nextHandler != null) {

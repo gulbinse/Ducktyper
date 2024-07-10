@@ -39,12 +39,8 @@ public class ReadyResponseHandler implements MessageHandler {
           System.out.println("Player is not ready.");
           break;
         default:
-          if (nextHandler != null) {
-            nextHandler.handleMessage(message);
-          }
           break;
       }
-
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }

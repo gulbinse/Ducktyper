@@ -120,6 +120,7 @@ public class Client {
    */
   public void start(String username) {
     messageHandlerChain = createMessageHandlerChain();
+    sendMessage(new HandshakeRequest(username));
 
     try {
       reader =
@@ -130,12 +131,12 @@ public class Client {
     }
     // new Thread to receive messages from the server
     new Thread(() -> receiveMessage(socket)).start();
-    sendMessage(new HandshakeRequest(username));
   }
 
   public void connect(String ip, int port, String username) {
     InetSocketAddress address = new InetSocketAddress(ip, port);
-    try (Socket socket = new Socket(address.getAddress(), address.getPort())) {
+    try {
+      Socket socket = new Socket(address.getAddress(), address.getPort());
       this.socket = socket;
       start(username);
     } catch (IOException e) {
@@ -179,11 +180,10 @@ public class Client {
     try {
       String json = moshiAdapter.toJson(message);
       OutputStream output = socket.getOutputStream();
-      PrintWriter writer = new PrintWriter(output, true);
+      PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
       writer.println(json);
       System.out.println("Sent message: " + json);
     } catch (IOException e) {
-      System.out.println("Error in sendMessage " + e.getMessage());
       e.printStackTrace();
     }
   }
@@ -195,12 +195,11 @@ public class Client {
       while (socket.isConnected()
           && !socket.isClosed()
           && (serverMessage = reader.readLine()) != null) {
+        System.out.println(serverMessage);
         Message message = moshiAdapter.fromJson(serverMessage);
         handleMessage(message);
-        System.out.println("Received message: " + message);
       }
     } catch (IOException e) {
-      System.out.println("Error on receiveMessage " + e.getMessage());
       throw new RuntimeException(e);
     }
   }

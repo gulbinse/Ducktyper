@@ -33,14 +33,14 @@ public class CreateSessionResponseHandler implements MessageHandler {
     if (message instanceof CreateSessionResponse createSessionResponse
         && createSessionResponse.getSessionId() != 0) {
       // switches to the lobby scene if the message contains an ID for the session
+      viewController.createLobby();
       viewController.switchToLobbyUi();
     } else if (message instanceof CreateSessionResponse createSessionResponse
         && createSessionResponse.getReason() != null) {
       // reason why the session couldn't be created
       System.out.println(
           "Player can't create session because "
-              + createSessionResponse.getReason().getString()
-              + ".");
+              + createSessionResponse.getReason().getString() + ".");
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }
