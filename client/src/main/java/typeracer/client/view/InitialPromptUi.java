@@ -239,18 +239,4 @@ public class InitialPromptUi extends VBox {
     Alert alert = new Alert(Alert.AlertType.ERROR, message);
     alert.showAndWait();
   }
-
-  public int getPlayerCount() {
-    if (modeDropdown.getValue() != null && !modeDropdown.getValue().isEmpty()) {
-      try {
-        return Integer.parseInt(modeDropdown.getValue());
-      } catch (NumberFormatException e) {
-        showAlert("Please select a valid number for max players.");
-      }
-    } else {
-      showAlert("Please select the maximum number of players.");
-    }
-    return -1;
-  }
-
 }

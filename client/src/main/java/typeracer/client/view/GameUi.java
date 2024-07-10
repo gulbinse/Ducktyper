@@ -8,8 +8,14 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -134,7 +140,10 @@ public class GameUi extends VBox {
     inputText.setMaxWidth(Double.MAX_VALUE);
     inputText.setPadding(new Insets(10));
     inputText.setStyle("-fx-alignment: top-left;");
-    inputText.setOnKeyTyped(event -> handleTyping(event.getCharacter().charAt(0))); //TODO: eine Methode um char zurückzugeben
+    inputText.setOnKeyTyped(
+        event ->
+            handleTyping(
+                event.getCharacter().charAt(0))); // TODO: eine Methode um char zurückzugeben
     panel.getChildren().add(inputText);
     getChildren().add(panel);
   }
@@ -143,7 +152,7 @@ public class GameUi extends VBox {
     viewController.handleCharacterTyped(typedCharacter);
     char expectedCharacter = getCurrentExpectedCharacter();
 
-    //TODO: Display wrong or correct character maybe by color
+    // TODO: Display wrong or correct character maybe by color
   }
 
   private char getCurrentExpectedCharacter() {
@@ -172,8 +181,7 @@ public class GameUi extends VBox {
                 new BorderWidths(1))));
 
     Label wpmLabel = new Label();
-    IntegerProperty wpmProperty =
-        viewController.getPlayerWpmProperty(viewController.getPlayerId());
+    IntegerProperty wpmProperty = viewController.getPlayerWpmProperty(viewController.getPlayerId());
     wpmLabel.textProperty().bind(Bindings.format("%d WPM", wpmProperty));
     wpmLabel.setAlignment(Pos.CENTER_LEFT);
 
@@ -230,12 +238,11 @@ public class GameUi extends VBox {
   }
 
   private void checkAndStartGooseAnimation() {
-//    int maxPlayers = viewController.getMaxPlayers();
-//    if (maxPlayers > 3) {
-//      startGooseAnimation((int) inputText.getWidth());
-//    }
+    //    int maxPlayers = viewController.getMaxPlayers();
+    //    if (maxPlayers > 3) {
+    //      startGooseAnimation((int) inputText.getWidth());
+    //    }
   }
-
 
   /** Adds a panel to display the top players. The panel is styled and positioned within the UI. */
   private void addTopPlayersPanel() {
@@ -257,9 +264,9 @@ public class GameUi extends VBox {
     topPlayersLabel.setFont(StyleManager.STANDARD_FONT);
     topPlayersPanel.getChildren().add(topPlayersLabel);
     getChildren().add(topPlayersPanel);
-    topPlayersLabel
-        .textProperty()
-        .bind(createTopPlayersBinding(viewController.topPlayersProperty()));
+    //    topPlayersLabel
+    //        .textProperty()
+    //        .bind(createTopPlayersBinding(viewController.topPlayersProperty()));
     VBox.setMargin(topPlayersPanel, new Insets(10, 50, 10, 50));
   }
 
@@ -327,7 +334,7 @@ public class GameUi extends VBox {
   public void onViewShown() {
     if (usernameLabel != null) {
       usernameLabel.setText(viewController.getUsername());
-      //checkAndStartGooseAnimation();
+      // checkAndStartGooseAnimation();
     }
   }
 }

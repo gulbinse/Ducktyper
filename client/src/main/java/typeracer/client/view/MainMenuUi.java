@@ -18,7 +18,7 @@ import typeracer.client.ViewController;
  */
 public class MainMenuUi extends VBox {
 
-  //For testing purpose only. Must be replayed later!!!
+  // For testing purpose only. Must be replayed later!!!
   private int defaultLobby = 1;
 
   private ViewController viewController;

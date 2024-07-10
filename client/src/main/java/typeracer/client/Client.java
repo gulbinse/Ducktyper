@@ -18,8 +18,7 @@ public class Client {
    *
    * @param args Command line arguments passed to the program (not used in this application).
    */
-  public static void main(String[] args) {
-  }
+  public static void main(String[] args) {}
 
   /**
    * Saves the user settings including username, WPM goal, and favorite text.
