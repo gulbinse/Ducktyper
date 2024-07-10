@@ -3,6 +3,7 @@ package typeracer.client;
 import typeracer.client.messagehandling.*;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.MoshiAdapter;
+import typeracer.communication.messages.client.HandshakeRequest;
 import typeracer.communication.messages.server.*;
 
 import java.io.*;
@@ -166,6 +167,7 @@ public class Client {
 
     // new Thread to receive messages from the server
     new Thread(() -> receiveMessage(socket)).start();
+    sendMessage(new HandshakeRequest(username));
   }
 
   public void connect(String ip, int port, String username) {
@@ -201,12 +203,13 @@ public class Client {
    *
    * @param message message that gets sent as a JSON
    */
-  private void sendMessage(String jsonMessage, Socket socket) {
+  public void sendMessage(Message message) {
     try {
+      String json = moshiAdapter.toJson(message);
       OutputStream output = socket.getOutputStream();
       PrintWriter writer = new PrintWriter(output, true);
-      writer.println(jsonMessage);
-      System.out.println("Sent message: " + jsonMessage);
+      writer.println(json);
+      System.out.println("Sent message: " + json);
     } catch (IOException e) {
       e.printStackTrace();
     }
