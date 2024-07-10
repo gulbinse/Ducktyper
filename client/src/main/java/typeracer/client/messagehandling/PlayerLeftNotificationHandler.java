@@ -1,6 +1,7 @@
 package typeracer.client.messagehandling;
 
 import typeracer.client.Client;
+import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.PlayerLeftNotification;
 
@@ -11,6 +12,7 @@ import typeracer.communication.messages.server.PlayerLeftNotification;
 public class PlayerLeftNotificationHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
+  private ViewController viewController;
 
   /**
    * Constructor with the next handler in chain.
@@ -32,7 +34,7 @@ public class PlayerLeftNotificationHandler implements MessageHandler {
     if (message instanceof PlayerLeftNotification playerLeftNotification) {
       System.out.println("Player " + playerLeftNotification.getPlayerId() + " left the game.");
       System.out.println("There are " + playerLeftNotification.getNumPlayers() + " players left.");
-
+      viewController.removePlayerFromGame(playerLeftNotification.getPlayerId());
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, client);
     }

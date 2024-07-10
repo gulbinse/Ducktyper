@@ -1,6 +1,7 @@
 package typeracer.client.messagehandling;
 
 import typeracer.client.Client;
+import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.PlayerJoinedNotification;
 
@@ -13,6 +14,7 @@ import java.io.IOException;
 public class PlayerJoinedNotificationHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
+  private ViewController viewController;
 
   /**
    * Constructor with the next handler in chain.
@@ -33,7 +35,7 @@ public class PlayerJoinedNotificationHandler implements MessageHandler {
   public void handleMessage(Message message, Client client) {
     if (message instanceof PlayerJoinedNotification playerJoinedNotification) {
       // set number of the current players
-      viewController.setNumPlayers(playerJoinedNotification.getNumPlayers());
+      viewController.addPlayerToGame(playerJoinedNotification.getPlayerId(), playerJoinedNotification.getPlayerName());
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, client);
     }

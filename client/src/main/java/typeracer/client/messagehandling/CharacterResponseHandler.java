@@ -46,6 +46,7 @@ public class CharacterResponseHandler implements MessageHandler {
       viewController.incrementError();
       System.out.println("The character is not correct.");
     } else {
+      viewController.handleCharacterAnswer(characterResponse.isCorrect());
       System.out.println("The character is correct.");
     }
   }

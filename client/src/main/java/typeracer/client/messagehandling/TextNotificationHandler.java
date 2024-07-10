@@ -1,6 +1,7 @@
 package typeracer.client.messagehandling;
 
 import typeracer.client.Client;
+import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.TextNotification;
 
@@ -11,6 +12,7 @@ import typeracer.communication.messages.server.TextNotification;
 public class TextNotificationHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
+  private ViewController viewController;
 
   /**
    * Constructor with the next handler in chain.
@@ -30,7 +32,7 @@ public class TextNotificationHandler implements MessageHandler {
   @Override
   public void handleMessage(Message message, Client client) {
     if (message instanceof TextNotification textNotification) {
-      viewController.setNewText(textNotification.getText());
+      viewController.setGameText(textNotification.getText());
     } else {
       nextHandler.handleMessage(message, client);
     }
