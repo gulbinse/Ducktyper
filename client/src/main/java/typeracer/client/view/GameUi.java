@@ -4,7 +4,6 @@ import java.util.stream.Collectors;
 import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
 import javafx.geometry.Insets;
@@ -174,7 +173,7 @@ public class GameUi extends VBox {
 
     Label wpmLabel = new Label();
     IntegerProperty wpmProperty =
-        viewController.getPlayerWpmProperty(viewController.getCurrentPlayerId());
+        viewController.getPlayerWpmProperty(viewController.getPlayerId());
     wpmLabel.textProperty().bind(Bindings.format("%d WPM", wpmProperty));
     wpmLabel.setAlignment(Pos.CENTER_LEFT);
 
@@ -183,7 +182,7 @@ public class GameUi extends VBox {
         .textProperty()
         .bind(
             viewController
-                .getPlayerAccuracyProperty(viewController.getCurrentPlayerId())
+                .getPlayerAccuracyProperty(viewController.getPlayerId())
                 .multiply(100)
                 .asString("%.2f%% Accuracy"));
     accuracyLabel.setAlignment(Pos.CENTER);
@@ -193,7 +192,7 @@ public class GameUi extends VBox {
     ProgressBar progressBar = new ProgressBar();
     progressBar
         .progressProperty()
-        .bind(viewController.getPlayerProgressProperty(viewController.getCurrentPlayerId()));
+        .bind(viewController.getPlayerProgressProperty(viewController.getPlayerId()));
     progressBar.setPrefWidth(200);
 
     VBox wpmContainer = new VBox(wpmLabel);

@@ -92,7 +92,7 @@ public class LobbyUi extends VBox {
         StyleManager.createStyledButton(
             "back", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
     readyButton.setOnAction(e -> viewController.setPlayerReady(!isReady));
-    backButton.setOnAction(e -> viewController.switchToMainMenu());
+    backButton.setOnAction(e -> viewController.leaveLobbyOrGame());
 
     HBox buttonBox = new HBox(10);
     buttonBox.setAlignment(Pos.CENTER);
