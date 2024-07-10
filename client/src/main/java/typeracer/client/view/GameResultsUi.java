@@ -25,7 +25,9 @@ import typeracer.client.ViewController;
 public class GameResultsUi extends VBox {
 
   /** The controller managing views and handling interactions. */
-  private ViewController viewController;
+  private final ViewController viewController;
+
+  private ClientSideSessionData playerData;
 
   /**
    * Constructs a new GameResultsUi and initializes its user interface.
@@ -87,7 +89,8 @@ public class GameResultsUi extends VBox {
     VBox statsBox = new VBox(10);
     statsBox.setAlignment(Pos.CENTER);
     statsBox.setBackground(
-        new Background(new BackgroundFill(StyleManager.GREY_BOX, CornerRadii.EMPTY, Insets.EMPTY)));
+        new Background(new BackgroundFill(StyleManager.GREY_BOX, CornerRadii.EMPTY,
+                Insets.EMPTY)));
     statsBox.setPadding(new Insets(15));
     statsBox.setBorder(
         new Border(
@@ -100,24 +103,24 @@ public class GameResultsUi extends VBox {
     Label statsLabel = new Label("Your Stats:");
     statsLabel.setFont(StyleManager.ITALIC_FONT);
 
-    int currentPlayerId = ClientSideSessionData.getInstance().getId();
+    int currentPlayerId = playerData.getId();
 
     Label wpmLabel = new Label();
-    wpmLabel.textProperty().bind(Bindings.format("WPM: %.2f", ClientSideSessionData.
-            getInstance().getPlayerWpms().get(currentPlayerId)));
+    wpmLabel.textProperty().bind(Bindings.format("WPM: %.2f", playerData.getPlayerWpms()
+            .get(currentPlayerId)));
     wpmLabel.setFont(StyleManager.STANDARD_FONT);
 
     Label accuracyLabel = new Label();
     accuracyLabel.textProperty().bind(Bindings.createStringBinding(
-            () -> String.format("Accuracy: %.2f%%", ClientSideSessionData.getInstance().
+            () -> String.format("Accuracy: %.2f%%", playerData.
                     getPlayerAccuracies().get(currentPlayerId).get() * 100),
-            ClientSideSessionData.getInstance().getPlayerAccuracies().get(currentPlayerId)));
+            playerData.getPlayerAccuracies().get(currentPlayerId)));
     accuracyLabel.setFont(StyleManager.STANDARD_FONT);
 
 
     Label errorLabel = new Label();
-    errorLabel.textProperty().bind(Bindings.format("Errors: %d", ClientSideSessionData.
-            getInstance().getPlayerErrors().get(currentPlayerId)));
+    errorLabel.textProperty().bind(Bindings.format("Errors: %d", playerData
+            .getPlayerErrors().get(currentPlayerId)));
     errorLabel.setFont(StyleManager.STANDARD_FONT);
 
     statsBox.getChildren().addAll(statsLabel, wpmLabel, accuracyLabel, errorLabel);

@@ -27,15 +27,6 @@ public class ClientSideSessionData {
       new SimpleListProperty<>(FXCollections.observableArrayList());
   String gameText = "Text";
 
-  private static ClientSideSessionData instance;
-
-  public static synchronized ClientSideSessionData getInstance() {
-    if (instance == null) {
-      instance = new ClientSideSessionData();
-    }
-    return instance;
-  }
-
   public String getUsername() {
     return username;
   }

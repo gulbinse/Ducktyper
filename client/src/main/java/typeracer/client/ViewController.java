@@ -82,7 +82,7 @@ public class ViewController {
   public void handleCharacterTyped(char character) {
     // TODO: add Logic, that makes Client send a CharacterRequest to Server
     if (client != null) {
-      client.sendCharacter(character);
+      //client.sendCharacter(character);
     } else {
       System.out.println("Error: Client is not initialized.");
     }

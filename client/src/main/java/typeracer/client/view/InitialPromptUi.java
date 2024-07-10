@@ -36,7 +36,7 @@ public class InitialPromptUi extends VBox {
   /** The controller to manage views and handle interactions. */
   private ViewController viewController;
 
-  private ClientSideSessionData clientSideSessionData;
+  private ClientSideSessionData playerData;
 
   /** The primary stage of the application. */
   private Stage stage;
@@ -49,7 +49,7 @@ public class InitialPromptUi extends VBox {
    */
   public InitialPromptUi(ViewController viewController, Stage stage) {
     this.viewController = viewController;
-    this.clientSideSessionData = new ClientSideSessionData();
+    this.playerData = new ClientSideSessionData();
     this.stage = stage;
     initializeUi();
   }
@@ -221,7 +221,7 @@ public class InitialPromptUi extends VBox {
     }
 
     try {
-      ClientSideSessionData.getInstance().setUsername(username);
+      playerData.setUsername(username);
       // int portNumber = Integer.parseInt(port);
       // viewController.connectToServer(username, ip, portNumber);
       viewController.switchToMainMenu();

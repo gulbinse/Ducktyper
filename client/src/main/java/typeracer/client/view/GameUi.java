@@ -58,7 +58,7 @@ public class GameUi extends VBox {
 
   private Label feedbackLabel;
 
-  private ClientSideSessionData clientSideSessionData;
+  private ClientSideSessionData playerData;
 
   /**
    * Constructs a new GameUi and initializes its user interface.
@@ -66,7 +66,7 @@ public class GameUi extends VBox {
    * @param viewController The controller to manage views and handle interactions.
    */
   public GameUi(ViewController viewController) {
-    this.clientSideSessionData = new ClientSideSessionData();
+    this.playerData = new ClientSideSessionData();
     this.viewController = viewController;
     initUi();
   }
@@ -91,7 +91,7 @@ public class GameUi extends VBox {
 
   /** Adds a label to display the username. The label is styled and positioned within the UI. */
   private void addUserLabel() {
-    String username = ClientSideSessionData.getInstance().getUsername();
+    String username = playerData.getUsername();
 
     if (username == null || username.isEmpty()) {
       username = "Default User";
@@ -126,7 +126,7 @@ public class GameUi extends VBox {
     displayText.setWrapText(true);
     displayText.setPrefHeight(150);
     displayText.setMaxWidth(Double.MAX_VALUE);
-    displayText.setText(clientSideSessionData.getGameText());
+    displayText.setText(playerData.getGameText());
     VBox panel = new VBox();
     panel.setAlignment(Pos.CENTER);
     panel.setPadding(new Insets(10, 50, 10, 50));
@@ -185,12 +185,12 @@ public class GameUi extends VBox {
     viewController.handleCharacterTyped(typedCharacter);
     char expectedCharacter = getCurrentExpectedCharacter();
 
-    int currentPlayerId = clientSideSessionData.getId();
+    int currentPlayerId = playerData.getId();
 
-    IntegerProperty errorsProperty = clientSideSessionData.getPlayerErrors().get(currentPlayerId);
+    IntegerProperty errorsProperty = playerData.getPlayerErrors().get(currentPlayerId);
     if (errorsProperty == null) {
       errorsProperty = new SimpleIntegerProperty(0);
-      clientSideSessionData.getPlayerErrors().put(currentPlayerId, errorsProperty);
+      playerData.getPlayerErrors().put(currentPlayerId, errorsProperty);
     }
     if (typedCharacter != expectedCharacter) {
       errorsProperty.set(errorsProperty.get() + 1);
@@ -225,11 +225,11 @@ public class GameUi extends VBox {
                 CornerRadii.EMPTY,
                 new BorderWidths(1))));
 
-    int currentPlayerId = clientSideSessionData.getId();
+    int currentPlayerId = playerData.getId();
 
     // WPM Label
     Label wpmLabel = new Label();
-    SimpleIntegerProperty wpmProperty = clientSideSessionData.getPlayerWpms().get(currentPlayerId);
+    SimpleIntegerProperty wpmProperty = playerData.getPlayerWpms().get(currentPlayerId);
     if (wpmProperty != null) {
       wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
     } else {
@@ -239,7 +239,7 @@ public class GameUi extends VBox {
 
     Label accuracyLabel = new Label();
     DoubleProperty accuracyProperty =
-        clientSideSessionData.getPlayerAccuracies().get(currentPlayerId);
+        playerData.getPlayerAccuracies().get(currentPlayerId);
     if (accuracyProperty != null) {
       accuracyLabel
           .textProperty()
@@ -254,7 +254,7 @@ public class GameUi extends VBox {
 
     // Errors Label
     Label errorsLabel = new Label();
-    IntegerProperty errorsProperty = clientSideSessionData.getPlayerErrors().get(currentPlayerId);
+    IntegerProperty errorsProperty = playerData.getPlayerErrors().get(currentPlayerId);
     if (errorsProperty != null) {
       errorsLabel.textProperty().bind(Bindings.format("Errors: %d", errorsProperty));
     } else {
@@ -264,7 +264,7 @@ public class GameUi extends VBox {
 
     ProgressBar progressBar = new ProgressBar();
     DoubleProperty progressProperty =
-        clientSideSessionData.getPlayerProgresses().get(currentPlayerId);
+        playerData.getPlayerProgresses().get(currentPlayerId);
     if (progressProperty != null) {
       progressBar.progressProperty().bind(progressProperty);
     } else {
@@ -327,7 +327,7 @@ public class GameUi extends VBox {
     getChildren().add(topPlayersPanel);
     topPlayersLabel
         .textProperty()
-        .bind(createTopPlayersBinding(clientSideSessionData.topPlayersProperty()));
+        .bind(createTopPlayersBinding(playerData.topPlayersProperty()));
     VBox.setMargin(topPlayersPanel, new Insets(10, 50, 10, 50));
   }
 
@@ -394,7 +394,7 @@ public class GameUi extends VBox {
    * view controller.
    */
   public void onViewShown() {
-    String currentUsername = clientSideSessionData.getUsername();
+    String currentUsername = playerData.getUsername();
     if (currentUsername != null && !currentUsername.isEmpty()) {
       usernameLabel.setText(currentUsername);
     } else {
