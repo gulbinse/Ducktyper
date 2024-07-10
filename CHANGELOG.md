@@ -29,6 +29,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Periodic sending of update notifications
   - Session as mediator between server and game
 - More extensive server & game logic tests
+- `MessageHandler` classes in *Chain of Responsibility* to manage requests clientside
+- Client connection support to server (#44)
 
 ### Changed
 - "Lobby" to "Session" renamed
