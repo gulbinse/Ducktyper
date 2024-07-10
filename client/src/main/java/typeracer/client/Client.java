@@ -26,7 +26,7 @@ public class Client {
   private MessageHandler messageHandlerChain;
   private final MoshiAdapter moshiAdapter = new MoshiAdapter();
   private Socket socket = null;
-  private final ViewController viewController;
+  private ViewController viewController;
 
 
   /**
