@@ -12,15 +12,16 @@ import typeracer.communication.messages.server.CreateSessionResponse;
 public class CreateSessionResponseHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
-  private ViewController viewController;
+  private final ViewController viewController;
 
   /**
    * Constructor with the next handler in chain.
    *
    * @param nextHandler the next handler in message handling chain
    */
-  public CreateSessionResponseHandler(MessageHandler nextHandler) {
+  public CreateSessionResponseHandler(MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;
+    this.viewController = viewController;
   }
 
   /**

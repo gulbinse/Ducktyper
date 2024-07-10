@@ -17,14 +17,14 @@ import java.net.UnknownHostException;
  * Client connects to a server to play the game.
  * Users can join with a username, get notifications and type.
  */
-
 public class Client {
-  private static final int DEFAULT_PORT = 4441;
+  private static int DEFAULT_PORT = 4441;
   private static final String DEFAULT_USERNAME = "alina";
   private static final String DEFAULT_ADDRESS = "localhost";
   private MessageHandler messageHandlerChain;
   private final MoshiAdapter moshiAdapter = new MoshiAdapter();
   private Socket socket = null;
+  private final ViewController viewController;
 
 
   /**
@@ -41,6 +41,7 @@ public class Client {
   public static void main(String[] args) {
     String username = DEFAULT_USERNAME;
     String serverAddress = DEFAULT_ADDRESS;
+    viewController = new ViewController(this);
     int port = DEFAULT_PORT;
     for (int i = 0; i < args.length; ++i) {
       switch (args[i]) {
@@ -104,9 +105,6 @@ public class Client {
       printErrorMessage("The port number should be in the range of 1024~65535.");
       return;
     }
-
-    Client client = new Client();
-
   }
 
   /**
@@ -181,17 +179,17 @@ public class Client {
   }
 
   private MessageHandler createMessageHandlerChain() {
-    MessageHandler characterResponseHandler = new CharacterResponseHandler(null);
-    MessageHandler handShakeResponseHandler = new HandShakeResponseHandler(characterResponseHandler);
-    MessageHandler createSessionResponseHandler = new CreateSessionResponseHandler(handShakeResponseHandler);
-    MessageHandler readyResponseHandler = new ReadyResponseHandler(createSessionResponseHandler);
-    MessageHandler textNotificationHandler = new TextNotificationHandler(readyResponseHandler);
-    MessageHandler playerStateNotificationHandler = new PlayerStateNotificationHandler(textNotificationHandler);
-    MessageHandler gameStateNotificationHandler = new GameStateNotificationHandler(playerStateNotificationHandler);
-    MessageHandler playerLeftNotificationHandler = new PlayerLeftNotificationHandler(gameStateNotificationHandler);
-    MessageHandler playerJoinedNotificationHandler = new PlayerJoinedNotificationHandler(playerLeftNotificationHandler);
-    MessageHandler joinSessionResponseHandler = new JoinSessionResponseHandler(playerJoinedNotificationHandler);
-    return new LeaveSessionResponseHandler(joinSessionResponseHandler);
+    MessageHandler characterResponseHandler = new CharacterResponseHandler(null, viewController);
+    MessageHandler handShakeResponseHandler = new HandShakeResponseHandler(characterResponseHandler, viewController);
+    MessageHandler createSessionResponseHandler = new CreateSessionResponseHandler(handShakeResponseHandler, viewController);
+    MessageHandler readyResponseHandler = new ReadyResponseHandler(createSessionResponseHandler, viewController);
+    MessageHandler textNotificationHandler = new TextNotificationHandler(readyResponseHandler, viewController);
+    MessageHandler playerStateNotificationHandler = new PlayerStateNotificationHandler(textNotificationHandler, viewController);
+    MessageHandler gameStateNotificationHandler = new GameStateNotificationHandler(playerStateNotificationHandler, viewController);
+    MessageHandler playerLeftNotificationHandler = new PlayerLeftNotificationHandler(gameStateNotificationHandler, viewController);
+    MessageHandler playerJoinedNotificationHandler = new PlayerJoinedNotificationHandler(playerLeftNotificationHandler, viewController);
+    MessageHandler joinSessionResponseHandler = new JoinSessionResponseHandler(playerJoinedNotificationHandler, viewController);
+    return new LeaveSessionResponseHandler(joinSessionResponseHandler, viewController);
   }
 
   public void handleMessage(Message message) throws IOException {

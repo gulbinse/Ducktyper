@@ -12,15 +12,16 @@ import typeracer.communication.messages.server.GameStateNotification;
 public class GameStateNotificationHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
-  private ViewController viewController;
+  private final ViewController viewController;
 
   /**
    * Constructor with the next handler in chain.
    *
    * @param nextHandler the next handler in message handling chain
    */
-  public GameStateNotificationHandler(MessageHandler nextHandler) {
+  public GameStateNotificationHandler(MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;
+    this.viewController = viewController;
   }
 
   /**

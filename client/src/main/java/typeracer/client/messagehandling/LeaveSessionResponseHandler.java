@@ -11,15 +11,16 @@ import typeracer.communication.messages.server.LeaveSessionResponse;
 public class LeaveSessionResponseHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
-  private ViewController viewController;
+  private final ViewController viewController;
 
   /**
    * Constructor with the next handler in chain.
    *
    * @param nextHandler the next handler in message handling chain
    */
-  public LeaveSessionResponseHandler(MessageHandler nextHandler) {
+  public LeaveSessionResponseHandler(MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;
+    this.viewController = viewController;
   }
 
   /**

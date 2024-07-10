@@ -10,14 +10,16 @@ import typeracer.communication.messages.server.ReadyResponse;
  */
 public class ReadyResponseHandler implements MessageHandler {
   private final MessageHandler nextHandler;
+  private final ViewController viewController;
 
   /**
    * Constructor with the next handler in chain.
    *
    * @param nextHandler the next handler in message handling chain
    */
-  public ReadyResponseHandler(final MessageHandler nextHandler) {
+  public ReadyResponseHandler(final MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;
+    this.viewController = viewController;
   }
 
   /**

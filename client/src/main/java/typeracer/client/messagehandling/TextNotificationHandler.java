@@ -11,15 +11,16 @@ import typeracer.communication.messages.server.TextNotification;
 public class TextNotificationHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
-  private ViewController viewController;
+  private final ViewController viewController;
 
   /**
    * Constructor with the next handler in chain.
    *
    * @param nextHandler the next handler in message handling chain
    */
-  public TextNotificationHandler(MessageHandler nextHandler) {
+  public TextNotificationHandler(MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;
+    this.viewController = viewController;
   }
 
   /**

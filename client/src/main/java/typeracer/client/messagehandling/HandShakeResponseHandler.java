@@ -11,15 +11,16 @@ import typeracer.communication.messages.server.HandshakeResponse;
 public class HandShakeResponseHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
-  private ViewController viewController;
+  private final ViewController viewController;
 
   /**
    * Constructor with the next handler in chain.
    *
    * @param nextHandler the next handler in message handling chain
    */
-  public HandShakeResponseHandler(MessageHandler nextHandler) {
+  public HandShakeResponseHandler(MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;
+    this.viewController = viewController;
   }
 
   /**

@@ -11,15 +11,16 @@ import typeracer.communication.messages.server.PlayerLeftNotification;
 public class PlayerLeftNotificationHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
-  private ViewController viewController;
+  private final ViewController viewController;
 
   /**
    * Constructor with the next handler in chain.
    *
    * @param nextHandler he next handler in message handling chain
    */
-  public PlayerLeftNotificationHandler(MessageHandler nextHandler) {
+  public PlayerLeftNotificationHandler(MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;
+    this.viewController = viewController;
   }
 
   /**

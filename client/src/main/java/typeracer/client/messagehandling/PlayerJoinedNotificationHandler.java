@@ -13,15 +13,16 @@ import java.io.IOException;
 public class PlayerJoinedNotificationHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
-  private ViewController viewController;
+  private final ViewController viewController;
 
   /**
    * Constructor with the next handler in chain.
    *
    * @param nextHandler next handler in chain
    */
-  public PlayerJoinedNotificationHandler(MessageHandler nextHandler) {
+  public PlayerJoinedNotificationHandler(MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;
+    this.viewController = viewController;
   }
 
   /**
