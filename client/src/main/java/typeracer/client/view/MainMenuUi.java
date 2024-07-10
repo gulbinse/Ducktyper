@@ -76,8 +76,9 @@ public class MainMenuUi extends VBox {
             "exit", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
 
     startGameButton.setOnAction(e -> viewController.joinLobby(defaultLobby));
-    profileSettingButton.setOnAction(e -> viewController.editProfile());
-    statsButton.setOnAction(e -> viewController.viewStats());
+    profileSettingButton.setOnAction(
+        e -> viewController.showScene(ViewController.SceneName.PROFILE_SETTINGS));
+    statsButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.STATS));
     exitButton.setOnAction(e -> exitApplication());
 
     StyleManager.applyFadeInAnimation(startGameButton, 1500);

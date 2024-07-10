@@ -82,15 +82,7 @@ public class ViewController extends Application {
   public void start(Stage primaryStage) {
     this.primaryStage = primaryStage;
     primaryStage.setTitle("Ducktyper");
-    initializeScenes();
-    Platform.runLater(() -> showScene(SceneName.INITIAL_PROMPT));
-    primaryStage.setResizable(true);
-    primaryStage.setOnCloseRequest(event -> System.exit(0));
-    primaryStage.show();
-  }
 
-  /** Initializes the scenes for different views in the application. */
-  private void initializeScenes() {
     addScene(SceneName.INITIAL_PROMPT, new InitialPromptUi(this, primaryStage));
     addScene(SceneName.MAIN_MENU, new MainMenuUi(this));
     addScene(SceneName.GAME, new GameUi(this));
@@ -98,6 +90,11 @@ public class ViewController extends Application {
     addScene(SceneName.PROFILE_SETTINGS, new ProfileSettingsUi(this));
     addScene(SceneName.GAME_RESULTS, new GameResultsUi(this));
     addScene(SceneName.LOBBY, new LobbyUi(this));
+
+    Platform.runLater(() -> showScene(SceneName.INITIAL_PROMPT));
+    primaryStage.setResizable(true);
+    primaryStage.setOnCloseRequest(event -> System.exit(0));
+    primaryStage.show();
   }
 
   /** Helper method to add views to the map. */
@@ -127,11 +124,6 @@ public class ViewController extends Application {
     }
   }
 
-  /** Switches the current scene to the main menu. */
-  public void switchToMainMenu() {
-    showScene(SceneName.MAIN_MENU);
-  }
-
   /** Switches the current scene to the lobby UI. */
   // Was ist der Unterschied zwischen der Methode und startGame(); ?
   public void switchToLobbyUi() {
@@ -140,35 +132,6 @@ public class ViewController extends Application {
     if (lobbyUi != null) {
       lobbyUi.onViewShown();
     }
-  }
-
-  /** Switches the current scene to the game UI. */
-  public void switchToGameUi() {
-    showScene(SceneName.GAME);
-    GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
-    if (gameUi != null) {
-      gameUi.onViewShown();
-    }
-  }
-
-  /** Switches the current scene to the game results UI. */
-  public void switchToGameResultUi() {
-    showScene(SceneName.GAME_RESULTS);
-  }
-
-  /** Displays the lobby view. */
-  public void startGame() {
-    showScene(SceneName.LOBBY);
-  }
-
-  /** Displays the statistics view. */
-  public void viewStats() {
-    showScene(SceneName.STATS);
-  }
-
-  /** Displays the profile settings view. */
-  public void editProfile() {
-    showScene(SceneName.PROFILE_SETTINGS);
   }
 
   /**
@@ -180,11 +143,6 @@ public class ViewController extends Application {
    */
   public void saveUserSettings(String username, int wpmGoal, String favoriteText) {
     //        client.saveSettings(username, wpmGoal, favoriteText);
-    showScene(SceneName.MAIN_MENU);
-  }
-
-  /** Cancels any changes made in the settings and returns to the main menu. */
-  public void cancelSettings() {
     showScene(SceneName.MAIN_MENU);
   }
 
@@ -223,7 +181,7 @@ public class ViewController extends Application {
     // TODO: add Logic, that makes Client send a JoinLobbyRequest to Server
     System.out.println("Request to join lobby " + lobbyId);
     // For Testing purpose only:
-    startGame();
+    showScene(SceneName.LOBBY);
   }
 
   /**
@@ -252,14 +210,18 @@ public class ViewController extends Application {
   public void leaveLobbyOrGame() {
     System.out.println("Leaving lobby");
     // TODO: add Logic, that makes Client send a LeaveSessionRequest to Server
-    switchToMainMenu();
+    showScene(SceneName.MAIN_MENU);
   }
 
   /** Starts a new game by fetching the game text and updating the UI accordingly. */
   // TODO: This method should be called by Client on receiving a GameStateNotification with
   // GameStatus == Running
   public void startNewGame() {
-    switchToGameUi();
+    showScene(SceneName.GAME);
+    GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
+    if (gameUi != null) {
+      gameUi.onViewShown();
+    }
   }
 
   /**
@@ -287,7 +249,7 @@ public class ViewController extends Application {
   // TODO: This method should be called by view on receiving a GameStateNotification with GameStatus
   // == Finished
   public void endGame() {
-    switchToGameResultUi();
+    showScene(SceneName.GAME_RESULTS);
   }
 
   /**
