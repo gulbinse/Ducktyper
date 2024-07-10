@@ -1,5 +1,6 @@
 package typeracer.client.messagehandling;
 
+import typeracer.client.ViewController;
 import typeracer.communication.messages.*;
 import typeracer.communication.messages.server.ReadyResponse;
 

@@ -26,13 +26,14 @@ public class Client {
   private MessageHandler messageHandlerChain;
   private final MoshiAdapter moshiAdapter = new MoshiAdapter();
   private Socket socket = null;
-  private ViewController viewController;
+  private final ViewController viewController;
 
 
   /**
    * Constructor for the client.
    */
   public Client() {
+    viewController = new ViewController(this);
   }
 
   /**
@@ -43,7 +44,6 @@ public class Client {
   public static void main(String[] args) {
     String username = DEFAULT_USERNAME;
     String serverAddress = DEFAULT_ADDRESS;
-    viewController = new ViewController(this);
     int port = DEFAULT_PORT;
     for (int i = 0; i < args.length; ++i) {
       switch (args[i]) {
@@ -107,6 +107,8 @@ public class Client {
       printErrorMessage("The port number should be in the range of 1024~65535.");
       return;
     }
+
+    Client client = new Client();
   }
 
   /**
