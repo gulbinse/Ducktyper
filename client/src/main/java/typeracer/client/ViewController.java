@@ -21,8 +21,7 @@ import typeracer.client.view.LobbyUi;
 import typeracer.client.view.MainMenuUi;
 import typeracer.client.view.PlayerStatsUi;
 import typeracer.client.view.ProfileSettingsUi;
-import typeracer.communication.messages.client.CreateSessionRequest;
-import typeracer.communication.messages.client.JoinSessionRequest;
+import typeracer.communication.messages.client.*;
 
 /** Manages the transition between different scenes and states in the TypeRacer game application. */
 public class ViewController extends Application {
@@ -140,7 +139,7 @@ public class ViewController extends Application {
    * @param favoriteText The favorite text of the user.
    */
   public void saveUserSettings(String username, int wpmGoal, String favoriteText) {
-    //        client.saveSettings(username, wpmGoal, favoriteText);
+    // client.saveSettings(username, wpmGoal, favoriteText);
     showScene(SceneName.MAIN_MENU);
   }
 
@@ -199,8 +198,10 @@ public class ViewController extends Application {
    * @param isReady status the player wants to be
    */
   public void setPlayerReady(boolean isReady) {
+    client.sendMessage(new ReadyRequest(isReady));
     System.out.println("Player wants to update his readyStatus to: " + isReady);
     // TODO: add Logic, that makes Client send a ReadyRequest to Server
+    // TODO: set ready to false when "Play Again"- Button is pressed
     // For Testing purpose only:
     startNewGame();
   }
@@ -211,12 +212,14 @@ public class ViewController extends Application {
    * @param character which the client typed
    */
   public void handleCharacterTyped(char character) {
+    client.sendMessage(new CharacterRequest(character));
     System.out.println("Character typed: " + character);
     // TODO: add Logic, that makes Client send a CharacterRequest to Server
   }
 
   /** Signals User intention to leave the game. */
   public void leaveLobbyOrGame() {
+    client.sendMessage(new LeaveSessionRequest());
     System.out.println("Leaving lobby");
     // TODO: add Logic, that makes Client send a LeaveSessionRequest to Server
     showScene(SceneName.MAIN_MENU);
@@ -267,7 +270,13 @@ public class ViewController extends Application {
    * @param isCorrect boolean if the typed character is correct
    */
   // TODO: This method should be called by view on receiving a CharacterResponse
-  public void handleCharacterAnswer(boolean isCorrect) {}
+  public void handleCharacterAnswer(boolean isCorrect) {
+    if (!isCorrect) {
+      System.out.println("The character is not correct.");
+    } else {
+      System.out.println("The character is correct.");
+    }
+  }
 
   /**
    * Updates the game text with the specified new text.
