@@ -55,7 +55,7 @@ public class ViewController extends Application {
   private static final int DEFAULT_WINDOW_WIDTH = 800;
   private static final int DEFAULT_WINDOW_HEIGHT = 650;
 
-  private static Map<SceneName, Scene> scenes;
+  private Map<SceneName, Scene> scenes;
 
   private Stage primaryStage;
   private final Client client;
