@@ -4,7 +4,6 @@ import java.util.stream.Collectors;
 import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
 import javafx.geometry.Insets;
@@ -113,7 +112,7 @@ public class GameUi extends VBox {
     displayText.setWrapText(true);
     displayText.setPrefHeight(150);
     displayText.setMaxWidth(Double.MAX_VALUE);
-    displayText.setText(viewController.getGameTextProperty());
+    displayText.setText(viewController.getGameText());
     VBox panel = new VBox();
     panel.setAlignment(Pos.CENTER);
     panel.setPadding(new Insets(10, 50, 10, 50));
@@ -145,10 +144,6 @@ public class GameUi extends VBox {
     char expectedCharacter = getCurrentExpectedCharacter();
 
     //TODO: Display wrong or correct character maybe by color
-    if (typedCharacter != expectedCharacter) {
-      IntegerProperty errorsProperty = viewController.getPlayerErrorsProperty();
-      errorsProperty.set(errorsProperty.get() + 1);
-    }
   }
 
   private char getCurrentExpectedCharacter() {
@@ -177,9 +172,9 @@ public class GameUi extends VBox {
                 new BorderWidths(1))));
 
     Label wpmLabel = new Label();
-    DoubleProperty wpmProperty =
-        viewController.getPlayerWpmProperty(viewController.getCurrentPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
+    IntegerProperty wpmProperty =
+        viewController.getPlayerWpmProperty(viewController.getPlayerId());
+    wpmLabel.textProperty().bind(Bindings.format("%d WPM", wpmProperty));
     wpmLabel.setAlignment(Pos.CENTER_LEFT);
 
     Label accuracyLabel = new Label();
@@ -187,21 +182,17 @@ public class GameUi extends VBox {
         .textProperty()
         .bind(
             viewController
-                .getPlayerAccuracyProperty(viewController.getCurrentPlayerId())
+                .getPlayerAccuracyProperty(viewController.getPlayerId())
                 .multiply(100)
                 .asString("%.2f%% Accuracy"));
     accuracyLabel.setAlignment(Pos.CENTER);
 
     Label errorsLabel = new Label();
-    IntegerProperty errorsProperty =
-        viewController.getPlayerErrorsProperty();
-    errorsLabel.textProperty().bind(Bindings.format("Errors: %d", errorsProperty));
-    errorsLabel.setAlignment(Pos.CENTER_RIGHT);
 
     ProgressBar progressBar = new ProgressBar();
     progressBar
         .progressProperty()
-        .bind(viewController.getPlayerProgressProperty(viewController.getCurrentPlayerId()));
+        .bind(viewController.getPlayerProgressProperty(viewController.getPlayerId()));
     progressBar.setPrefWidth(200);
 
     VBox wpmContainer = new VBox(wpmLabel);
@@ -239,10 +230,10 @@ public class GameUi extends VBox {
   }
 
   private void checkAndStartGooseAnimation() {
-    int maxPlayers = viewController.getMaxPlayers();
-    if (maxPlayers > 3) {
-      startGooseAnimation((int) inputText.getWidth());
-    }
+//    int maxPlayers = viewController.getMaxPlayers();
+//    if (maxPlayers > 3) {
+//      startGooseAnimation((int) inputText.getWidth());
+//    }
   }
 
 
@@ -325,7 +316,6 @@ public class GameUi extends VBox {
             response -> {
               if (response == ButtonType.YES) {
                 viewController.endGame();
-                viewController.switchToGameResultUi();
               }
             });
   }

@@ -18,6 +18,9 @@ import typeracer.client.ViewController;
  */
 public class MainMenuUi extends VBox {
 
+  //For testing purpose only. Must be replayed later!!!
+  private int defaultLobby = 1;
+
   private ViewController viewController;
 
   /** Button to start a new game. */
@@ -72,7 +75,7 @@ public class MainMenuUi extends VBox {
         StyleManager.createStyledButton(
             "exit", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
 
-    startGameButton.setOnAction(e -> viewController.startGame());
+    startGameButton.setOnAction(e -> viewController.joinLobby(defaultLobby));
     profileSettingButton.setOnAction(e -> viewController.editProfile());
     statsButton.setOnAction(e -> viewController.viewStats());
     exitButton.setOnAction(e -> exitApplication());

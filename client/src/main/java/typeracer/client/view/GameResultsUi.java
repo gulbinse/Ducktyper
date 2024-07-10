@@ -1,7 +1,6 @@
 package typeracer.client.view;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,7 +25,7 @@ import typeracer.client.ViewController;
 public class GameResultsUi extends VBox {
 
   /** The controller managing views and handling interactions. */
-  private ViewController viewController;
+  private final ViewController viewController;
 
   /**
    * Constructs a new GameResultsUi and initializes its user interface.
@@ -67,8 +66,8 @@ public class GameResultsUi extends VBox {
 
     this.getChildren().addAll(titleLabel, statsBox, buttonBox);
 
-    playAgainButton.setOnAction(e -> ViewController.switchToLobbyUi());
-    mainMenuButton.setOnAction(e -> ViewController.switchToMainMenu());
+    playAgainButton.setOnAction(e -> viewController.switchToLobbyUi());
+    mainMenuButton.setOnAction(e -> viewController.switchToMainMenu());
 
     StyleManager.applyFadeInAnimation(titleLabel, 1000);
     StyleManager.applyFadeInAnimation(statsBox, 1200);
@@ -102,9 +101,9 @@ public class GameResultsUi extends VBox {
     statsLabel.setFont(StyleManager.ITALIC_FONT);
 
     Label wpmLabel = new Label();
-    DoubleProperty wpmProperty =
-        viewController.getPlayerWpmProperty(viewController.getCurrentPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("WPM: %.2f", wpmProperty));
+    IntegerProperty wpmProperty =
+        viewController.getPlayerWpmProperty(viewController.getPlayerId());
+    wpmLabel.textProperty().bind(Bindings.format("WPM: %d", wpmProperty));
     wpmLabel.setFont(StyleManager.STANDARD_FONT);
 
     Label accuracyLabel = new Label();
@@ -112,31 +111,26 @@ public class GameResultsUi extends VBox {
         .textProperty()
         .bind(
             viewController
-                .getPlayerAccuracyProperty(viewController.getCurrentPlayerId())
+                .getPlayerAccuracyProperty(viewController.getPlayerId())
                 .multiply(100)
                 .asString("Accuracy: %.2f%%"));
     accuracyLabel.setFont(StyleManager.STANDARD_FONT);
 
-    Label errorLabel = new Label();
-    IntegerProperty errorProperty =
-        viewController.getPlayerErrorsProperty();
-    errorLabel.textProperty().bind(Bindings.format("Errors: %d", errorProperty));
-    errorLabel.setFont(StyleManager.STANDARD_FONT);
 
-    statsBox.getChildren().addAll(statsLabel, wpmLabel, accuracyLabel, errorLabel);
+    statsBox.getChildren().addAll(statsLabel, wpmLabel, accuracyLabel);
     VBox.setMargin(statsBox, new Insets(10, 200, 10, 200));
     VBox.setMargin(statsLabel, new Insets(0, 0, 10, 0));
 
     return statsBox;
   }
 
-  /**
+  /*
    * Creates the leaderboard panel displaying player rankings.
    *
    * @return A VBox containing the leaderboard.
    */
 
-  /**
+  /*
    * private VBox createLeaderboard() { VBox leaderboardBox = new VBox(10);
    * leaderboardBox.setAlignment(Pos.CENTER); leaderboardBox.setPadding(new Insets(10));
    * leaderboardBox.setStyle( "-fx-background-color: " +

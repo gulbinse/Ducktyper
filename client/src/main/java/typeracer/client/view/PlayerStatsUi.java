@@ -2,7 +2,7 @@ package typeracer.client.view;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -14,7 +14,6 @@ import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import typeracer.client.ViewController;
@@ -26,7 +25,7 @@ import typeracer.client.ViewController;
  */
 public class PlayerStatsUi extends VBox {
   /** The view controller to manage views and handle interactions. */
-  private ViewController viewController;
+  private final ViewController viewController;
 
   /** Label for displaying the number of games played. */
   private Label gamesPlayedLabel;
@@ -73,20 +72,12 @@ public class PlayerStatsUi extends VBox {
     Button backButton =
         StyleManager.createStyledButton(
             "back", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
-    backButton.setOnAction(e -> ViewController.switchToMainMenu());
+    backButton.setOnAction(e -> viewController.switchToMainMenu());
 
-    Button resetButton =
-        StyleManager.createStyledButton(
-            "reset stats", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
-    resetButton.setOnAction(e -> viewController.handleResetStats());
-
-    HBox buttonBar = new HBox(10, backButton, resetButton);
-    buttonBar.setAlignment(Pos.CENTER);
-
-    this.getChildren().addAll(statsBox, buttonBar);
+    this.getChildren().addAll(statsBox, backButton);
 
     StyleManager.applyFadeInAnimation(statsBox, 1000);
-    StyleManager.applyButtonHoverAnimation(backButton, resetButton);
+    StyleManager.applyButtonHoverAnimation(backButton);
   }
 
   /**
@@ -111,14 +102,14 @@ public class PlayerStatsUi extends VBox {
     Label wpmLabel = new Label();
     Label accuracyLabel = new Label();
 
-    DoubleProperty wpmProperty =
-        viewController.getPlayerWpmProperty(viewController.getCurrentPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
+    IntegerProperty wpmProperty =
+        viewController.getPlayerWpmProperty(viewController.getPlayerId());
+    wpmLabel.textProperty().bind(Bindings.format("%d WPM", wpmProperty));
     accuracyLabel
         .textProperty()
         .bind(
             viewController
-                .getPlayerAccuracyProperty(viewController.getCurrentPlayerId())
+                .getPlayerAccuracyProperty(viewController.getPlayerId())
                 .multiply(100)
                 .asString("%.2f%% Accuracy"));
 
