@@ -1,6 +1,5 @@
 package typeracer.client.messagehandling;
 
-import typeracer.client.Client;
 import typeracer.communication.messages.*;
 import typeracer.communication.messages.server.ReadyResponse;
 
@@ -25,10 +24,9 @@ public class ReadyResponseHandler implements MessageHandler {
    * Handles the incoming messages.
    *
    * @param message the message to handle
-   * @param client client associated with the message handling
    */
   @Override
-  public void handleMessage(Message message, Client client) {
+  public void handleMessage(Message message) {
     if (message instanceof ReadyResponse readyResponse) {
 
       switch (readyResponse.getReadyStatus()) {
@@ -40,13 +38,13 @@ public class ReadyResponseHandler implements MessageHandler {
           break;
         default:
           if (nextHandler != null) {
-            nextHandler.handleMessage(message, client);
+            nextHandler.handleMessage(message);
           }
           break;
       }
 
     } else if (nextHandler != null) {
-      nextHandler.handleMessage(message, client);
+      nextHandler.handleMessage(message);
     }
 
   }

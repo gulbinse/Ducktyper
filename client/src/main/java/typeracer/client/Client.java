@@ -4,14 +4,12 @@ import typeracer.client.messagehandling.*;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.MoshiAdapter;
 import typeracer.communication.messages.client.HandshakeRequest;
-import typeracer.communication.messages.server.*;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.*;
 
 
 /**
@@ -22,16 +20,18 @@ import java.util.*;
 
 public class Client {
   private static final int DEFAULT_PORT = 4441;
-  private static final String DEFAULT_USERNAME = "";
-  private static final String DEFAULT_ADDRESS = "";
+  private static final String DEFAULT_USERNAME = "alina";
+  private static final String DEFAULT_ADDRESS = "localhost";
   private MessageHandler messageHandlerChain;
   private final MoshiAdapter moshiAdapter = new MoshiAdapter();
   private Socket socket = null;
 
+
   /**
    * Constructor for the client.
    */
-  public Client() {}
+  public Client() {
+  }
 
   /**
    * Entry to <code>Client</code>.
@@ -105,8 +105,8 @@ public class Client {
       return;
     }
 
-    // start a client
     Client client = new Client();
+
   }
 
   /**
@@ -176,7 +176,7 @@ public class Client {
       this.socket = socket;
       start(username, socket);
     } catch (IOException e) {
-      e.printStackTrace();
+      System.out.println("Connection lost. Shutting down: " + e.getMessage());
     }
   }
 
@@ -190,12 +190,13 @@ public class Client {
     MessageHandler gameStateNotificationHandler = new GameStateNotificationHandler(playerStateNotificationHandler);
     MessageHandler playerLeftNotificationHandler = new PlayerLeftNotificationHandler(gameStateNotificationHandler);
     MessageHandler playerJoinedNotificationHandler = new PlayerJoinedNotificationHandler(playerLeftNotificationHandler);
-    return new JoinSessionResponseHandler(playerJoinedNotificationHandler);
+    MessageHandler joinSessionResponseHandler = new JoinSessionResponseHandler(playerJoinedNotificationHandler);
+    return new LeaveSessionResponseHandler(joinSessionResponseHandler);
   }
 
-  public void handleMessage(Message message, Client client) throws IOException {
+  public void handleMessage(Message message) throws IOException {
     System.out.println("Received message: " + message);
-    messageHandlerChain.handleMessage(message, client);
+    messageHandlerChain.handleMessage(message);
   }
 
   /**
@@ -222,13 +223,13 @@ public class Client {
    */
   private void receiveMessage(Socket socket) {
     try {
-      Client client = new Client();
       InputStream Input = socket.getInputStream();
       BufferedReader reader = new BufferedReader(new InputStreamReader(Input));
       String serverMessage;
       while ((serverMessage = reader.readLine()) != null) {
         Message message = moshiAdapter.fromJson(serverMessage);
-        handleMessage(message, client);
+        handleMessage(message);
+        System.out.println("Received message: " + message);
       }
     } catch (IOException e) {
       throw new RuntimeException(e);

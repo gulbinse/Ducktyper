@@ -1,6 +1,6 @@
 package typeracer.client.messagehandling;
 
-import typeracer.client.Client;
+import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.LeaveSessionResponse;
 
@@ -11,6 +11,7 @@ import typeracer.communication.messages.server.LeaveSessionResponse;
 public class LeaveSessionResponseHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
+  private ViewController viewController;
 
   /**
    * Constructor with the next handler in chain.
@@ -25,16 +26,18 @@ public class LeaveSessionResponseHandler implements MessageHandler {
    * Handles the incoming messages.
    *
    * @param message the message to handle
-   * @param client client associated with the message handling
    */
   @Override
-  public void handleMessage(Message message, Client client) {
+  public void handleMessage(Message message) {
     if (message instanceof LeaveSessionResponse leaveSessionResponse) {
       switch (leaveSessionResponse.getLeaveStatus()) {
         case ACCEPTED:
           System.out.println("Player can leave the session.");
+          viewController.switchToLobbyUi();
         case DENIED:
           System.out.println("Player can not leave the session.");
+        default:
+          nextHandler.handleMessage(message);
       }
     }
   }

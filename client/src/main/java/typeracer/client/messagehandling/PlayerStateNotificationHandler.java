@@ -1,6 +1,5 @@
 package typeracer.client.messagehandling;
 
-import typeracer.client.Client;
 import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.PlayerStateNotification;
@@ -28,16 +27,15 @@ public class PlayerStateNotificationHandler implements MessageHandler {
    * Handles the incoming messages.
    *
    * @param message the message to handle
-   * @param client client associated with the message handling
    */
   @Override
-  public void handleMessage(Message message, Client client) {
+  public void handleMessage(Message message) {
     if (message instanceof PlayerStateNotification playerStateNotification) {
       viewController.updatePlayerStateInformation(playerStateNotification.getPlayerId(), playerStateNotification.getAccuracy(),
           playerStateNotification.getProgress(), playerStateNotification.getWpm());
 
     } else if (nextHandler != null) {
-      nextHandler.handleMessage(message, client);
+      nextHandler.handleMessage(message);
     }
   }
 }

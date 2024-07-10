@@ -1,6 +1,5 @@
 package typeracer.client.messagehandling;
 
-import typeracer.client.Client;
 import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.CharacterResponse;
@@ -27,23 +26,21 @@ public class CharacterResponseHandler implements MessageHandler {
    * Handles the incoming messages.
    *
    * @param message the message to handle
-   * @param client client associated with the message handling
    */
   @Override
-  public void handleMessage(Message message, Client client) {
+  public void handleMessage(Message message) {
     if (message instanceof CharacterResponse characterResponse) {
       System.out.println("The typed character is " + characterResponse.isCorrect() + ".");
       handleCharacterResponse((CharacterResponse) message);
 
     } else if (nextHandler != null) {
-      nextHandler.handleMessage(message, client);
+      nextHandler.handleMessage(message);
     }
   }
 
   private void handleCharacterResponse(CharacterResponse characterResponse) {
     boolean correct = characterResponse.isCorrect();
     if (!correct) {
-      viewController.incrementError();
       System.out.println("The character is not correct.");
     } else {
       viewController.handleCharacterAnswer(characterResponse.isCorrect());

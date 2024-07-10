@@ -1,7 +1,6 @@
 package typeracer.client.messagehandling;
 
-import typeracer.client.Client;
-//import typeracer.client.ViewController;
+import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.CreateSessionResponse;
 
@@ -13,7 +12,7 @@ import typeracer.communication.messages.server.CreateSessionResponse;
 public class CreateSessionResponseHandler implements MessageHandler {
 
   private final MessageHandler nextHandler;
-  //private ViewController viewController;
+  private ViewController viewController;
 
   /**
    * Constructor with the next handler in chain.
@@ -28,21 +27,19 @@ public class CreateSessionResponseHandler implements MessageHandler {
    * Handles the incoming messages.
    *
    * @param message the message to handle
-   * @param client client associated with the message handling
    */
   @Override
-  public void handleMessage(Message message, Client client) {
+  public void handleMessage(Message message) {
     if (message instanceof CreateSessionResponse createSessionResponse && createSessionResponse.getSessionId() != 0) {
       // switches to the lobby scene if the message contains an ID for the session
-      ViewController.switchToLobbyUi();
-      viewController.setSessionID(createSessionResponse.getSessionId());
+      viewController.switchToLobbyUi();
       } else if (message instanceof CreateSessionResponse createSessionResponse
         && createSessionResponse.getReason() != null) {
       // reason why the session couldn't be created
-      viewController.showReason("Player can't create session because " + createSessionResponse.getReason().getString()
+      System.out.println("Player can't create session because " + createSessionResponse.getReason().getString()
           + ".");
     } else if (nextHandler != null) {
-      nextHandler.handleMessage(message, client);
+      nextHandler.handleMessage(message);
     }
   }
 }

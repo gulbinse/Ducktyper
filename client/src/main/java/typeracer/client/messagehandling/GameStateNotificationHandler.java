@@ -1,6 +1,5 @@
 package typeracer.client.messagehandling;
 
-import typeracer.client.Client;
 import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.GameStateNotification;
@@ -28,27 +27,28 @@ public class GameStateNotificationHandler implements MessageHandler {
    * Handles the incoming messages.
    *
    * @param message the message to handle
-   * @param client client associated with the message handling
    */
   @Override
-  public void handleMessage(Message message, Client client) {
+  public void handleMessage(Message message) {
     try {
       if (message instanceof GameStateNotification gameStateNotification) {
         switch (gameStateNotification.getGameStatus()) {
           case "RUNNING":
-            viewController.startGame();
+            //viewController.startGame();
             break;
           case "FINISHED":
             // ends the game
             viewController.endGame();
-            viewController.getTopPlayers();
+            //viewController.getTopPlayers();
             break;
           case "WAITING_FOR_READY":
             System.out.println("Game is waiting for ready.");
+          default:
+            nextHandler.handleMessage(message);
         }
 
       } else if (nextHandler != null) {
-        nextHandler.handleMessage(message, client);
+        nextHandler.handleMessage(message);
       }
     } catch (Exception e) {
       throw new RuntimeException(e);
