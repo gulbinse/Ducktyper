@@ -185,6 +185,17 @@ public class ViewController extends Application {
   }
 
   /**
+   * Called when User tries to create a lobby by pressing button in GUI.
+   **/
+  public void createLobby() {
+    // TODO: add Logic, that makes Client send a CreateSessionRequest to Server
+    client.sendMessage(new CreateSessionRequest());
+    System.out.println("Request to create lobby");
+    // For Testing purpose only:
+    showScene(SceneName.LOBBY);
+  }
+
+  /**
    * Requests to set the player ready.
    *
    * @param isReady status the player wants to be
