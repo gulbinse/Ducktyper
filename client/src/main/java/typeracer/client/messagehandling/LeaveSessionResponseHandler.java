@@ -38,8 +38,10 @@ public class LeaveSessionResponseHandler implements MessageHandler {
         case DENIED:
           System.out.println("Player can not leave the session.");
         default:
-          nextHandler.handleMessage(message);
+          break;
       }
+    } else if (nextHandler != null) {
+      nextHandler.handleMessage(message);
     }
   }
 }
