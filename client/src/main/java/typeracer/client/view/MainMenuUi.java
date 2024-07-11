@@ -58,7 +58,7 @@ public class MainMenuUi extends VBox {
     this.setAlignment(Pos.CENTER);
     this.setSpacing(15);
     this.setBackground(
-        new Background(new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, null)));
+            new Background(new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, null)));
 
     VBox titlePanel = createTitlePanel();
     this.getChildren().add(titlePanel);
@@ -88,14 +88,18 @@ public class MainMenuUi extends VBox {
     sessionIdField = new TextField();
     sessionIdField.setPromptText("Enter Session ID");
     sessionIdField.setMaxWidth(200);
-    joinSessionButton.setOnAction(e -> viewController.joinExistingSession(sessionIdField.getText()));
+
+    startGameButton.setOnAction(
+            e -> {
+              viewController.requestNewGameSession();
+            });
+    joinSessionButton.setOnAction(
+            e -> {
+              viewController.joinExistingSession(Integer.parseInt(sessionIdField.getText()));
+            });
+
     VBox sessionBox = new VBox(10, sessionIdField, joinSessionButton);
     sessionBox.setAlignment(Pos.CENTER);
-    profileSettingButton.setOnAction(
-        e -> viewController.showScene(ViewController.SceneName.PROFILE_SETTINGS));
-    statsButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.STATS));
-
-
 
     profileSettingButton.setOnAction(e -> viewController.editProfile());
     statsButton.setOnAction(e -> viewController.viewStats());
