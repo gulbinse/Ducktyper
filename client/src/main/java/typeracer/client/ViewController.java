@@ -23,6 +23,8 @@ import typeracer.client.view.PlayerStatsUi;
 import typeracer.client.view.ProfileSettingsUi;
 import typeracer.communication.messages.client.CreateSessionRequest;
 import typeracer.communication.messages.client.JoinSessionRequest;
+import typeracer.client.config.settings.Configuration;
+
 
 /** Manages the transition between different scenes and states in the TypeRacer game application. */
 public class ViewController extends Application {
@@ -122,27 +124,81 @@ public class ViewController extends Application {
     }
   }
 
-  /** Switches the current scene to the lobby UI. */
-  // Was ist der Unterschied zwischen der Methode und startGame(); ?
-  public void switchToLobbyUi() {
-    showScene(SceneName.LOBBY);
-    LobbyUi lobbyUi = (LobbyUi) scenes.get(SceneName.LOBBY).getRoot();
-    if (lobbyUi != null) {
-      lobbyUi.onViewShown();
+    /**
+     * Switches the current scene to the main menu.
+     */
+    public void switchToMainMenu() {
+        showScene(SceneName.MAIN_MENU);
     }
+
+    /**
+     * Switches the current scene to the lobby UI.
+     */
+    // Was ist der Unterschied zwischen der Methode und startGame(); ?
+    public void switchToLobbyUi(String sessionId) {
+        showScene(SceneName.LOBBY);
+        LobbyUi lobbyUi = (LobbyUi) scenes.get(SceneName.LOBBY).getRoot();
+        if (lobbyUi != null) {
+          lobbyUi.setSessionId(sessionId);
+          lobbyUi.onViewShown();
+        }
+    }
+
+    /**
+     * Switches the current scene to the game UI.
+     */
+    public void switchToGameUi() {
+        showScene(SceneName.GAME);
+        GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
+        if (gameUi != null) {
+            gameUi.onViewShown();
+        }
+    }
+
+    /**
+     * Switches the current scene to the game results UI.
+     */
+    public void switchToGameResultUi() {
+        showScene(SceneName.GAME_RESULTS);
+    }
+
+    /**
+     * Displays the lobby view.
+     */
+    public void startGame() {
+        showScene(SceneName.LOBBY);
+    }
+
+    /**
+     * Displays the statistics view.
+     */
+    public void viewStats() {
+        showScene(SceneName.STATS);
+    }
+
+  /** Displays the profile settings view. */
+  public void editProfile() {
+    showScene(SceneName.PROFILE_SETTINGS);
   }
 
-  /**
-   * Saves user settings and switches back to the main menu.
-   *
-   * @param username The username to save.
-   * @param wpmGoal The words per minute goal.
-   * @param favoriteText The favorite text of the user.
-   */
-  public void saveUserSettings(String username, int wpmGoal, String favoriteText) {
-    //        client.saveSettings(username, wpmGoal, favoriteText);
-    showScene(SceneName.MAIN_MENU);
-  }
+    /**
+     * Saves user settings and switches back to the main menu.
+     *
+     * @param username     The username to save.
+     * @param wpmGoal      The words per minute goal.
+     * @param favoriteText The favorite text of the user.
+     */
+    public void saveUserSettings(String username, int wpmGoal, String favoriteText) {
+//        client.saveSettings(username, wpmGoal, favoriteText);
+        showScene(SceneName.MAIN_MENU);
+    }
+
+    /**
+     * Cancels any changes made in the settings and returns to the main menu.
+     */
+    public void cancelSettings() {
+        showScene(SceneName.MAIN_MENU);
+    }
 
   /**
    * Loads the stylesheet for the given scene.
@@ -193,6 +249,48 @@ public class ViewController extends Application {
     showScene(SceneName.LOBBY);
   }
 
+  public void requestNewGameSession() {
+    // Example of creating a new session
+    String baseUrl = AppConfiguration.getProperty("backend.url");
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(baseUrl + "/sessions/new"))
+            .POST(HttpRequest.BodyPublishers.noBody())
+            .build();
+
+    httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+            .thenApply(HttpResponse::body)
+            .thenAccept(sessionId -> {
+              Platform.runLater(() -> {
+                switchToLobbyUi(sessionId);
+              });
+            })
+            .exceptionally(e -> {
+              e.printStackTrace();
+              return null;
+            });
+  }
+
+  public void joinExistingSession(String sessionId) {
+    // Example of joining an existing session
+    String baseUrl = AppConfiguration.getProperty("backend.url");
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(baseUrl + "/sessions/join/" + sessionId))
+            .POST(HttpRequest.BodyPublishers.noBody())
+            .build();
+
+    httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+            .thenApply(HttpResponse::body)
+            .thenAccept(response -> {
+              Platform.runLater(() -> {
+                switchToLobbyUi(sessionId);
+              });
+            })
+            .exceptionally(e -> {
+              e.printStackTrace();
+              return null;
+            });
+  }
+
   /**
    * Requests to set the player ready.
    *
@@ -202,7 +300,28 @@ public class ViewController extends Application {
     System.out.println("Player wants to update his readyStatus to: " + isReady);
     // TODO: add Logic, that makes Client send a ReadyRequest to Server
     // For Testing purpose only:
-    startNewGame();
+    startNewGame(); // TODO: ist wahrscheinlich falsch!
+  }
+
+  /**
+   * Simulates fetching player names for a given session ID from a server.
+   * @param sessionId The ID of the session for which players are to be fetched.
+   * @return An ObservableList of player names.
+   */
+  public void fetchPlayersForSession(String sessionId) {
+      String baseUrl = Configuration.getProperty("backend.url");
+      HttpClient client = HttpClient.newHttpClient();
+      HttpRequest request = HttpRequest.newBuilder()
+              .uri(URI.create(baseUrl + "/sessions/" + sessionId + "/players"))
+              .build();
+
+      client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+              .thenApply(HttpResponse::body)
+              .thenAccept(System.out::println)
+              .exceptionally(e -> {
+                  e.printStackTrace();
+                  return null;
+              });
   }
 
   /**
