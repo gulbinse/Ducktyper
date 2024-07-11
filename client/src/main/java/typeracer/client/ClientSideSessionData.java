@@ -18,6 +18,7 @@ public class ClientSideSessionData {
 
   private String username;
   private int id;
+  private int sessionId;
   private final Map<Integer, String> playerNameById = new ConcurrentHashMap<>();
   private final Map<Integer, SimpleBooleanProperty> playerReady = new HashMap<>();
   private final Map<Integer, DoubleProperty> playerWpms = new HashMap<>();
@@ -135,5 +136,13 @@ public class ClientSideSessionData {
     if (topPlayers.get().contains(playerName)) {
       topPlayers.remove(playerName);
     }
+  }
+
+  public int getSessionId() {
+    return sessionId;
+  }
+
+  public void setSessionId(int sessionId) {
+    this.sessionId = sessionId;
   }
 }
