@@ -124,50 +124,12 @@ public class ViewController extends Application {
     }
   }
 
-    /**
-     * Switches the current scene to the main menu.
-     */
-    public void switchToMainMenu() {
-        showScene(SceneName.MAIN_MENU);
-    }
-
-    /**
-     * Switches the current scene to the lobby UI.
-     */
-    // Was ist der Unterschied zwischen der Methode und startGame(); ?
-    public void switchToLobbyUi(String sessionId) {
-        showScene(SceneName.LOBBY);
-        LobbyUi lobbyUi = (LobbyUi) scenes.get(SceneName.LOBBY).getRoot();
-        if (lobbyUi != null) {
-          lobbyUi.setSessionId(sessionId);
-          lobbyUi.onViewShown();
-        }
-    }
-
-    /**
-     * Switches the current scene to the game UI.
-     */
-    public void switchToGameUi() {
-        showScene(SceneName.GAME);
-        GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
-        if (gameUi != null) {
-            gameUi.onViewShown();
-        }
-    }
-
-    /**
-     * Switches the current scene to the game results UI.
-     */
-    public void switchToGameResultUi() {
-        showScene(SceneName.GAME_RESULTS);
-    }
-
-    /**
-     * Displays the lobby view.
-     */
-    public void startGame() {
-        showScene(SceneName.LOBBY);
-    }
+  public void setSessionId(int sessionId) {
+    playerData.setSessionId(sessionId);
+    LobbyUi lobbyUi = (LobbyUi) scenes.get(SceneName.LOBBY).getRoot();
+    lobbyUi.setSessionId(sessionId);
+    lobbyUi.onViewShown();
+  }
 
     /**
      * Displays the statistics view.
@@ -247,48 +209,6 @@ public class ViewController extends Application {
     System.out.println("Request to create lobby");
     // For Testing purpose only:
     showScene(SceneName.LOBBY);
-  }
-
-  public void requestNewGameSession() {
-    // Example of creating a new session
-    String baseUrl = AppConfiguration.getProperty("backend.url");
-    HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(baseUrl + "/sessions/new"))
-            .POST(HttpRequest.BodyPublishers.noBody())
-            .build();
-
-    httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-            .thenApply(HttpResponse::body)
-            .thenAccept(sessionId -> {
-              Platform.runLater(() -> {
-                switchToLobbyUi(sessionId);
-              });
-            })
-            .exceptionally(e -> {
-              e.printStackTrace();
-              return null;
-            });
-  }
-
-  public void joinExistingSession(String sessionId) {
-    // Example of joining an existing session
-    String baseUrl = AppConfiguration.getProperty("backend.url");
-    HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(baseUrl + "/sessions/join/" + sessionId))
-            .POST(HttpRequest.BodyPublishers.noBody())
-            .build();
-
-    httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-            .thenApply(HttpResponse::body)
-            .thenAccept(response -> {
-              Platform.runLater(() -> {
-                switchToLobbyUi(sessionId);
-              });
-            })
-            .exceptionally(e -> {
-              e.printStackTrace();
-              return null;
-            });
   }
 
   /**
