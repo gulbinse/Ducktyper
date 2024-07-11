@@ -4,7 +4,6 @@ import javafx.animation.FadeTransition;
 import javafx.animation.RotateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
@@ -215,7 +214,7 @@ public class InitialPromptUi extends VBox {
     String port = portField.getText().trim();
 
     if (username.isEmpty() || ip.isEmpty() || port.isEmpty()) {
-      showAlert("Please fill in all fields correctly.");
+      viewController.showAlert("Please fill in all fields correctly.");
       return;
     }
 
@@ -224,19 +223,9 @@ public class InitialPromptUi extends VBox {
       viewController.connectToServer(ip, portNumber, username);
       viewController.showScene(ViewController.SceneName.MAIN_MENU);
     } catch (NumberFormatException e) {
-      showAlert("Please enter a valid port number.");
+      viewController.showAlert("Please enter a valid port number.");
     } catch (Exception e) {
-      showAlert("Could not connect to the server: " + e.getMessage());
+      viewController.showAlert("Could not connect to the server: " + e.getMessage());
     }
-  }
-
-  /**
-   * Displays an error alert with the specified message.
-   *
-   * @param message The message to display in the alert.
-   */
-  private void showAlert(String message) {
-    Alert alert = new Alert(Alert.AlertType.ERROR, message);
-    alert.showAndWait();
   }
 }
