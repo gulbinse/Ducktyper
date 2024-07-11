@@ -1,6 +1,8 @@
 package typeracer.client;
 
 import java.io.IOException;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,13 +27,18 @@ import typeracer.client.view.LobbyUi;
 import typeracer.client.view.MainMenuUi;
 import typeracer.client.view.PlayerStatsUi;
 import typeracer.client.view.ProfileSettingsUi;
+import typeracer.client.config.settings.Configuration;
+import java.net.URI;
+import java.net.http.HttpRequest;
+
 
 /**
  * Manages the transition between different scenes and states in the TypeRacer game application.
  */
 public class ViewController extends Application {
 
-    /**
+
+  /**
      * Enum representing the different views available in the TypeRacer game application.
      */
     public enum SceneName {
@@ -81,6 +88,8 @@ public class ViewController extends Application {
     private Stage primaryStage;
     private final Client client;
     private ClientSideSessionData playerData = new ClientSideSessionData();
+    private HttpClient httpClient = HttpClient.newHttpClient();
+    private final String BASE_URL = "http://localhost:8080/api/sessions";
 
 
     /**
@@ -164,11 +173,12 @@ public class ViewController extends Application {
      * Switches the current scene to the lobby UI.
      */
     // Was ist der Unterschied zwischen der Methode und startGame(); ?
-    public void switchToLobbyUi() {
+    public void switchToLobbyUi(String sessionId) {
         showScene(SceneName.LOBBY);
         LobbyUi lobbyUi = (LobbyUi) scenes.get(SceneName.LOBBY).getRoot();
         if (lobbyUi != null) {
-            lobbyUi.onViewShown();
+          lobbyUi.setSessionId(sessionId);
+          lobbyUi.onViewShown();
         }
     }
 
@@ -252,16 +262,47 @@ public class ViewController extends Application {
      */
     public void connectToServer(String ip, int port, String username) throws IOException {
         //TODO: add Logic, that makes Client connect to Server and transfer username
+      String serverIp = Configuration.getProperty("server.ip");
+      int serverPort = Integer.parseInt(Configuration.getProperty("server.port"));
         System.out.println("Connected to server at " + ip + ":" + port);
         playerData.setUsername(username);
     }
 
-    public void joinLobby(int lobbyId) {
+  public void requestNewGameSession() {
+    switchToLobbyUi();
+  }
+
+  public void joinExistingSession(String text) {
+      switchToLobbyUi();
+  }
+
+  public void joinLobby(int lobbyId) {
         //TODO: add Logic, that makes Client send a JoinLobbyRequest to Server
         System.out.println("Request to join lobby " + lobbyId);
         //For Testing purpose only:
         startGame();
     }
+
+  /**
+   * Simulates fetching player names for a given session ID from a server.
+   * @param sessionId The ID of the session for which players are to be fetched.
+   * @return An ObservableList of player names.
+   */
+  public void fetchPlayersForSession(String sessionId) {
+      String baseUrl = Configuration.getProperty("backend.url");
+      HttpClient client = HttpClient.newHttpClient();
+      HttpRequest request = HttpRequest.newBuilder()
+              .uri(URI.create(baseUrl + "/sessions/" + sessionId + "/players"))
+              .build();
+
+      client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+              .thenApply(HttpResponse::body)
+              .thenAccept(System.out::println)
+              .exceptionally(e -> {
+                  e.printStackTrace();
+                  return null;
+              });
+  }
 
     public void setPlayerReady(boolean isReady) {
         System.out.println("Player wants to update his readyStatus to: " + isReady);
