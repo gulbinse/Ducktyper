@@ -102,7 +102,7 @@ public class GameResultsUi extends VBox {
 
     Label wpmLabel = new Label();
     DoubleProperty wpmProperty = viewController.getPlayerWpmProperty(viewController.getPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("WPM: %.2f%%", wpmProperty));
+    wpmLabel.textProperty().bind(Bindings.format("WPM: %.2f%", wpmProperty));
     wpmLabel.setFont(StyleManager.STANDARD_FONT);
 
     Label accuracyLabel = new Label();

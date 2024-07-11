@@ -103,7 +103,7 @@ public class PlayerStatsUi extends VBox {
     Label accuracyLabel = new Label();
 
     DoubleProperty wpmProperty = viewController.getPlayerWpmProperty(viewController.getPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("%.2f%% WPM", wpmProperty));
+    wpmLabel.textProperty().bind(Bindings.format("%.2f% WPM", wpmProperty));
     accuracyLabel
         .textProperty()
         .bind(
