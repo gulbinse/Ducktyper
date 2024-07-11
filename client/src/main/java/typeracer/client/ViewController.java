@@ -23,7 +23,7 @@ import typeracer.client.view.PlayerStatsUi;
 import typeracer.client.view.ProfileSettingsUi;
 import typeracer.communication.messages.client.CreateSessionRequest;
 import typeracer.communication.messages.client.JoinSessionRequest;
-import typeracer.client.config.settings.Configuration;
+import typeracer.communication.messages.client.ReadyRequest;
 
 
 /** Manages the transition between different scenes and states in the TypeRacer game application. */
@@ -56,12 +56,11 @@ public class ViewController extends Application {
   private static final String STYLESHEET_PATH = "/styles.css";
   private static final int DEFAULT_WINDOW_WIDTH = 800;
   private static final int DEFAULT_WINDOW_HEIGHT = 650;
-
-  private Map<SceneName, Scene> scenes;
-
+  private static Map<SceneName, Scene> scenes;
   private Stage primaryStage;
-  private final Client client;
+  private Client client;
   private ClientSideSessionData playerData = new ClientSideSessionData();
+  private LobbyUi lobbyUi;
 
   /**
    * Constructs a ViewController with a given stage and client. Initializes the view mappings and
@@ -124,12 +123,10 @@ public class ViewController extends Application {
     }
   }
 
-    /**
-     * Switches the current scene to the main menu.
-     */
-    public void switchToMainMenu() {
-        showScene(SceneName.MAIN_MENU);
-    }
+  /** Switches the current scene to the main menu. */
+  public void switchToMainMenu() {
+    showScene(SceneName.MAIN_MENU);
+  }
 
     /**
      * Switches the current scene to the lobby UI.
@@ -162,43 +159,32 @@ public class ViewController extends Application {
         showScene(SceneName.GAME_RESULTS);
     }
 
-    /**
-     * Displays the lobby view.
-     */
-    public void startGame() {
-        showScene(SceneName.LOBBY);
-    }
-
-    /**
-     * Displays the statistics view.
-     */
-    public void viewStats() {
-        showScene(SceneName.STATS);
-    }
+  /** Displays the statistics view. */
+  public void viewStats() {
+    showScene(SceneName.STATS);
+  }
 
   /** Displays the profile settings view. */
   public void editProfile() {
     showScene(SceneName.PROFILE_SETTINGS);
   }
 
-    /**
-     * Saves user settings and switches back to the main menu.
-     *
-     * @param username     The username to save.
-     * @param wpmGoal      The words per minute goal.
-     * @param favoriteText The favorite text of the user.
-     */
-    public void saveUserSettings(String username, int wpmGoal, String favoriteText) {
-//        client.saveSettings(username, wpmGoal, favoriteText);
-        showScene(SceneName.MAIN_MENU);
-    }
+  /**
+   * Saves user settings and switches back to the main menu.
+   *
+   * @param username The username to save.
+   * @param wpmGoal The words per minute goal.
+   * @param favoriteText The favorite text of the user.
+   */
+  public void saveUserSettings(String username, int wpmGoal, String favoriteText) {
+    //        client.saveSettings(username, wpmGoal, favoriteText);
+    showScene(SceneName.MAIN_MENU);
+  }
 
-    /**
-     * Cancels any changes made in the settings and returns to the main menu.
-     */
-    public void cancelSettings() {
-        showScene(SceneName.MAIN_MENU);
-    }
+  /** Cancels any changes made in the settings and returns to the main menu. */
+  public void cancelSettings() {
+    showScene(SceneName.MAIN_MENU);
+  }
 
   /**
    * Loads the stylesheet for the given scene.
@@ -227,114 +213,34 @@ public class ViewController extends Application {
     playerData.setUsername(username);
   }
 
-  /**
-   * Called when User tries to join a lobby by pressing button in GUI.
-   *
-   * @param lobbyId of Lobby, the player wants to join
-   */
-  public void joinLobby(int lobbyId) {
-    // TODO: add Logic, that makes Client send a JoinLobbyRequest to Server
-    client.sendMessage(new JoinSessionRequest(lobbyId));
-    System.out.println("Request to join lobby " + lobbyId);
-    // For Testing purpose only:
-    showScene(SceneName.LOBBY);
-  }
-
-  /** Called when User tries to create a lobby by pressing button in GUI. */
-  public void createLobby() {
-    // TODO: add Logic, that makes Client send a CreateSessionRequest to Server
-    client.sendMessage(new CreateSessionRequest());
-    System.out.println("Request to create lobby");
-    // For Testing purpose only:
-    showScene(SceneName.LOBBY);
-  }
-
   public void requestNewGameSession() {
-    // Example of creating a new session
-    String baseUrl = AppConfiguration.getProperty("backend.url");
-    HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(baseUrl + "/sessions/new"))
-            .POST(HttpRequest.BodyPublishers.noBody())
-            .build();
-
-    httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-            .thenApply(HttpResponse::body)
-            .thenAccept(sessionId -> {
-              Platform.runLater(() -> {
-                switchToLobbyUi(sessionId);
-              });
-            })
-            .exceptionally(e -> {
-              e.printStackTrace();
-              return null;
-            });
+    client.sendMessage(new CreateSessionRequest());
+    showScene(SceneName.LOBBY);
   }
 
-  public void joinExistingSession(String sessionId) {
-    // Example of joining an existing session
-    String baseUrl = AppConfiguration.getProperty("backend.url");
-    HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(baseUrl + "/sessions/join/" + sessionId))
-            .POST(HttpRequest.BodyPublishers.noBody())
-            .build();
-
-    httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-            .thenApply(HttpResponse::body)
-            .thenAccept(response -> {
-              Platform.runLater(() -> {
-                switchToLobbyUi(sessionId);
-              });
-            })
-            .exceptionally(e -> {
-              e.printStackTrace();
-              return null;
-            });
+  public void joinExistingSession(int sessionId) {
+    if (sessionId == 0) {
+      System.out.println("Session ID cannot be empty");
+      return;
+    } else {
+      client.sendMessage(new JoinSessionRequest(sessionId));
+    }
+    showScene(SceneName.LOBBY);
   }
 
-  /**
-   * Requests to set the player ready.
-   *
-   * @param isReady status the player wants to be
-   */
-  public void setPlayerReady(boolean isReady) {
-    System.out.println("Player wants to update his readyStatus to: " + isReady);
-    // TODO: add Logic, that makes Client send a ReadyRequest to Server
-    // For Testing purpose only:
-    startNewGame(); // TODO: ist wahrscheinlich falsch!
+  //TODO: Not sure if this method should be called in Client
+  public void updateSessionId(int newSessionId) {
+    Platform.runLater(() -> {
+      playerData.setId(newSessionId);
+      lobbyUi.setSessionId(newSessionId);
+    });
   }
 
-  /**
-   * Simulates fetching player names for a given session ID from a server.
-   * @param sessionId The ID of the session for which players are to be fetched.
-   * @return An ObservableList of player names.
-   */
-  public void fetchPlayersForSession(String sessionId) {
-      String baseUrl = Configuration.getProperty("backend.url");
-      HttpClient client = HttpClient.newHttpClient();
-      HttpRequest request = HttpRequest.newBuilder()
-              .uri(URI.create(baseUrl + "/sessions/" + sessionId + "/players"))
-              .build();
-
-      client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-              .thenApply(HttpResponse::body)
-              .thenAccept(System.out::println)
-              .exceptionally(e -> {
-                  e.printStackTrace();
-                  return null;
-              });
-  }
-
-  /**
-   * Passes the User input from the GUI to the Client.
-   *
-   * @param character which the client typed
-   */
   public void handleCharacterTyped(char character) {
     System.out.println("Character typed: " + character);
     // TODO: add Logic, that makes Client send a CharacterRequest to Server
   }
 
-  /** Signals User intention to leave the game. */
   public void leaveLobbyOrGame() {
     System.out.println("Leaving lobby");
     // TODO: add Logic, that makes Client send a LeaveSessionRequest to Server
@@ -345,15 +251,17 @@ public class ViewController extends Application {
   // TODO: This method should be called by Client on receiving a GameStateNotification with
   // GameStatus == Running
   public void startNewGame() {
+    boolean isReady = false;
+    client.sendMessage(new ReadyRequest(isReady));
+    playerData.getGameText();
     showScene(SceneName.GAME);
     GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
     if (gameUi != null) {
       gameUi.onViewShown();
-    }
   }
 
   /**
-   * Adds a player to the game on client side.
+   * Adds a player to the game on client side
    *
    * @param playerId of joined player
    * @param playerName of joined player
@@ -363,11 +271,6 @@ public class ViewController extends Application {
     playerData.addPlayer(playerId, playerName);
   }
 
-  /**
-   * Removes a player who left from the game GUI.
-   *
-   * @param playerId of the player who left
-   */
   // TODO: this method should be called by Client on receiving a PlayerLeftNotification
   public void removePlayerFromGame(int playerId) {
     playerData.removePlayer(playerId);
@@ -380,11 +283,6 @@ public class ViewController extends Application {
     showScene(SceneName.GAME_RESULTS);
   }
 
-  /**
-   * Passes the correctness of a typed character to the GUI.
-   *
-   * @param isCorrect boolean if the typed character is correct
-   */
   // TODO: This method should be called by view on receiving a CharacterResponse
   public void handleCharacterAnswer(boolean isCorrect) {}
 
@@ -469,8 +367,8 @@ public class ViewController extends Application {
    */
   public DoubleProperty getPlayerAccuracyProperty(int playerId) {
     return playerData
-        .getPlayerAccuracies()
-        .computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
+            .getPlayerAccuracies()
+            .computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
   }
 
   /**
@@ -481,8 +379,8 @@ public class ViewController extends Application {
    */
   public DoubleProperty getPlayerProgressProperty(int playerId) {
     return playerData
-        .getPlayerProgresses()
-        .computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
+            .getPlayerProgresses()
+            .computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
   }
 
   public ListProperty<String> getTopPlayersProperty() {
