@@ -4,11 +4,12 @@ import javafx.animation.FadeTransition;
 import javafx.animation.RotateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -37,8 +38,6 @@ public class InitialPromptUi extends VBox {
 
   /** The primary stage of the application. */
   private Stage stage;
-
-  private ComboBox<String> modeDropdown;
 
   /**
    * Constructs a new InitialPromptUi and initializes its user interface components.
@@ -88,26 +87,21 @@ public class InitialPromptUi extends VBox {
     HBox usernameAndButtonPanel = new HBox(10);
     usernameAndButtonPanel.setAlignment(Pos.CENTER);
 
-    usernameField = new TextField();
+    usernameField = new TextField("TheRealDonaldDuck");
     usernameField.setMaxWidth(300);
     usernameField.getStyleClass().add("username-field");
-    usernameField.setPromptText("Enter your username");
-    usernameField.setFocusTraversable(false);
 
     ImageView submitImage = createSubmitImage();
-    usernameAndButtonPanel.getChildren().addAll(usernameField, submitImage);
+    usernameAndButtonPanel.getChildren().addAll(new VBox(new Label("Username:") , usernameField), submitImage);
 
-    ipField = new TextField();
+    ipField = new TextField("localhost");
     ipField.setMaxWidth(150);
-    ipField.setPromptText("Server IP");
-    ipField.setFocusTraversable(false);
 
-    portField = new TextField();
+    portField = new TextField("4441");
     portField.setMaxWidth(150);
     portField.setPromptText("Port");
-    ipField.setFocusTraversable(false);
 
-    inputPanel.getChildren().addAll(usernameAndButtonPanel, ipField, portField);
+    inputPanel.getChildren().addAll(usernameAndButtonPanel, new VBox(new Label("Server IP:"), ipField), new VBox(new Label("Port:"), portField));
 
     return inputPanel;
   }
