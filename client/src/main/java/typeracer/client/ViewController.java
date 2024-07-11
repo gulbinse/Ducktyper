@@ -195,10 +195,10 @@ public class ViewController extends Application {
 
   /**
    * Requests to set the player ready.
-   *
-   * @param isReady status the player wants to be
    */
-  public void setPlayerReady(boolean isReady) {
+  public void setPlayerReady() {
+    boolean isReady = true;
+    client.sendMessage(new ReadyRequest(isReady));
     System.out.println("Player wants to update his readyStatus to: " + isReady);
     // TODO: add Logic, that makes Client send a ReadyRequest to Server
     // For Testing purpose only:
@@ -211,12 +211,14 @@ public class ViewController extends Application {
    * @param character which the client typed
    */
   public void handleCharacterTyped(char character) {
+    client.sendMessage(new CharacterRequest(character));
     System.out.println("Character typed: " + character);
     // TODO: add Logic, that makes Client send a CharacterRequest to Server
   }
 
   /** Signals User intention to leave the game. */
   public void leaveSessionOrGame() {
+    client.sendMessage(new LeaveSessionRequest());
     System.out.println("Leaving session");
     // TODO: add Logic, that makes Client send a LeaveSessionRequest to Server
     showScene(SceneName.MAIN_MENU);
@@ -227,8 +229,6 @@ public class ViewController extends Application {
   // GameStatus == Running
   public void startNewGame() {
     Platform.runLater(() -> {
-      boolean isReady = false;
-      client.sendMessage(new ReadyRequest(isReady));
       playerData.getGameText();
       showScene(SceneName.GAME);
       GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
