@@ -214,12 +214,10 @@ public class ViewController extends Application {
         showScene(SceneName.STATS);
     }
 
-    /**
-     * Displays the profile settings view.
-     */
-    public void editProfile() {
-        showScene(SceneName.PROFILE_SETTINGS);
-    }
+  /** Displays the profile settings view. */
+  public void editProfile() {
+    showScene(SceneName.PROFILE_SETTINGS);
+  }
 
     /**
      * Saves user settings and switches back to the main menu.
@@ -253,27 +251,61 @@ public class ViewController extends Application {
         }
     }
 
-    /**
-     * Connects to the server with the given IP address and port number.
-     *
-     * @param ip   The IP address of the server.
-     * @param port The port number of the server.
-     * @throws IOException If an I/O error occurs when attempting to connect to the server.
-     */
-    public void connectToServer(String ip, int port, String username) throws IOException {
-        //TODO: add Logic, that makes Client connect to Server and transfer username
-      String serverIp = Configuration.getProperty("server.ip");
-      int serverPort = Integer.parseInt(Configuration.getProperty("server.port"));
-        System.out.println("Connected to server at " + ip + ":" + port);
-        playerData.setUsername(username);
-    }
-
-  public void requestNewGameSession() {
-    switchToLobbyUi();
+  /**
+   * Connects to the server with the given IP address and port number.
+   *
+   * @param ip The IP address of the server.
+   * @param port The port number of the server.
+   * @throws IOException If an I/O error occurs when attempting to connect to the server.
+   */
+  public void connectToServer(String ip, int port, String username) throws IOException {
+    // TODO: add Logic, that makes Client connect to Server and transfer username
+    String serverIp = AppConfiguration.getProperty("server.ip");
+    int serverPort = Integer.parseInt(AppConfiguration.getProperty("server.port"));
+    System.out.println("Connected to server at " + serverIp + ":" + serverPort);
+    playerData.setUsername(username);
   }
 
-  public void joinExistingSession(String text) {
-      switchToLobbyUi();
+  public void requestNewGameSession() {
+    // Example of creating a new session
+    String baseUrl = AppConfiguration.getProperty("backend.url");
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(baseUrl + "/sessions/new"))
+            .POST(HttpRequest.BodyPublishers.noBody())
+            .build();
+
+    httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+            .thenApply(HttpResponse::body)
+            .thenAccept(sessionId -> {
+              Platform.runLater(() -> {
+                switchToLobbyUi(sessionId);
+              });
+            })
+            .exceptionally(e -> {
+              e.printStackTrace();
+              return null;
+            });
+  }
+
+  public void joinExistingSession(String sessionId) {
+    // Example of joining an existing session
+    String baseUrl = AppConfiguration.getProperty("backend.url");
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(baseUrl + "/sessions/join/" + sessionId))
+            .POST(HttpRequest.BodyPublishers.noBody())
+            .build();
+
+    httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+            .thenApply(HttpResponse::body)
+            .thenAccept(response -> {
+              Platform.runLater(() -> {
+                switchToLobbyUi(sessionId);
+              });
+            })
+            .exceptionally(e -> {
+              e.printStackTrace();
+              return null;
+            });
   }
 
   public void joinLobby(int lobbyId) {
