@@ -222,7 +222,7 @@ public class InitialPromptUi extends VBox {
     try {
       int portNumber = Integer.parseInt(port);
       viewController.connectToServer(ip, portNumber, username);
-      viewController.switchToMainMenu();
+      viewController.showScene(ViewController.SceneName.MAIN_MENU);
     } catch (NumberFormatException e) {
       showAlert("Please enter a valid port number.");
     } catch (Exception e) {
@@ -239,18 +239,4 @@ public class InitialPromptUi extends VBox {
     Alert alert = new Alert(Alert.AlertType.ERROR, message);
     alert.showAndWait();
   }
-
-  public int getPlayerCount() {
-    if (modeDropdown.getValue() != null && !modeDropdown.getValue().isEmpty()) {
-      try {
-        return Integer.parseInt(modeDropdown.getValue());
-      } catch (NumberFormatException e) {
-        showAlert("Please select a valid number for max players.");
-      }
-    } else {
-      showAlert("Please select the maximum number of players.");
-    }
-    return -1;
-  }
-
 }

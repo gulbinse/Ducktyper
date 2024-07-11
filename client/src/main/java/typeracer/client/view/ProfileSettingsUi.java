@@ -151,7 +151,7 @@ public class ProfileSettingsUi extends VBox {
           }
         });
 
-    cancelButton.setOnAction(e -> viewController.cancelSettings());
+    cancelButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.MAIN_MENU));
   }
 
   /**

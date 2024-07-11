@@ -1,7 +1,7 @@
 package typeracer.client.view;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -67,7 +67,7 @@ public class GameResultsUi extends VBox {
     this.getChildren().addAll(titleLabel, statsBox, buttonBox);
 
     playAgainButton.setOnAction(e -> viewController.switchToLobbyUi());
-    mainMenuButton.setOnAction(e -> viewController.switchToMainMenu());
+    mainMenuButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.MAIN_MENU));
 
     StyleManager.applyFadeInAnimation(titleLabel, 1000);
     StyleManager.applyFadeInAnimation(statsBox, 1200);
@@ -101,9 +101,8 @@ public class GameResultsUi extends VBox {
     statsLabel.setFont(StyleManager.ITALIC_FONT);
 
     Label wpmLabel = new Label();
-    IntegerProperty wpmProperty =
-        viewController.getPlayerWpmProperty(viewController.getPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("WPM: %d", wpmProperty));
+    DoubleProperty wpmProperty = viewController.getPlayerWpmProperty(viewController.getPlayerId());
+    wpmLabel.textProperty().bind(Bindings.format("WPM: %.2f%%", wpmProperty));
     wpmLabel.setFont(StyleManager.STANDARD_FONT);
 
     Label accuracyLabel = new Label();
@@ -115,7 +114,6 @@ public class GameResultsUi extends VBox {
                 .multiply(100)
                 .asString("Accuracy: %.2f%%"));
     accuracyLabel.setFont(StyleManager.STANDARD_FONT);
-
 
     statsBox.getChildren().addAll(statsLabel, wpmLabel, accuracyLabel);
     VBox.setMargin(statsBox, new Insets(10, 200, 10, 200));

@@ -2,7 +2,7 @@ package typeracer.client.view;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -72,7 +72,7 @@ public class PlayerStatsUi extends VBox {
     Button backButton =
         StyleManager.createStyledButton(
             "back", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
-    backButton.setOnAction(e -> viewController.switchToMainMenu());
+    backButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.MAIN_MENU));
 
     this.getChildren().addAll(statsBox, backButton);
 
@@ -102,9 +102,8 @@ public class PlayerStatsUi extends VBox {
     Label wpmLabel = new Label();
     Label accuracyLabel = new Label();
 
-    IntegerProperty wpmProperty =
-        viewController.getPlayerWpmProperty(viewController.getPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("%d WPM", wpmProperty));
+    DoubleProperty wpmProperty = viewController.getPlayerWpmProperty(viewController.getPlayerId());
+    wpmLabel.textProperty().bind(Bindings.format("%.2f%% WPM", wpmProperty));
     accuracyLabel
         .textProperty()
         .bind(

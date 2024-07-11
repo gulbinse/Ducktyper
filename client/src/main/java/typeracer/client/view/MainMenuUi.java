@@ -2,6 +2,7 @@ package typeracer.client.view;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -18,7 +19,7 @@ import typeracer.client.ViewController;
  */
 public class MainMenuUi extends VBox {
 
-  //For testing purpose only. Must be replayed later!!!
+  // For testing purpose only. Must be replayed later!!!
   private int defaultLobby = 1;
 
   private ViewController viewController;
@@ -82,15 +83,19 @@ public class MainMenuUi extends VBox {
         StyleManager.createStyledButton(
             "exit", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
 
+    startGameButton.setOnAction(e -> viewController.joinLobby(defaultLobby));
+    startGameButton.setOnAction(e -> viewController.requestNewGameSession());
     sessionIdField = new TextField();
     sessionIdField.setPromptText("Enter Session ID");
     sessionIdField.setMaxWidth(200);
-
-    startGameButton.setOnAction(e -> viewController.requestNewGameSession());
     joinSessionButton.setOnAction(e -> viewController.joinExistingSession(sessionIdField.getText()));
-
     VBox sessionBox = new VBox(10, sessionIdField, joinSessionButton);
     sessionBox.setAlignment(Pos.CENTER);
+    profileSettingButton.setOnAction(
+        e -> viewController.showScene(ViewController.SceneName.PROFILE_SETTINGS));
+    statsButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.STATS));
+
+
 
     profileSettingButton.setOnAction(e -> viewController.editProfile());
     statsButton.setOnAction(e -> viewController.viewStats());

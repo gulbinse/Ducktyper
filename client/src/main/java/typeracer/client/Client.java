@@ -1,102 +1,207 @@
 package typeracer.client;
 
-import java.util.List;
-import java.util.Map;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+import typeracer.client.messagehandling.*;
+import typeracer.communication.messages.Message;
+import typeracer.communication.messages.MoshiAdapter;
+import typeracer.communication.messages.client.HandshakeRequest;
 
 /**
- * Entry point class for the TypeRacer game application. This class contains the main method which
- * kicks off the application by initializing the GUI.
+ * Network client to play a Typeracer game. Client connects to a server to play the game. Users can
+ * join with a username, get notifications and type.
  */
 public class Client {
-  private Map<String, Boolean> playerConnectionStatus;
+  private static int DEFAULT_PORT = 4441;
+  private static final String DEFAULT_USERNAME = "alina";
+  private static final String DEFAULT_ADDRESS = "localhost";
+  private MessageHandler messageHandlerChain;
+  private final MoshiAdapter moshiAdapter = new MoshiAdapter();
+  private Socket socket;
+  private final ViewController viewController;
+  private BufferedReader reader;
 
-  /** Default constructor for the Client class. */
-  public Client() {}
+  /** Constructor for the client. */
+  public Client(ViewController viewController) {
+    this.viewController = viewController;
+    // ViewController.launch();
 
-  /**
-   * The main method that starts the TypeRacer game application.
-   *
-   * @param args Command line arguments passed to the program (not used in this application).
-   */
-  public static void main(String[] args) {
+    String username = DEFAULT_USERNAME;
+    String serverAddress = DEFAULT_ADDRESS;
+    int port = DEFAULT_PORT;
+
+    // check validity
+    if (!isValidName(username)) {
+      printErrorMessage("Invalid username: " + username);
+      return;
+    }
+
+    String ip = null;
+    try {
+      InetAddress inetAddress = InetAddress.getByName(serverAddress);
+      ip = inetAddress.getHostAddress();
+    } catch (UnknownHostException e) {
+      printErrorMessage("Invalid server address: " + serverAddress);
+      return;
+    }
+    assert ip != null;
+
+    if (!isValidPort(port)) {
+      printErrorMessage("The port number should be in the range of 1024~65535.");
+      return;
+    }
   }
 
   /**
-   * Saves the user settings including username, WPM goal, and favorite text.
+   * Entry to <code>Client</code>.
    *
-   * @param username The username of the player.
-   * @param wpmGoal The words per minute goal.
-   * @param favoriteText The favorite text of the player.
+   * @param args command-line arguments
    */
-  public void saveSettings(String username, int wpmGoal, String favoriteText) {
-    // Implementation goes here
+  public static void main(String[] args) {}
+
+  /**
+   * Check if the given index is the last argument in the array.
+   *
+   * @param i index to check
+   * @param args array of arguments
+   * @return true if index is last argument
+   */
+  private static boolean isLastArgument(int i, final String[] args) {
+    return i == args.length - 1;
   }
 
   /**
-   * Returns the total number of games played by the user.
+   * Check if the given port number is valid.
    *
-   * @return The total number of games played.
+   * @param port number of port to check
+   * @return number true if port number is within the valid range
    */
-  public int getGamesPlayed() {
-    return 0; // Implementation goes here
+  private static boolean isValidPort(int port) {
+    return port >= 1024 && port <= 65535;
   }
 
   /**
-   * Returns the average words per minute (WPM) achieved by the user.
+   * Check if the given username is valid.
    *
-   * @return The average WPM.
+   * @param username name of the user to check
+   * @return true if the username is not null and not empty
    */
-  public double getAverageWpm() {
-    return 0; // Implementation goes here
+  private static boolean isValidName(String username) {
+    return username != null && !username.isBlank();
+  }
+
+  /** Prints the help message for the server. */
+  public static void printHelpMessage() {
+    System.out.println(
+        "java Client [--username <String>] [--address <String>] [--port <int>] [--help]");
   }
 
   /**
-   * Returns the total number of errors made by the user.
+   * Prints error message with given string.
    *
-   * @return The total number of errors.
+   * @param str error message string
    */
-  public int getTotalErrors() {
-    return 0; // Implementation goes here
+  private static void printErrorMessage(String str) {
+    System.out.println("Error! " + str);
   }
 
   /**
-   * Returns the best words per minute (WPM) achieved by the user.
+   * Starts the client and listens to the server.
    *
-   * @return The best WPM.
+   * @param username name of the user
    */
-  public double getBestWpm() {
-    return 0; // Implementation goes here
+  public void start(String username) {
+    messageHandlerChain = createMessageHandlerChain();
+
+    try {
+      reader =
+          new BufferedReader(
+              new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+    } catch (IOException e) {
+      System.err.println("Client start not possible: " + e.getMessage());
+    }
+    // new Thread to receive messages from the server
+    new Thread(() -> receiveMessage(socket)).start();
+    sendMessage(new HandshakeRequest(username));
+  }
+
+  public void connect(String ip, int port, String username) {
+    InetSocketAddress address = new InetSocketAddress(ip, port);
+    try (Socket socket = new Socket(address.getAddress(), address.getPort())) {
+      this.socket = socket;
+      start(username);
+    } catch (IOException e) {
+      System.out.println("Connection lost. Shutting down: " + e.getMessage());
+    }
+  }
+
+  private MessageHandler createMessageHandlerChain() {
+    MessageHandler characterResponseHandler = new CharacterResponseHandler(null, viewController);
+    MessageHandler handShakeResponseHandler =
+        new HandShakeResponseHandler(characterResponseHandler, viewController);
+    MessageHandler createSessionResponseHandler =
+        new CreateSessionResponseHandler(handShakeResponseHandler, viewController);
+    MessageHandler readyResponseHandler =
+        new ReadyResponseHandler(createSessionResponseHandler, viewController);
+    MessageHandler textNotificationHandler =
+        new TextNotificationHandler(readyResponseHandler, viewController);
+    MessageHandler playerStateNotificationHandler =
+        new PlayerStateNotificationHandler(textNotificationHandler, viewController);
+    MessageHandler gameStateNotificationHandler =
+        new GameStateNotificationHandler(playerStateNotificationHandler, viewController);
+    MessageHandler playerLeftNotificationHandler =
+        new PlayerLeftNotificationHandler(gameStateNotificationHandler, viewController);
+    MessageHandler playerJoinedNotificationHandler =
+        new PlayerJoinedNotificationHandler(playerLeftNotificationHandler, viewController);
+    MessageHandler joinSessionResponseHandler =
+        new JoinSessionResponseHandler(playerJoinedNotificationHandler, viewController);
+    return new LeaveSessionResponseHandler(joinSessionResponseHandler, viewController);
+  }
+
+  public void handleMessage(Message message) throws IOException {
+    messageHandlerChain.handleMessage(message);
   }
 
   /**
-   * Returns the average accuracy percentage achieved by the user.
+   * Sends messages to the server.
    *
-   * @return The average accuracy percentage.
+   * @param message message that gets sent as a JSON
    */
-  public double getAverageAccuracy() {
-    return 0; // Implementation goes here
+  public void sendMessage(Message message) {
+    try {
+      String json = moshiAdapter.toJson(message);
+      OutputStream output = socket.getOutputStream();
+      PrintWriter writer = new PrintWriter(output, true);
+      writer.println(json);
+      System.out.println("Sent message: " + json);
+    } catch (IOException e) {
+      System.out.println("Error in sendMessage " + e.getMessage());
+      e.printStackTrace();
+    }
   }
 
-  /** Resets the user's game statistics. */
-  public void resetStats() {
-    // Implementation goes here
-  }
-
-  /**
-   * Fetches a new game text for the user.
-   *
-   * @return The new game text.
-   */
-  public String fetchNewGameText() {
-    return ""; // Implementation goes here
-  }
-
-  /**
-   * Returns a list of top players.
-   *
-   * @return A list of top players.
-   */
-  public List<String> getTopPlayers() {
-    return List.of(); // Implementation goes here
+  /** Receives the messages from the server through given socket. */
+  private void receiveMessage(Socket socket) {
+    try {
+      String serverMessage;
+      while (socket.isConnected()
+          && !socket.isClosed()
+          && (serverMessage = reader.readLine()) != null) {
+        Message message = moshiAdapter.fromJson(serverMessage);
+        handleMessage(message);
+        System.out.println("Received message: " + message);
+      }
+    } catch (IOException e) {
+      System.out.println("Error on receiveMessage " + e.getMessage());
+      throw new RuntimeException(e);
+    }
   }
 }

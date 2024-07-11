@@ -1,5 +1,8 @@
 package typeracer.client;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
@@ -10,119 +13,127 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+/** Stores the Data of all known users for the Client. */
 public class ClientSideSessionData {
 
-    private String username;
-    private int id;
-    private final Map<Integer, String> playerNameById = new ConcurrentHashMap<>();
-    private final Map<Integer, SimpleBooleanProperty> playerReady = new HashMap<>();
-    private Map<Integer, SimpleIntegerProperty> playerWpms = new HashMap<>();
-    private Map<Integer, DoubleProperty> playerAccuracies = new HashMap<>();
-    private Map<Integer, DoubleProperty> playerProgresses = new HashMap<>();
-    private Map<Integer, IntegerProperty> playerErrors = new HashMap<>();
-    private ListProperty<String> topPlayers =
-            new SimpleListProperty<>(FXCollections.observableArrayList());
-    String gameText = "Text";
+  private String username;
+  private int id;
+  private final Map<Integer, String> playerNameById = new ConcurrentHashMap<>();
+  private final Map<Integer, SimpleBooleanProperty> playerReady = new HashMap<>();
+  private final Map<Integer, DoubleProperty> playerWpms = new HashMap<>();
+  private final Map<Integer, DoubleProperty> playerAccuracies = new HashMap<>();
+  private final Map<Integer, DoubleProperty> playerProgresses = new HashMap<>();
+  private Map<Integer, IntegerProperty> playerErrors = new HashMap<>();
+  private final ListProperty<String> topPlayers =
+      new SimpleListProperty<>(FXCollections.observableArrayList());
+  String gameText = "Text";
 
-    public String getUsername() {
-        return username;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public int getId() {
-        return id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public Map<Integer, String> getPlayerNameById() {
-        return playerNameById;
-    }
+  public Map<Integer, String> getPlayerNameById() {
+    return playerNameById;
+  }
 
-    public Map<Integer, SimpleBooleanProperty> getPlayerReady() {
-        return playerReady;
-    }
+  public Map<Integer, SimpleBooleanProperty> getPlayerReady() {
+    return playerReady;
+  }
 
-    public Map<Integer, SimpleIntegerProperty> getPlayerWpms() {
-        return playerWpms;
-    }
+  public Map<Integer, DoubleProperty> getPlayerWpms() {
+    return playerWpms;
+  }
 
-    public void setPlayerWpms(int playerId, int playerWpm) {
-        playerWpms.computeIfAbsent(playerId, k -> new SimpleIntegerProperty()).set(playerWpm);
-    }
+  public void setPlayerWpms(int playerId, double playerWpm) {
+    playerWpms.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(playerWpm);
+  }
 
-    public Map<Integer, DoubleProperty> getPlayerAccuracies() {
-        return playerAccuracies;
-    }
+  public Map<Integer, DoubleProperty> getPlayerAccuracies() {
+    return playerAccuracies;
+  }
 
-    public void setPlayerAccuracies(int playerId, double playerAccuracy) {
-        playerAccuracies.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(playerAccuracy);
-    }
+  public void setPlayerAccuracies(int playerId, double playerAccuracy) {
+    playerAccuracies.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(playerAccuracy);
+  }
 
-    public Map<Integer, DoubleProperty> getPlayerProgresses() {
-        return playerProgresses;
-    }
+  public Map<Integer, DoubleProperty> getPlayerProgresses() {
+    return playerProgresses;
+  }
 
-    public void setPlayerProgresses(int playerId, double playerProgress) {
-        playerProgresses.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(playerProgress);
-    }
+  public void setPlayerProgresses(int playerId, double playerProgress) {
+    playerProgresses.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(playerProgress);
+  }
 
-    public Map<Integer, IntegerProperty> getPlayerErrors() {
-        return playerErrors;
-    }
+  public Map<Integer, IntegerProperty> getPlayerErrors() {
+    return playerErrors;
+  }
 
-    public void setPlayerErrors(Map<Integer, IntegerProperty> playerErrors) {
-        this.playerErrors = playerErrors;
-    }
+  public void setPlayerErrors(Map<Integer, IntegerProperty> playerErrors) {
+    this.playerErrors = playerErrors;
+  }
 
-    public ObservableList<String> getTopPlayers() {
-        return topPlayers.get();
-    }
+  public ObservableList<String> getTopPlayers() {
+    return topPlayers.get();
+  }
 
-    public ListProperty<String> topPlayersProperty() {
-        return topPlayers;
-    }
+  public ListProperty<String> topPlayersProperty() {
+    return topPlayers;
+  }
 
-    public void setTopPlayers(ObservableList<String> topPlayers) {
-        this.topPlayers.set(topPlayers);
-    }
+  public void setTopPlayers(ObservableList<String> topPlayers) {
+    this.topPlayers.set(topPlayers);
+  }
 
-    public String getGameText() {
-        return gameText;
-    }
+  public String getGameText() {
+    return gameText;
+  }
 
-    public void setGameText(String gameText) {
-        this.gameText = gameText;
-    }
+  public void setGameText(String gameText) {
+    this.gameText = gameText;
+  }
 
-    public void addPlayer(int playerId, String playerName) {
-        playerNameById.put(playerId, playerName);
-        playerReady.put(playerId, new SimpleBooleanProperty(false));
-        playerWpms.put(playerId, new SimpleIntegerProperty(0));
-        playerAccuracies.put(playerId, new SimpleDoubleProperty(0));
-        playerProgresses.put(playerId, new SimpleDoubleProperty(0));
-        playerErrors.put(playerId, new SimpleIntegerProperty(0));
-    }
+  /**
+   * Adds A Player to the data.
+   *
+   * @param playerId of the joined player
+   * @param playerName of the joined player
+   */
+  public void addPlayer(int playerId, String playerName) {
+    playerNameById.put(playerId, playerName);
+    playerReady.put(playerId, new SimpleBooleanProperty(false));
+    playerWpms.put(playerId, new SimpleDoubleProperty(0));
+    playerAccuracies.put(playerId, new SimpleDoubleProperty(0));
+    playerProgresses.put(playerId, new SimpleDoubleProperty(0));
+    playerErrors.put(playerId, new SimpleIntegerProperty(0));
+  }
 
-    public void removePlayer(int playerId) {
-        playerNameById.remove(playerId);
-        playerReady.remove(playerId);
-        playerWpms.remove(playerId);
-        playerAccuracies.remove(playerId);
-        playerProgresses.remove(playerId);
-        playerErrors.remove(playerId);
-        String playerName = playerNameById.get(playerId);
-        if (topPlayers.get().contains(playerName)) {
-            topPlayers.remove(playerName);
-        }
+  /**
+   * Removes a player from the data.
+   *
+   * @param playerId of the player who left
+   */
+  public void removePlayer(int playerId) {
+    playerNameById.remove(playerId);
+    playerReady.remove(playerId);
+    playerWpms.remove(playerId);
+    playerAccuracies.remove(playerId);
+    playerProgresses.remove(playerId);
+    playerErrors.remove(playerId);
+    String playerName = playerNameById.get(playerId);
+    if (topPlayers.get().contains(playerName)) {
+      topPlayers.remove(playerName);
     }
+  }
 }
