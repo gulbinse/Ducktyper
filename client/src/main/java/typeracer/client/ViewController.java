@@ -13,6 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import typeracer.client.view.GameResultsUi;
 import typeracer.client.view.GameUi;
@@ -23,8 +24,6 @@ import typeracer.client.view.PlayerStatsUi;
 import typeracer.client.view.ProfileSettingsUi;
 import typeracer.communication.messages.client.CreateSessionRequest;
 import typeracer.communication.messages.client.JoinSessionRequest;
-import typeracer.client.config.settings.Configuration;
-
 
 /** Manages the transition between different scenes and states in the TypeRacer game application. */
 public class ViewController extends Application {
@@ -114,10 +113,10 @@ public class ViewController extends Application {
     if (scene != null) {
       primaryStage.setScene(scene);
       primaryStage.show();
-      if (scene.getRoot() instanceof LobbyUi) {
-        ((LobbyUi) scene.getRoot()).onViewShown();
-      } else if (scene.getRoot() instanceof GameUi) {
-        ((GameUi) scene.getRoot()).onViewShown();
+      if (scene.getRoot() instanceof LobbyUi lobbyUi) {
+        lobbyUi.onViewShown();
+      } else if (scene.getRoot() instanceof GameUi gameUi) {
+        gameUi.onViewShown();
       }
     } else {
       System.err.println("View not found: " + sceneName);
@@ -131,12 +130,12 @@ public class ViewController extends Application {
     lobbyUi.onViewShown();
   }
 
-    /**
-     * Displays the statistics view.
-     */
-    public void viewStats() {
-        showScene(SceneName.STATS);
-    }
+  /**
+   * Displays the statistics view.
+   */
+  public void viewStats() {
+      showScene(SceneName.STATS);
+  }
 
   /** Displays the profile settings view. */
   public void editProfile() {
@@ -151,8 +150,8 @@ public class ViewController extends Application {
      * @param favoriteText The favorite text of the user.
      */
     public void saveUserSettings(String username, int wpmGoal, String favoriteText) {
-//        client.saveSettings(username, wpmGoal, favoriteText);
-        showScene(SceneName.MAIN_MENU);
+      // client.saveSettings(username, wpmGoal, favoriteText);
+      showScene(SceneName.MAIN_MENU);
     }
 
     /**
@@ -221,27 +220,6 @@ public class ViewController extends Application {
     // TODO: add Logic, that makes Client send a ReadyRequest to Server
     // For Testing purpose only:
     startNewGame(); // TODO: ist wahrscheinlich falsch!
-  }
-
-  /**
-   * Simulates fetching player names for a given session ID from a server.
-   * @param sessionId The ID of the session for which players are to be fetched.
-   * @return An ObservableList of player names.
-   */
-  public void fetchPlayersForSession(String sessionId) {
-      String baseUrl = Configuration.getProperty("backend.url");
-      HttpClient client = HttpClient.newHttpClient();
-      HttpRequest request = HttpRequest.newBuilder()
-              .uri(URI.create(baseUrl + "/sessions/" + sessionId + "/players"))
-              .build();
-
-      client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-              .thenApply(HttpResponse::body)
-              .thenAccept(System.out::println)
-              .exceptionally(e -> {
-                  e.printStackTrace();
-                  return null;
-              });
   }
 
   /**
@@ -421,5 +399,15 @@ public class ViewController extends Application {
   // for testing purpose only
   private void addDummyPlayer() {
     addPlayerToGame(1, "dummyPlayer");
+  }
+
+  /**
+   * Displays an error alert with the specified message.
+   *
+   * @param message The message to display in the alert.
+   */
+  public void showAlert(String message) {
+    Alert alert = new Alert(Alert.AlertType.ERROR, message);
+    alert.showAndWait();
   }
 }
