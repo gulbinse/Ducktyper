@@ -96,11 +96,6 @@ public class MainMenuUi extends VBox {
     });
     VBox sessionBox = new VBox(10, sessionIdField, joinSessionButton);
     sessionBox.setAlignment(Pos.CENTER);
-    profileSettingButton.setOnAction(
-        e -> viewController.showScene(ViewController.SceneName.PROFILE_SETTINGS));
-    statsButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.STATS));
-
-
 
     profileSettingButton.setOnAction(e -> viewController.editProfile());
     statsButton.setOnAction(e -> viewController.viewStats());

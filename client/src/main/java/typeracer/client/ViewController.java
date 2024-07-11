@@ -142,24 +142,22 @@ public class ViewController extends Application {
     showScene(SceneName.PROFILE_SETTINGS);
   }
 
-    /**
-     * Saves user settings and switches back to the main menu.
-     *
-     * @param username     The username to save.
-     * @param wpmGoal      The words per minute goal.
-     * @param favoriteText The favorite text of the user.
-     */
-    public void saveUserSettings(String username, int wpmGoal, String favoriteText) {
-      // client.saveSettings(username, wpmGoal, favoriteText);
-      showScene(SceneName.MAIN_MENU);
-    }
+  /**
+   * Saves user settings and switches back to the main menu.
+   *
+   * @param username The username to save.
+   * @param wpmGoal The words per minute goal.
+   * @param favoriteText The favorite text of the user.
+   */
+  public void saveUserSettings(String username, int wpmGoal, String favoriteText) {
+    // client.saveSettings(username, wpmGoal, favoriteText);
+    showScene(SceneName.MAIN_MENU);
+  }
 
-    /**
-     * Cancels any changes made in the settings and returns to the main menu.
-     */
-    public void cancelSettings() {
-        showScene(SceneName.MAIN_MENU);
-    }
+  /** Cancels any changes made in the settings and returns to the main menu. */
+  public void cancelSettings() {
+    showScene(SceneName.MAIN_MENU);
+  }
 
   /**
    * Loads the stylesheet for the given scene.
@@ -210,6 +208,14 @@ public class ViewController extends Application {
     showScene(SceneName.LOBBY);
   }
 
+  //TODO: Not sure if this method should be called in Client
+  public void updateSessionId(int newSessionId) {
+    Platform.runLater(() -> {
+      playerData.setId(newSessionId);
+      lobbyUi.setSessionId(newSessionId);
+    });
+  }
+
   /**
    * Requests to set the player ready.
    *
@@ -243,6 +249,9 @@ public class ViewController extends Application {
   // TODO: This method should be called by Client on receiving a GameStateNotification with
   // GameStatus == Running
   public void startNewGame() {
+    boolean isReady = false;
+    client.sendMessage(new ReadyRequest(isReady));
+    playerData.getGameText();
     showScene(SceneName.GAME);
     GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
     if (gameUi != null) {

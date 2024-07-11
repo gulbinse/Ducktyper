@@ -3,7 +3,6 @@ package typeracer.client.view;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -26,10 +25,11 @@ public class LobbyUi extends VBox {
   private ListView<String> playerList;
   private Button readyButton;
   private Button backButton;
-  private ComboBox<String> modeDropdown;
   private ViewController viewController;
   private Label usernameLabel;
   private boolean isReady;
+  private int sessionId;
+  private Label sessionIdLabel;
 
   /**
    * Constructor to initialize the Lobby UI.
@@ -72,17 +72,13 @@ public class LobbyUi extends VBox {
     usernameLabel = new Label();
     usernameLabel.setFont(StyleManager.BOLD_FONT);
 
+    sessionIdLabel = new Label("Session ID: Not set");
+    sessionIdLabel.setFont(StyleManager.BOLD_FONT);
+
     playerList = new ListView<>();
     playerList.setPrefHeight(200);
     playerList.setItems(viewController.getPlayerUsernames());
     customizePlayerList();
-
-    modeDropdown = new ComboBox<>();
-    modeDropdown.getItems().addAll("Trial", "Duo", "Trio");
-    modeDropdown.setPromptText("Select game mode");
-
-    VBox modeSelection = new VBox(10);
-    modeSelection.getChildren().addAll(modeDropdown);
 
     readyButton =
         StyleManager.createStyledButton(
@@ -97,7 +93,7 @@ public class LobbyUi extends VBox {
     buttonBox.setAlignment(Pos.CENTER);
     buttonBox.getChildren().addAll(backButton, readyButton);
 
-    this.getChildren().addAll(titleImageView, playerList, modeSelection, buttonBox);
+    this.getChildren().addAll(titleImageView, usernameLabel, sessionIdLabel, playerList, buttonBox);
   }
 
   /** Customizes the player list by setting a custom cell factory to display player statuses. */
@@ -127,6 +123,16 @@ public class LobbyUi extends VBox {
                 }
               }
             });
+  }
+
+  public void setSessionId(int sessionId) {
+    this.sessionId = sessionId;
+  }
+
+  // Simulated method to fetch game mode for a given session
+  private String fetchGameModeForSession(String sessionId) {
+    // Example hardcoded response
+    return "Duo"; // Example game mode based on sessionId
   }
 
   /** Called when the view is shown to the user. Sets the username label. */
