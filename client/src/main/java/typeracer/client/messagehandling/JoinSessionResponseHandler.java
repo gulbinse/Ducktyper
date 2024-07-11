@@ -36,7 +36,7 @@ public class JoinSessionResponseHandler implements MessageHandler {
       switch ((joinSessionResponse.getJoinStatus())) {
         case ACCEPTED:
           System.out.println("Player can join.");
-          viewController.switchToLobbyUi();
+          viewController.showScene(ViewController.SceneName.LOBBY);
           break;
         case DENIED:
           System.out.println(

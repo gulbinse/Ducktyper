@@ -2,6 +2,7 @@ package typeracer.client.view;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -35,6 +36,10 @@ public class MainMenuUi extends VBox {
   /** Button to exit the game. */
   private Button exitButton;
 
+  private Button joinSessionButton;
+
+  private TextField sessionIdField;
+
   /**
    * Constructs a new MainMenuUi and initializes its user interface.
    *
@@ -64,7 +69,10 @@ public class MainMenuUi extends VBox {
 
     startGameButton =
         StyleManager.createStyledButton(
-            "start game", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
+            "start new game", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
+    joinSessionButton =
+            StyleManager.createStyledButton("Join Session", StyleManager.ORANGE_BUTTON,
+                    StyleManager.STANDARD_FONT);
     profileSettingButton =
         StyleManager.createStyledButton(
             "profile settings", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
@@ -75,13 +83,26 @@ public class MainMenuUi extends VBox {
         StyleManager.createStyledButton(
             "exit", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
 
-    startGameButton.setOnAction(e -> viewController.joinLobby(defaultLobby));
-    profileSettingButton.setOnAction(
-        e -> viewController.showScene(ViewController.SceneName.PROFILE_SETTINGS));
-    statsButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.STATS));
+    startGameButton.setOnAction(e -> viewController.createLobby());
+    sessionIdField = new TextField();
+    sessionIdField.setPromptText("Enter Session ID");
+    sessionIdField.setMaxWidth(200);
+    joinSessionButton.setOnAction(event -> {
+      try {
+        viewController.joinLobby(Integer.parseInt(sessionIdField.getText()));
+      } catch (NumberFormatException e) {
+        viewController.showAlert("Please enter a valid session number: " + e.getMessage());
+      }
+    });
+    VBox sessionBox = new VBox(10, sessionIdField, joinSessionButton);
+    sessionBox.setAlignment(Pos.CENTER);
+
+    profileSettingButton.setOnAction(e -> viewController.editProfile());
+    statsButton.setOnAction(e -> viewController.viewStats());
     exitButton.setOnAction(e -> exitApplication());
 
     StyleManager.applyFadeInAnimation(startGameButton, 1500);
+    StyleManager.applyFadeInAnimation(joinSessionButton, 1500);
     StyleManager.applyFadeInAnimation(profileSettingButton, 1500);
     StyleManager.applyFadeInAnimation(statsButton, 1500);
     StyleManager.applyFadeInAnimation(exitButton, 1500);
@@ -89,7 +110,7 @@ public class MainMenuUi extends VBox {
     StyleManager.applyButtonHoverAnimation(
         startGameButton, profileSettingButton, statsButton, exitButton);
 
-    this.getChildren().addAll(startGameButton, profileSettingButton, statsButton, exitButton);
+    this.getChildren().addAll(startGameButton, sessionBox, profileSettingButton, statsButton, exitButton);
   }
 
   /** Creates and returns a title panel with an image. */

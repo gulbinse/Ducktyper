@@ -13,6 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import typeracer.client.view.GameResultsUi;
 import typeracer.client.view.GameUi;
@@ -21,7 +22,8 @@ import typeracer.client.view.LobbyUi;
 import typeracer.client.view.MainMenuUi;
 import typeracer.client.view.PlayerStatsUi;
 import typeracer.client.view.ProfileSettingsUi;
-import typeracer.communication.messages.client.*;
+import typeracer.communication.messages.client.CreateSessionRequest;
+import typeracer.communication.messages.client.JoinSessionRequest;
 
 /** Manages the transition between different scenes and states in the TypeRacer game application. */
 public class ViewController extends Application {
@@ -111,24 +113,33 @@ public class ViewController extends Application {
     if (scene != null) {
       primaryStage.setScene(scene);
       primaryStage.show();
-      if (scene.getRoot() instanceof LobbyUi) {
-        ((LobbyUi) scene.getRoot()).onViewShown();
-      } else if (scene.getRoot() instanceof GameUi) {
-        ((GameUi) scene.getRoot()).onViewShown();
+      if (scene.getRoot() instanceof LobbyUi lobbyUi) {
+        lobbyUi.onViewShown();
+      } else if (scene.getRoot() instanceof GameUi gameUi) {
+        gameUi.onViewShown();
       }
     } else {
       System.err.println("View not found: " + sceneName);
     }
   }
 
-  /** Switches the current scene to the lobby UI. */
-  // Was ist der Unterschied zwischen der Methode und startGame(); ?
-  public void switchToLobbyUi() {
-    showScene(SceneName.LOBBY);
+  public void setSessionId(int sessionId) {
+    playerData.setSessionId(sessionId);
     LobbyUi lobbyUi = (LobbyUi) scenes.get(SceneName.LOBBY).getRoot();
-    if (lobbyUi != null) {
-      lobbyUi.onViewShown();
-    }
+    lobbyUi.setSessionId(sessionId);
+    lobbyUi.onViewShown();
+  }
+
+  /**
+   * Displays the statistics view.
+   */
+  public void viewStats() {
+      showScene(SceneName.STATS);
+  }
+
+  /** Displays the profile settings view. */
+  public void editProfile() {
+    showScene(SceneName.PROFILE_SETTINGS);
   }
 
   /**
@@ -140,6 +151,11 @@ public class ViewController extends Application {
    */
   public void saveUserSettings(String username, int wpmGoal, String favoriteText) {
     // client.saveSettings(username, wpmGoal, favoriteText);
+    showScene(SceneName.MAIN_MENU);
+  }
+
+  /** Cancels any changes made in the settings and returns to the main menu. */
+  public void cancelSettings() {
     showScene(SceneName.MAIN_MENU);
   }
 
@@ -192,18 +208,24 @@ public class ViewController extends Application {
     showScene(SceneName.LOBBY);
   }
 
+  //TODO: Not sure if this method should be called in Client
+  public void updateSessionId(int newSessionId) {
+    Platform.runLater(() -> {
+      playerData.setId(newSessionId);
+      lobbyUi.setSessionId(newSessionId);
+    });
+  }
+
   /**
    * Requests to set the player ready.
    *
    * @param isReady status the player wants to be
    */
   public void setPlayerReady(boolean isReady) {
-    client.sendMessage(new ReadyRequest(isReady));
     System.out.println("Player wants to update his readyStatus to: " + isReady);
     // TODO: add Logic, that makes Client send a ReadyRequest to Server
-    // TODO: set ready to false when "Play Again"- Button is pressed
     // For Testing purpose only:
-    startNewGame();
+    startNewGame(); // TODO: ist wahrscheinlich falsch!
   }
 
   /**
@@ -212,14 +234,12 @@ public class ViewController extends Application {
    * @param character which the client typed
    */
   public void handleCharacterTyped(char character) {
-    client.sendMessage(new CharacterRequest(character));
     System.out.println("Character typed: " + character);
     // TODO: add Logic, that makes Client send a CharacterRequest to Server
   }
 
   /** Signals User intention to leave the game. */
   public void leaveLobbyOrGame() {
-    client.sendMessage(new LeaveSessionRequest());
     System.out.println("Leaving lobby");
     // TODO: add Logic, that makes Client send a LeaveSessionRequest to Server
     showScene(SceneName.MAIN_MENU);
@@ -229,6 +249,9 @@ public class ViewController extends Application {
   // TODO: This method should be called by Client on receiving a GameStateNotification with
   // GameStatus == Running
   public void startNewGame() {
+    boolean isReady = false;
+    client.sendMessage(new ReadyRequest(isReady));
+    playerData.getGameText();
     showScene(SceneName.GAME);
     GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
     if (gameUi != null) {
@@ -270,13 +293,7 @@ public class ViewController extends Application {
    * @param isCorrect boolean if the typed character is correct
    */
   // TODO: This method should be called by view on receiving a CharacterResponse
-  public void handleCharacterAnswer(boolean isCorrect) {
-    if (!isCorrect) {
-      System.out.println("The character is not correct.");
-    } else {
-      System.out.println("The character is correct.");
-    }
-  }
+  public void handleCharacterAnswer(boolean isCorrect) {}
 
   /**
    * Updates the game text with the specified new text.
@@ -391,5 +408,15 @@ public class ViewController extends Application {
   // for testing purpose only
   private void addDummyPlayer() {
     addPlayerToGame(1, "dummyPlayer");
+  }
+
+  /**
+   * Displays an error alert with the specified message.
+   *
+   * @param message The message to display in the alert.
+   */
+  public void showAlert(String message) {
+    Alert alert = new Alert(Alert.AlertType.ERROR, message);
+    alert.showAndWait();
   }
 }
