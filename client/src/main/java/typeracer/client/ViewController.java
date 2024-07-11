@@ -22,9 +22,7 @@ import typeracer.client.view.SessionUi;
 import typeracer.client.view.MainMenuUi;
 import typeracer.client.view.PlayerStatsUi;
 import typeracer.client.view.ProfileSettingsUi;
-import typeracer.communication.messages.client.CreateSessionRequest;
-import typeracer.communication.messages.client.JoinSessionRequest;
-import typeracer.communication.messages.client.ReadyRequest;
+import typeracer.communication.messages.client.*;
 
 /** Manages the transition between different scenes and states in the TypeRacer game application. */
 public class ViewController extends Application {
@@ -192,10 +190,10 @@ public class ViewController extends Application {
 
   /**
    * Requests to set the player ready.
-   *
-   * @param isReady status the player wants to be
    */
-  public void setPlayerReady(boolean isReady) {
+  public void setPlayerReady() {
+    boolean isReady = true;
+    client.sendMessage(new ReadyRequest(isReady));
     System.out.println("Player wants to update his readyStatus to: " + isReady);
     // TODO: add Logic, that makes Client send a ReadyRequest to Server
     // For Testing purpose only:
@@ -208,12 +206,14 @@ public class ViewController extends Application {
    * @param character which the client typed
    */
   public void handleCharacterTyped(char character) {
+    client.sendMessage(new CharacterRequest(character));
     System.out.println("Character typed: " + character);
     // TODO: add Logic, that makes Client send a CharacterRequest to Server
   }
 
   /** Signals User intention to leave the game. */
   public void leaveSessionOrGame() {
+    client.sendMessage(new LeaveSessionRequest());
     System.out.println("Leaving session");
     // TODO: add Logic, that makes Client send a LeaveSessionRequest to Server
     showScene(SceneName.MAIN_MENU);
@@ -223,8 +223,6 @@ public class ViewController extends Application {
   // TODO: This method should be called by Client on receiving a GameStateNotification with
   // GameStatus == Running
   public void startNewGame() {
-    boolean isReady = false;
-    client.sendMessage(new ReadyRequest(isReady));
     playerData.getGameText();
     showScene(SceneName.GAME);
     GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
@@ -258,6 +256,7 @@ public class ViewController extends Application {
   // TODO: This method should be called by view on receiving a GameStateNotification with GameStatus
   // == Finished
   public void endGame() {
+
     showScene(SceneName.GAME_RESULTS);
   }
 
