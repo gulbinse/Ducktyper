@@ -182,6 +182,7 @@ public class ViewController extends Application {
   public void joinSession(int sessionId) {
     // TODO: add Logic, that makes Client send a JoinSessionRequest to Server
     client.sendMessage(new JoinSessionRequest(sessionId));
+    setSessionId(sessionId);
     System.out.println("Request to join session " + sessionId);
   }
 

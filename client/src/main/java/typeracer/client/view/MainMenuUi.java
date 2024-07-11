@@ -88,7 +88,7 @@ public class MainMenuUi extends VBox {
       try {
         viewController.joinSession(Integer.parseInt(sessionIdField.getText()));
       } catch (NumberFormatException e) {
-        viewController.showAlert("Please enter a valid session number: " + e.getMessage());
+        viewController.showAlert("Please enter a valid session number.");
       }
     });
     VBox sessionBox = new VBox(10, sessionIdField, joinSessionButton);
