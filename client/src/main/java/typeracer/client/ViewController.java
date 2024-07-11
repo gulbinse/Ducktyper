@@ -24,6 +24,7 @@ import typeracer.client.view.PlayerStatsUi;
 import typeracer.client.view.ProfileSettingsUi;
 import typeracer.communication.messages.client.CreateSessionRequest;
 import typeracer.communication.messages.client.JoinSessionRequest;
+import typeracer.communication.messages.client.ReadyRequest;
 
 /** Manages the transition between different scenes and states in the TypeRacer game application. */
 public class ViewController extends Application {
@@ -99,7 +100,11 @@ public class ViewController extends Application {
   /** Helper method to add views to the map. */
   private void addScene(SceneName sceneName, Parent ui) {
     Scene scene = new Scene(ui, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
-    loadStylesheets(scene);
+    try {
+      scene.getStylesheets().add(STYLESHEET_PATH);
+    } catch (Exception e) {
+      showAlert("Error loading stylesheets: " + e.getMessage());
+    }
     scenes.put(sceneName, scene);
   }
 
@@ -119,27 +124,17 @@ public class ViewController extends Application {
         gameUi.onViewShown();
       }
     } else {
-      System.err.println("View not found: " + sceneName);
+      showAlert("View not found: " + sceneName);
     }
   }
 
   public void setSessionId(int sessionId) {
-    playerData.setSessionId(sessionId);
-    LobbyUi lobbyUi = (LobbyUi) scenes.get(SceneName.LOBBY).getRoot();
-    lobbyUi.setSessionId(sessionId);
-    lobbyUi.onViewShown();
-  }
-
-  /**
-   * Displays the statistics view.
-   */
-  public void viewStats() {
-      showScene(SceneName.STATS);
-  }
-
-  /** Displays the profile settings view. */
-  public void editProfile() {
-    showScene(SceneName.PROFILE_SETTINGS);
+    Platform.runLater(() -> {
+      playerData.setSessionId(sessionId);
+      LobbyUi lobbyUi = (LobbyUi) scenes.get(SceneName.LOBBY).getRoot();
+      lobbyUi.setSessionId(sessionId);
+      lobbyUi.onViewShown();
+    });
   }
 
   /**
@@ -157,19 +152,6 @@ public class ViewController extends Application {
   /** Cancels any changes made in the settings and returns to the main menu. */
   public void cancelSettings() {
     showScene(SceneName.MAIN_MENU);
-  }
-
-  /**
-   * Loads the stylesheet for the given scene.
-   *
-   * @param scene The scene to which the stylesheet will be applied.
-   */
-  private void loadStylesheets(Scene scene) {
-    try {
-      scene.getStylesheets().add(STYLESHEET_PATH);
-    } catch (Exception e) {
-      System.err.println("Error loading stylesheets: " + e.getMessage());
-    }
   }
 
   /**
@@ -206,14 +188,6 @@ public class ViewController extends Application {
     System.out.println("Request to create lobby");
     // For Testing purpose only:
     showScene(SceneName.LOBBY);
-  }
-
-  //TODO: Not sure if this method should be called in Client
-  public void updateSessionId(int newSessionId) {
-    Platform.runLater(() -> {
-      playerData.setId(newSessionId);
-      lobbyUi.setSessionId(newSessionId);
-    });
   }
 
   /**

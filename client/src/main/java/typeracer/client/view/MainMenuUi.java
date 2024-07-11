@@ -97,8 +97,8 @@ public class MainMenuUi extends VBox {
     VBox sessionBox = new VBox(10, sessionIdField, joinSessionButton);
     sessionBox.setAlignment(Pos.CENTER);
 
-    profileSettingButton.setOnAction(e -> viewController.editProfile());
-    statsButton.setOnAction(e -> viewController.viewStats());
+    profileSettingButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.PROFILE_SETTINGS));
+    statsButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.STATS));
     exitButton.setOnAction(e -> exitApplication());
 
     StyleManager.applyFadeInAnimation(startGameButton, 1500);
