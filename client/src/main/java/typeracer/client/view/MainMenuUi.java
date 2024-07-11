@@ -83,12 +83,17 @@ public class MainMenuUi extends VBox {
         StyleManager.createStyledButton(
             "exit", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
 
-    startGameButton.setOnAction(e -> viewController.joinLobby(defaultLobby));
-    startGameButton.setOnAction(e -> viewController.requestNewGameSession());
+    startGameButton.setOnAction(e -> viewController.createLobby());
     sessionIdField = new TextField();
     sessionIdField.setPromptText("Enter Session ID");
     sessionIdField.setMaxWidth(200);
-    joinSessionButton.setOnAction(e -> viewController.joinExistingSession(sessionIdField.getText()));
+    joinSessionButton.setOnAction(event -> {
+      try {
+        viewController.joinLobby(Integer.parseInt(sessionIdField.getText()));
+      } catch (NumberFormatException e) {
+        viewController.showAlert("Please enter a valid session number: " + e.getMessage());
+      }
+    });
     VBox sessionBox = new VBox(10, sessionIdField, joinSessionButton);
     sessionBox.setAlignment(Pos.CENTER);
     profileSettingButton.setOnAction(
