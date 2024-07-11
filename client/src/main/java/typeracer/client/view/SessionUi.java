@@ -28,7 +28,6 @@ public class SessionUi extends VBox {
   private ViewController viewController;
   private Label usernameLabel;
   private boolean isReady;
-  private int sessionId;
   private Label sessionIdLabel;
 
   /**
@@ -125,10 +124,6 @@ public class SessionUi extends VBox {
             });
   }
 
-  public void setSessionId(int sessionId) {
-    this.sessionId = sessionId;
-  }
-
   // Simulated method to fetch game mode for a given session
   private String fetchGameModeForSession(String sessionId) {
     // Example hardcoded response
@@ -138,6 +133,7 @@ public class SessionUi extends VBox {
   /** Called when the view is shown to the user. Sets the username label. */
   public void onViewShown() {
     updateUsernameLabel();
+    sessionIdLabel.setText("Session ID: " + viewController.getSessionId());
     playerList.refresh();
   }
 }

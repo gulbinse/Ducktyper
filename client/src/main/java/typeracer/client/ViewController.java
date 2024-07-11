@@ -114,27 +114,33 @@ public class ViewController extends Application {
    * @param sceneName The name of the view to display.
    */
   public void showScene(SceneName sceneName) {
-    Scene scene = scenes.get(sceneName);
-    if (scene != null) {
-      primaryStage.setScene(scene);
-      primaryStage.show();
-      if (scene.getRoot() instanceof SessionUi sessionUi) {
-        sessionUi.onViewShown();
-      } else if (scene.getRoot() instanceof GameUi gameUi) {
-        gameUi.onViewShown();
+    Platform.runLater(() -> {
+      Scene scene = scenes.get(sceneName);
+      if (scene != null) {
+        primaryStage.setScene(scene);
+        primaryStage.show();
+        if (scene.getRoot() instanceof SessionUi sessionUi) {
+          sessionUi.onViewShown();
+        } else if (scene.getRoot() instanceof GameUi gameUi) {
+          gameUi.onViewShown();
+        }
+      } else {
+        showAlert("View not found: " + sceneName);
       }
-    } else {
-      showAlert("View not found: " + sceneName);
-    }
+    });
+
   }
 
   public void setSessionId(int sessionId) {
     Platform.runLater(() -> {
       playerData.setSessionId(sessionId);
       SessionUi sessionUi = (SessionUi) scenes.get(SceneName.SESSION).getRoot();
-      sessionUi.setSessionId(sessionId);
       sessionUi.onViewShown();
     });
+  }
+
+  public int getSessionId() {
+    return playerData.getSessionId();
   }
 
   /**
@@ -177,8 +183,6 @@ public class ViewController extends Application {
     // TODO: add Logic, that makes Client send a JoinSessionRequest to Server
     client.sendMessage(new JoinSessionRequest(sessionId));
     System.out.println("Request to join session " + sessionId);
-    // For Testing purpose only:
-    showScene(SceneName.SESSION);
   }
 
   /** Called when User tries to create a session by pressing button in GUI. */
@@ -186,8 +190,6 @@ public class ViewController extends Application {
     // TODO: add Logic, that makes Client send a CreateSessionRequest to Server
     client.sendMessage(new CreateSessionRequest());
     System.out.println("Request to create session");
-    // For Testing purpose only:
-    showScene(SceneName.SESSION);
   }
 
   /**
@@ -223,14 +225,16 @@ public class ViewController extends Application {
   // TODO: This method should be called by Client on receiving a GameStateNotification with
   // GameStatus == Running
   public void startNewGame() {
-    boolean isReady = false;
-    client.sendMessage(new ReadyRequest(isReady));
-    playerData.getGameText();
-    showScene(SceneName.GAME);
-    GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
-    if (gameUi != null) {
-      gameUi.onViewShown();
-    }
+    Platform.runLater(() -> {
+      boolean isReady = false;
+      client.sendMessage(new ReadyRequest(isReady));
+      playerData.getGameText();
+      showScene(SceneName.GAME);
+      GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
+      if (gameUi != null) {
+        gameUi.onViewShown();
+      }
+    });
   }
 
   /**

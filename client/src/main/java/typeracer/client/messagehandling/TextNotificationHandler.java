@@ -32,7 +32,7 @@ public class TextNotificationHandler implements MessageHandler {
   public void handleMessage(Message message) {
     if (message instanceof TextNotification textNotification) {
       viewController.setGameText(textNotification.getText());
-    } else {
+    } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }
   }
