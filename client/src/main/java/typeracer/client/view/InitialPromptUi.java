@@ -68,6 +68,11 @@ public class InitialPromptUi extends VBox {
     VBox inputPanel = createInputPanel();
 
     this.getChildren().addAll(titlePanel, inputPanel);
+    this.setOnKeyPressed(e -> {
+      if (e.getCode().equals(KeyCode.ENTER)) {
+        submitAction();
+      }
+    });
   }
 
   /**
