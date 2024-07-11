@@ -19,9 +19,6 @@ import typeracer.client.ViewController;
  */
 public class MainMenuUi extends VBox {
 
-  // For testing purpose only. Must be replayed later!!!
-  private int defaultLobby = 1;
-
   private ViewController viewController;
 
   /** Button to start a new game. */
@@ -83,13 +80,13 @@ public class MainMenuUi extends VBox {
         StyleManager.createStyledButton(
             "exit", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
 
-    startGameButton.setOnAction(e -> viewController.createLobby());
+    startGameButton.setOnAction(e -> viewController.createSession());
     sessionIdField = new TextField();
     sessionIdField.setPromptText("Enter Session ID");
     sessionIdField.setMaxWidth(200);
     joinSessionButton.setOnAction(event -> {
       try {
-        viewController.joinLobby(Integer.parseInt(sessionIdField.getText()));
+        viewController.joinSession(Integer.parseInt(sessionIdField.getText()));
       } catch (NumberFormatException e) {
         viewController.showAlert("Please enter a valid session number: " + e.getMessage());
       }

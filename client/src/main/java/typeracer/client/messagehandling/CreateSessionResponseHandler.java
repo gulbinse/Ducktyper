@@ -32,9 +32,9 @@ public class CreateSessionResponseHandler implements MessageHandler {
   public void handleMessage(Message message) {
     if (message instanceof CreateSessionResponse createSessionResponse
         && createSessionResponse.getSessionId() != 0) {
-      // switches to the lobby scene if the message contains an ID for the session
+      // switches to the session scene if the message contains an ID for the session
       viewController.setSessionId(createSessionResponse.getSessionId());
-      viewController.showScene(ViewController.SceneName.LOBBY);
+      viewController.showScene(ViewController.SceneName.SESSION);
     } else if (message instanceof CreateSessionResponse createSessionResponse
         && createSessionResponse.getReason() != null) {
       // reason why the session couldn't be created

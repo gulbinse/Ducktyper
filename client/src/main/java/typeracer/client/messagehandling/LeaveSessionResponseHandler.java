@@ -34,7 +34,7 @@ public class LeaveSessionResponseHandler implements MessageHandler {
       switch (leaveSessionResponse.getLeaveStatus()) {
         case ACCEPTED:
           System.out.println("Player can leave the session.");
-          viewController.showScene(ViewController.SceneName.LOBBY);
+          viewController.showScene(ViewController.SceneName.SESSION);
         case DENIED:
           System.out.println("Player can not leave the session.");
         default:

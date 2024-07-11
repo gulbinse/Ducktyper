@@ -36,7 +36,7 @@ public class HandShakeResponseHandler implements MessageHandler {
         switch (handShakeResponse.getConnectionStatus()) {
           case ACCEPTED:
             System.out.println("Accepted connection");
-            viewController.showScene(ViewController.SceneName.LOBBY);
+            viewController.showScene(ViewController.SceneName.SESSION);
             break;
           case DENIED:
             System.out.println(

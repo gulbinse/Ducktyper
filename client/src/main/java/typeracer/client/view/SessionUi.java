@@ -18,10 +18,10 @@ import javafx.scene.shape.Circle;
 import typeracer.client.ViewController;
 
 /**
- * This class represents the UI for the game lobby. It includes components such as player list, mode
+ * This class represents the UI for the game session view. It includes components such as player list, mode
  * selection dropdown, and buttons to ready up or go back to the main menu.
  */
-public class LobbyUi extends VBox {
+public class SessionUi extends VBox {
   private ListView<String> playerList;
   private Button readyButton;
   private Button backButton;
@@ -32,11 +32,11 @@ public class LobbyUi extends VBox {
   private Label sessionIdLabel;
 
   /**
-   * Constructor to initialize the Lobby UI.
+   * Constructor to initialize the Session UI.
    *
    * @param viewController the controller to manage views.
    */
-  public LobbyUi(ViewController viewController) {
+  public SessionUi(ViewController viewController) {
     this.viewController = viewController;
     initializeUi();
     updateUsernameLabel();

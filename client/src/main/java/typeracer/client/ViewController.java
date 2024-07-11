@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 import typeracer.client.view.GameResultsUi;
 import typeracer.client.view.GameUi;
 import typeracer.client.view.InitialPromptUi;
-import typeracer.client.view.LobbyUi;
+import typeracer.client.view.SessionUi;
 import typeracer.client.view.MainMenuUi;
 import typeracer.client.view.PlayerStatsUi;
 import typeracer.client.view.ProfileSettingsUi;
@@ -49,8 +49,8 @@ public class ViewController extends Application {
     /** The game results view. */
     GAME_RESULTS,
 
-    /** The lobby view. */
-    LOBBY
+    /** The session view. */
+    SESSION
   }
 
   private static final String STYLESHEET_PATH = "/styles.css";
@@ -89,7 +89,7 @@ public class ViewController extends Application {
     addScene(SceneName.STATS, new PlayerStatsUi(this));
     addScene(SceneName.PROFILE_SETTINGS, new ProfileSettingsUi(this));
     addScene(SceneName.GAME_RESULTS, new GameResultsUi(this));
-    addScene(SceneName.LOBBY, new LobbyUi(this));
+    addScene(SceneName.SESSION, new SessionUi(this));
 
     Platform.runLater(() -> showScene(SceneName.INITIAL_PROMPT));
     primaryStage.setResizable(true);
@@ -118,8 +118,8 @@ public class ViewController extends Application {
     if (scene != null) {
       primaryStage.setScene(scene);
       primaryStage.show();
-      if (scene.getRoot() instanceof LobbyUi lobbyUi) {
-        lobbyUi.onViewShown();
+      if (scene.getRoot() instanceof SessionUi sessionUi) {
+        sessionUi.onViewShown();
       } else if (scene.getRoot() instanceof GameUi gameUi) {
         gameUi.onViewShown();
       }
@@ -131,9 +131,9 @@ public class ViewController extends Application {
   public void setSessionId(int sessionId) {
     Platform.runLater(() -> {
       playerData.setSessionId(sessionId);
-      LobbyUi lobbyUi = (LobbyUi) scenes.get(SceneName.LOBBY).getRoot();
-      lobbyUi.setSessionId(sessionId);
-      lobbyUi.onViewShown();
+      SessionUi sessionUi = (SessionUi) scenes.get(SceneName.SESSION).getRoot();
+      sessionUi.setSessionId(sessionId);
+      sessionUi.onViewShown();
     });
   }
 
@@ -169,25 +169,25 @@ public class ViewController extends Application {
   }
 
   /**
-   * Called when User tries to join a lobby by pressing button in GUI.
+   * Called when User tries to join a session by pressing button in GUI.
    *
-   * @param lobbyId of Lobby, the player wants to join
+   * @param sessionId of session the player wants to join
    */
-  public void joinLobby(int lobbyId) {
-    // TODO: add Logic, that makes Client send a JoinLobbyRequest to Server
-    client.sendMessage(new JoinSessionRequest(lobbyId));
-    System.out.println("Request to join lobby " + lobbyId);
+  public void joinSession(int sessionId) {
+    // TODO: add Logic, that makes Client send a JoinSessionRequest to Server
+    client.sendMessage(new JoinSessionRequest(sessionId));
+    System.out.println("Request to join session " + sessionId);
     // For Testing purpose only:
-    showScene(SceneName.LOBBY);
+    showScene(SceneName.SESSION);
   }
 
-  /** Called when User tries to create a lobby by pressing button in GUI. */
-  public void createLobby() {
+  /** Called when User tries to create a session by pressing button in GUI. */
+  public void createSession() {
     // TODO: add Logic, that makes Client send a CreateSessionRequest to Server
     client.sendMessage(new CreateSessionRequest());
-    System.out.println("Request to create lobby");
+    System.out.println("Request to create session");
     // For Testing purpose only:
-    showScene(SceneName.LOBBY);
+    showScene(SceneName.SESSION);
   }
 
   /**
@@ -213,8 +213,8 @@ public class ViewController extends Application {
   }
 
   /** Signals User intention to leave the game. */
-  public void leaveLobbyOrGame() {
-    System.out.println("Leaving lobby");
+  public void leaveSessionOrGame() {
+    System.out.println("Leaving session");
     // TODO: add Logic, that makes Client send a LeaveSessionRequest to Server
     showScene(SceneName.MAIN_MENU);
   }
