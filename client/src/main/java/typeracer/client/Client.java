@@ -195,7 +195,7 @@ public class Client {
       while (socket.isConnected()
           && !socket.isClosed()
           && (serverMessage = reader.readLine()) != null) {
-        System.out.println(serverMessage);
+//        System.out.println(serverMessage);
         Message message = moshiAdapter.fromJson(serverMessage);
         handleMessage(message);
       }

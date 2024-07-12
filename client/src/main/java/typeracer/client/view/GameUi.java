@@ -16,7 +16,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -47,7 +46,7 @@ public class GameUi extends VBox {
   private TextField inputText;
 
   Text uncopiedGameText = new Text();
-  Text wrongCharacter = new Text();
+  Text expectedCharacter = new Text();
   Text copiedGameText = new Text();
 
   /** The label displaying the top players. */
@@ -124,12 +123,12 @@ public class GameUi extends VBox {
   /** Adds a display panel that contains a non-editable TextArea for displaying typing text. */
   private void addDisplayPanel() {
     uncopiedGameText.setFill(Color.BLACK);
-    wrongCharacter.setFill(Color.RED);
-    copiedGameText.setFill(Color.GREEN);
+    expectedCharacter.setFill(Color.RED);
+    copiedGameText.setFill(Color.WHITE);
     displayText = new TextFlow();
     displayText.setPrefHeight(150);
     displayText.setMaxWidth(Double.MAX_VALUE);
-    displayText.getChildren().addAll(copiedGameText, wrongCharacter, uncopiedGameText);
+    displayText.getChildren().addAll(copiedGameText, expectedCharacter, uncopiedGameText);
     VBox panel = new VBox();
     panel.setAlignment(Pos.CENTER);
     panel.setPadding(new Insets(10, 50, 10, 50));
@@ -142,28 +141,22 @@ public class GameUi extends VBox {
   }
 
   public void updateDisplayText(boolean correctChar) {
-    Text firstText = (Text) displayText.getChildren().getFirst();
-    Text middleText = (Text) displayText.getChildren().get(1);
-    Text lastText = (Text) displayText.getChildren().getLast();
+    String uncopiedText = uncopiedGameText.getText();
+    String copiedText = copiedGameText.getText();
+    String expectedChar;
 
-    String uncopiedText = lastText.getText();
-    String copiedText = firstText.getText();
-
-    String typedChar;
-    if (Objects.equals(middleText.getText(), "")){
-      typedChar = String.valueOf(uncopiedText.charAt(0));}
+    if (Objects.equals(expectedCharacter.getText(), "")){
+      expectedChar = String.valueOf(uncopiedText.charAt(0));
+    }
     else{
-      typedChar = middleText.getText();
+      expectedChar = expectedCharacter.getText();
       }
       if(correctChar) {
-        copiedText = copiedText + typedChar;
+        copiedText = copiedText + expectedChar;
         uncopiedText = uncopiedText.substring(1);
-        firstText.setText(copiedText);
-        lastText.setText(uncopiedText);
-        middleText.setText("");
-      }
-      else {
-        wrongCharacter.setText(typedChar);
+        copiedGameText.setText(copiedText);
+        uncopiedGameText.setText(uncopiedText);
+        expectedCharacter.setText("");
       }
   }
 
