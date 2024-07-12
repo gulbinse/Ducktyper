@@ -64,11 +64,13 @@ public class JoinSessionRequestHandler implements MessageHandler {
 
           // Send PlayerUpdateNotifications to the connected client for every player in the session
           for (int playerId : session.getPlayerIds()) {
-            String name = ConnectionManager.getInstance().getPlayerName(playerId);
-            boolean ready = session.isPlayerReady(playerId);
-            ConnectionManager.getInstance()
-                .sendMessage(
-                    new PlayerUpdateNotification(numPlayers, playerId, name, ready), clientId);
+            if (playerId != clientId) {
+              String name = ConnectionManager.getInstance().getPlayerName(playerId);
+              boolean ready = session.isPlayerReady(playerId);
+              ConnectionManager.getInstance()
+                  .sendMessage(
+                      new PlayerUpdateNotification(numPlayers, playerId, name, ready), clientId);
+            }
           }
         }
       }
