@@ -118,7 +118,6 @@ public class GameUi extends VBox {
     displayText.setWrapText(true);
     displayText.setPrefHeight(150);
     displayText.setMaxWidth(Double.MAX_VALUE);
-    displayText.setText(viewController.getGameText());
     VBox panel = new VBox();
     panel.setAlignment(Pos.CENTER);
     panel.setPadding(new Insets(10, 50, 10, 50));
@@ -372,6 +371,7 @@ public class GameUi extends VBox {
   public void onViewShown() {
     if (usernameLabel != null) {
       usernameLabel.setText(viewController.getUsername());
+      displayText.setText(viewController.getGameText());
       // checkAndStartGooseAnimation();
     }
   }

@@ -27,7 +27,7 @@ public class ClientSideSessionData {
   private Map<Integer, IntegerProperty> playerErrors = new HashMap<>();
   private final ListProperty<String> topPlayers =
       new SimpleListProperty<>(FXCollections.observableArrayList());
-  String gameText = "Text";
+  String gameText;
 
   public String getUsername() {
     return username;
