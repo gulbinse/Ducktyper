@@ -126,7 +126,7 @@ public class Player {
       double progress = (double) newTextIndex / textToType.length();
       assert 0 <= progress && progress <= 1;
       state.setProgress(progress);
-      if (progress >= 1) {
+      if (newTextIndex + 1 >= textToType.length()) {
         setIsFinished(true);
       }
 
