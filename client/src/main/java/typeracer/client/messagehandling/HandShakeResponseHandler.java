@@ -31,7 +31,6 @@ public class HandShakeResponseHandler implements MessageHandler {
   @Override
   public void handleMessage(Message message) {
     try {
-      System.out.println(message);
       if (message instanceof HandshakeResponse handShakeResponse) {
         switch (handShakeResponse.getConnectionStatus()) {
           case ACCEPTED:
