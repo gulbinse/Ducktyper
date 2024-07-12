@@ -6,7 +6,7 @@ import typeracer.server.utils.TypingResult;
 public class Player {
   private final int id;
   private final PlayerState state;
-  private static final long MINUTES_TO_NANO_SECONDS_FACTOR = 10 ^ 9;
+  private static final long MINUTES_TO_NANO_SECONDS_FACTOR = 60_000_000_000L;
   private long gameStartTime;
   private int typingAttempts = 0;
 
