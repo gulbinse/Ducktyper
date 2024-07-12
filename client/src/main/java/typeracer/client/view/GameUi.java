@@ -137,28 +137,50 @@ public class GameUi extends VBox {
     getChildren().add(panel);
   }
 
+  /**
+   * Finalizes the display text by resetting the uncopied game text.
+   * <p>
+   * Sets the uncopied game text to the game text obtained from the view controller.
+   */
   private void finaliseDisplayText(){
     uncopiedGameText.setText(viewController.getGameText());
   }
 
-  public void updateDisplayText(boolean correctChar) {
-    String uncopiedText = uncopiedGameText.getText();
-    String copiedText = copiedGameText.getText();
-    String expectedChar;
+  /**
+   * Updates the display text based on whether the typed character is correct.
+   * <p>
+   * If the typed character is correct, it moves the character from the uncopied text to the
+   * copied text.
+   * If the typed character is incorrect, it highlights the expected character in red.
+   *
+   * @param isCorrect true if the typed character is correct, false otherwise.
+   */
+  public void updateDisplayText(boolean isCorrect) {
+    String currentUncopiedText = uncopiedGameText.getText();
+    String currentCopiedText = copiedGameText.getText();
 
-    if (Objects.equals(expectedCharacter.getText(), "")){
-      expectedChar = String.valueOf(uncopiedText.charAt(0));
+    if (currentUncopiedText.isEmpty()) {
+      return;
     }
-    else{
-      expectedChar = expectedCharacter.getText();
-      }
-      if(correctChar) {
-        copiedText = copiedText + expectedChar;
-        uncopiedText = uncopiedText.substring(1);
-        copiedGameText.setText(copiedText);
-        uncopiedGameText.setText(uncopiedText);
-        expectedCharacter.setText("");
-      }
+
+    char typedCharacter = currentUncopiedText.charAt(0);
+
+    if (isCorrect) {
+      copiedGameText.setText(currentCopiedText + typedCharacter);
+      uncopiedGameText.setText(currentUncopiedText.substring(1));
+
+      expectedCharacter.setText("");
+      expectedCharacter.setUnderline(false);
+      expectedCharacter.setFill(Color.WHITE);
+    } else {
+      expectedCharacter.setText(String.valueOf(typedCharacter));
+      expectedCharacter.setFill(Color.RED);
+      expectedCharacter.setUnderline(true);
+
+    }
+    if (!displayText.getChildren().contains(expectedCharacter)) {
+      displayText.getChildren().add(0, expectedCharacter);
+    }
   }
 
   /**
