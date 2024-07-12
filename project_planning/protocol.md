@@ -67,10 +67,12 @@ The message notifying the client whether its HandshakeRequest has been accepted.
 {
     "messageType":"HandshakeResponse",
     "connectionStatus":<STATUS>,
+    "playerId":<ID>,
     "reason":<REASON>
 }
 ```
 - `String <STATUS>`: one of `"ACCEPTED"` or `"DENIED"`
+- `int <ID>`: the assigned id of the player
 - `String <REASON>`: specifies the reason for a denied connection, SUCCESS otherwise
 
 ### CreateSessionResponse

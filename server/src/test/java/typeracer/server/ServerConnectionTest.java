@@ -51,8 +51,9 @@ public class ServerConnectionTest {
     for (String message : jsonMessages) {
       if (message.matches(".*\"messageType\":\"HandshakeResponse\".*")) {
         assertThat(message.matches(".*\"connectionStatus\":\"(ACCEPTED|DENIED)\".*"));
+        assertThat(message.matches(".*\"playerId\":(0|[1-9][0-9]*).*"));
         assertThat(message.matches(".*\"reason\":\".*\".*"));
-        assertThatContainsNKeyValuePairs(message, 3);
+        assertThatContainsNKeyValuePairs(message, 4);
         return;
       }
     }
