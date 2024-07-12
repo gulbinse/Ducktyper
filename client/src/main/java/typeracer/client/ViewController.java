@@ -68,7 +68,7 @@ public class ViewController extends Application {
   public ViewController() {
     scenes = new HashMap<>();
     this.client = new Client(this);
-    addDummyPlayer();
+    //addDummyPlayer();
   }
 
   /**
@@ -225,7 +225,6 @@ public class ViewController extends Application {
     Platform.runLater(
         () -> {
           GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
-          gameUi.addPlayer(getPlayerId());
           for (int playerId : playerData.getPlayerNamesById().keySet()) {
             gameUi.addPlayer(playerId);
           }
