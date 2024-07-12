@@ -3,6 +3,7 @@ package typeracer.client.messagehandling;
 import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.LeaveSessionResponse;
+import typeracer.communication.statuscodes.PermissionStatus;
 
 /**
  * Handles LeaveSessionResponse messages in a chain of responsibility pattern. If the message is not
@@ -30,16 +31,16 @@ public class LeaveSessionResponseHandler implements MessageHandler {
    */
   @Override
   public void handleMessage(Message message) {
-    if (message instanceof LeaveSessionResponse leaveSessionResponse) {
-      switch (leaveSessionResponse.getLeaveStatus()) {
-        case ACCEPTED:
-          System.out.println("Player can leave the session.");
-          viewController.showScene(ViewController.SceneName.SESSION);
-        case DENIED:
-          System.out.println("Player can not leave the session.");
-        default:
-          break;
-      }
+    // ACCEPT response
+    if (message instanceof LeaveSessionResponse leaveSessionResponse &&
+        leaveSessionResponse.getLeaveStatus() == PermissionStatus.ACCEPTED) {
+      System.out.println("Player can leave the session.");
+      viewController.showScene(ViewController.SceneName.SESSION);
+      // DENIED response
+      } else if (message instanceof LeaveSessionResponse leaveSessionResponse &&
+      leaveSessionResponse.getLeaveStatus() == PermissionStatus.DENIED) {
+      System.out.println("Player can not leave the session.");
+
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }
