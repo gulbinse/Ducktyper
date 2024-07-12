@@ -14,6 +14,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import typeracer.client.view.GameResultsUi;
 import typeracer.client.view.GameUi;
@@ -22,9 +24,7 @@ import typeracer.client.view.SessionUi;
 import typeracer.client.view.MainMenuUi;
 import typeracer.client.view.PlayerStatsUi;
 import typeracer.client.view.ProfileSettingsUi;
-import typeracer.communication.messages.client.CreateSessionRequest;
-import typeracer.communication.messages.client.JoinSessionRequest;
-import typeracer.communication.messages.client.ReadyRequest;
+import typeracer.communication.messages.client.*;
 
 /** Manages the transition between different scenes and states in the TypeRacer game application. */
 public class ViewController extends Application {
@@ -229,7 +229,6 @@ public class ViewController extends Application {
   // GameStatus == Running
   public void startNewGame() {
     Platform.runLater(() -> {
-      playerData.getGameText();
       showScene(SceneName.GAME);
       GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
       if (gameUi != null) {
@@ -272,7 +271,10 @@ public class ViewController extends Application {
    * @param isCorrect boolean if the typed character is correct
    */
   // TODO: This method should be called by view on receiving a CharacterResponse
-  public void handleCharacterAnswer(boolean isCorrect) {}
+  public void handleCharacterAnswer(boolean isCorrect) {
+    GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
+    gameUi.updateDisplayText(isCorrect);
+  }
 
   /**
    * Updates the game text with the specified new text.

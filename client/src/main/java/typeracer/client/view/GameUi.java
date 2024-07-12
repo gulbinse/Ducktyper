@@ -1,11 +1,13 @@
 package typeracer.client.view;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javafx.animation.TranslateTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -14,7 +16,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -30,6 +31,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 import typeracer.client.ViewController;
 
@@ -43,10 +46,16 @@ public class GameUi extends VBox {
   private ViewController viewController;
 
   /** The text area where the typing text is displayed. */
-  private TextArea displayText;
+  private TextFlow displayText;
+
+  private SimpleStringProperty displayTextProperty;
 
   /** The text field where the user inputs their typing. */
   private TextField inputText;
+
+  Text uncopiedGameText = new Text();
+  Text wrongCharacter = new Text();
+  Text copiedGameText = new Text();
 
   /** The label displaying the top players. */
   private Label topPlayersLabel;
@@ -113,17 +122,48 @@ public class GameUi extends VBox {
 
   /** Adds a display panel that contains a non-editable TextArea for displaying typing text. */
   private void addDisplayPanel() {
-    displayText = new TextArea();
-    displayText.setEditable(false);
-    displayText.setWrapText(true);
+    uncopiedGameText.setFill(Color.BLACK);
+    wrongCharacter.setFill(Color.RED);
+    copiedGameText.setFill(Color.GREEN);
+    displayText = new TextFlow();
     displayText.setPrefHeight(150);
     displayText.setMaxWidth(Double.MAX_VALUE);
-    displayText.setText(viewController.getGameText());
+    displayText.getChildren().addAll(copiedGameText, wrongCharacter, uncopiedGameText);
     VBox panel = new VBox();
     panel.setAlignment(Pos.CENTER);
     panel.setPadding(new Insets(10, 50, 10, 50));
     panel.getChildren().add(displayText);
     getChildren().add(panel);
+  }
+
+  private void finaliseDisplayText(){
+    uncopiedGameText.setText(viewController.getGameText());
+  }
+
+  public void updateDisplayText(boolean correctChar) {
+    Text firstText = (Text) displayText.getChildren().getFirst();
+    Text middleText = (Text) displayText.getChildren().get(1);
+    Text lastText = (Text) displayText.getChildren().getLast();
+
+    String uncopiedText = lastText.getText();
+    String copiedText = firstText.getText();
+
+    String typedChar;
+    if (Objects.equals(middleText.getText(), "")){
+      typedChar = String.valueOf(uncopiedText.charAt(0));}
+    else{
+      typedChar = middleText.getText();
+      }
+      if(correctChar) {
+        copiedText = copiedText + typedChar;
+        uncopiedText = uncopiedText.substring(1);
+        firstText.setText(copiedText);
+        lastText.setText(uncopiedText);
+        middleText.setText("");
+      }
+      else {
+        wrongCharacter.setText(typedChar);
+      }
   }
 
   /**
@@ -150,16 +190,7 @@ public class GameUi extends VBox {
 
   private void handleTyping(char typedCharacter) {
     viewController.handleCharacterTyped(typedCharacter);
-    char expectedCharacter = getCurrentExpectedCharacter();
-
     // TODO: Display wrong or correct character maybe by color
-  }
-
-  private char getCurrentExpectedCharacter() {
-    if (gameText == null || gameText.isEmpty() || currentCharIndex >= gameText.length()) {
-      return '\0';
-    }
-    return gameText.charAt(currentCharIndex);
   }
 
   /**
@@ -334,6 +365,7 @@ public class GameUi extends VBox {
   public void onViewShown() {
     if (usernameLabel != null) {
       usernameLabel.setText(viewController.getUsername());
+      finaliseDisplayText();
       // checkAndStartGooseAnimation();
     }
   }
