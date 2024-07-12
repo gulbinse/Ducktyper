@@ -24,6 +24,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.control.TextArea;
@@ -87,7 +88,7 @@ public class GameUi extends VBox {
     addUserLabel();
     addDisplayPanel();
     addInputPanel();
-    addStatsPanel();
+    // addStatsPanel();
     addPlayersPanel();
     // addGooseAnimation();
     // addTopPlayersPanel();
@@ -272,14 +273,49 @@ public class GameUi extends VBox {
   }
 
   public void addPlayer(int playerId) {
-    Rectangle racetrack = new Rectangle(300, 60, Color.TRANSPARENT);
+    Rectangle raceBorder = new Rectangle(300, 60, Color.TRANSPARENT);
+    raceBorder.widthProperty().bind(Bindings.createDoubleBinding(() -> this.widthProperty().getValue() - 100, this.widthProperty()));
+    raceBorder.setStroke(Color.WHITE);
+    raceBorder.setStrokeWidth(4);
+    raceBorder.getStrokeDashArray().addAll(8.0, 16.0);
+    raceBorder.setArcHeight(20);
+    raceBorder.setArcWidth(20);
+
+    Line line = new Line();
+    line.setStartX(0);
+    line.endXProperty().bind(Bindings.createDoubleBinding(() -> this.widthProperty().getValue() - 110, this.widthProperty()));
+    line.getStrokeDashArray().addAll(4.0, 8.0);
+    line.setStrokeWidth(2);
+    line.setStroke(Color.WHITE);
+    line.setFill(Color.RED);
+    line.setTranslateY(-20);
+
+    Line line2 = new Line();
+    line2.setStartX(0);
+    line2.endXProperty().bind(Bindings.createDoubleBinding(() -> this.widthProperty().getValue() - 110, this.widthProperty()));
+    line2.getStrokeDashArray().addAll(4.0, 8.0);
+    line2.setStrokeWidth(2);
+    line2.setStroke(Color.WHITE);
+    line2.setFill(Color.RED);
+    line2.setTranslateY(20);
+
+    Rectangle racetrack = new Rectangle(300, 60, Color.RED);
+    racetrack.widthProperty().bind(Bindings.createDoubleBinding(() -> this.widthProperty().getValue() - 100, this.widthProperty()));
+    racetrack.setFill(Color.DARKSLATEGRAY);
+    racetrack.setStroke(Color.RED);
+    racetrack.setStrokeWidth(4);
+    racetrack.setStrokeDashOffset(12);
+    racetrack.getStrokeDashArray().addAll(8.0, 16.0);
+    racetrack.setArcHeight(20);
+    racetrack.setArcWidth(20);
+
     ImageView racer =
         new ImageView(new Image(getClass().getResourceAsStream("/images/gooseanimation.gif")));
     racer.setPreserveRatio(true);
     racer.setFitWidth(50);
 
     DoubleProperty progressProperty = viewController.getPlayerProgressProperty(playerId);
-    DoubleBinding progressBinding = Bindings.createDoubleBinding(() -> (racetrack.getWidth() - racer.getFitWidth()) * progressProperty.getValue() + racetrack.getX(), progressProperty);
+    DoubleBinding progressBinding = Bindings.createDoubleBinding(() -> (racetrack.getWidth() - racer.getFitWidth()) * progressProperty.getValue() + racetrack.getLayoutX(), progressProperty, this.widthProperty());
     racer.xProperty().bind(progressBinding);
 
     Label wpmLabel = new Label();
@@ -295,11 +331,21 @@ public class GameUi extends VBox {
     Label errorsLabel = new Label();
     Label usernameLabel = new Label(viewController.getUsernameById(playerId));
 
-    HBox stats = new HBox(usernameLabel, wpmLabel, accuracyLabel, errorsLabel);
+    HBox stats = new HBox();
+    stats.getChildren().addAll(wpmLabel, accuracyLabel, errorsLabel);
+    stats.setAlignment(Pos.CENTER);
 
-    HBox playerDisplay = new HBox(new Pane(racetrack, racer), stats);
+    VBox banner = new VBox(5);
+    banner.getChildren().addAll(usernameLabel, stats);
+    banner.setAlignment(Pos.CENTER);
+    banner.setBackground(new Background(new BackgroundFill(StyleManager.GREY_BOX, CornerRadii.EMPTY, Insets.EMPTY)));
 
-    getChildren().add(playerDisplay);
+    VBox playerDisplay = new VBox(banner, new Pane(new StackPane(racetrack, raceBorder, line, line2), racer));
+    playerDisplay.setPadding(new Insets(10, 50, 10, 50));
+    playerDisplay.setAlignment(Pos.CENTER);
+    HBox.setHgrow(racetrack, Priority.ALWAYS);
+
+    getChildren().add(getChildren().size() - 1, playerDisplay);
   }
 
   private void startGooseAnimation(int trackLength) {
