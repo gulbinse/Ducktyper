@@ -294,9 +294,11 @@ public class ViewController extends Application {
   // TODO: This method should be called by Client, when it receives a PlayerStateNotification
   public void updatePlayerStateInformation(
       int playerId, double playerWpm, double playerAccuracy, double playerProgress) {
-    playerData.setPlayerWpms(playerId, playerWpm);
-    playerData.setPlayerAccuracies(playerId, playerAccuracy);
-    playerData.setPlayerProgresses(playerId, playerProgress);
+    Platform.runLater(() -> {
+      playerData.setPlayerWpms(playerId, playerWpm);
+      playerData.setPlayerAccuracies(playerId, playerAccuracy);
+      playerData.setPlayerProgresses(playerId, playerProgress);
+    });
   }
 
   /**

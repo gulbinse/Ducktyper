@@ -3,6 +3,7 @@ package typeracer.client.view;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
@@ -81,7 +82,7 @@ public class GameUi extends VBox {
     setBackground(
         new Background(
             new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
-    addHeaderImage();
+    //addHeaderImage();
     addUserLabel();
     addDisplayPanel();
     addInputPanel();
@@ -105,7 +106,7 @@ public class GameUi extends VBox {
     usernameLabel.setBackground(
         new Background(new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(5), Insets.EMPTY)));
     usernameLabel.setAlignment(Pos.CENTER);
-    getChildren().add(1, usernameLabel);
+    getChildren().add(usernameLabel);
   }
 
   /** Adds an image to the header of the UI. The image is loaded and styled appropriately. */
@@ -270,12 +271,14 @@ public class GameUi extends VBox {
   }
 
   public void addPlayer(int playerId) {
+    getChildren().add(new Button("Test"));
     Rectangle racetrack = new Rectangle();
     ImageView racer =
         new ImageView(new Image(getClass().getResourceAsStream("/images/gooseanimation.gif")));
+    racer.setFitHeight(50);
 
-    // TODO: Bin mir unsicher ob das Binding so funktioniert:
     DoubleProperty progressProperty = viewController.getPlayerProgressProperty(playerId);
+
     racer
         .xProperty()
         .bind(
@@ -285,26 +288,24 @@ public class GameUi extends VBox {
 
     Label wpmLabel = new Label();
     DoubleProperty wpmProperty = viewController.getPlayerWpmProperty(playerId);
-    wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
+    StringBinding wpmBinding = Bindings.createStringBinding(() -> wpmProperty.getValue() + " WPM", wpmProperty); // TODO: runden
+    wpmLabel.textProperty().bind(wpmBinding);
 
     Label accuracyLabel = new Label();
+    DoubleProperty accuracyProperty = viewController.getPlayerAccuracyProperty(playerId);
+    StringBinding accuracyBinding = Bindings.createStringBinding(() -> accuracyProperty.getValue() * 100 + "% Accuracy", accuracyProperty); // TODO: runden
     accuracyLabel
         .textProperty()
-        .bind(
-            viewController
-                .getPlayerAccuracyProperty(playerId)
-                .multiply(100)
-                .asString("%.2f%% Accuracy"));
+        .bind(accuracyBinding);
 
     Label errorsLabel = new Label();
     Label usernameLabel = new Label(viewController.getUsernameById(playerId));
 
     HBox stats = new HBox(usernameLabel, wpmLabel, accuracyLabel, errorsLabel);
 
-    HBox playerDisplay = new HBox(new StackPane(racetrack, racer), stats);
+    HBox playerDisplay = new HBox(new StackPane(racetrack/*, racer*/), stats);
 
-    // TODO: Richtig anzeigen:
-    // playersPanel.getChildren().add(playerDisplay);
+    getChildren().add(playerDisplay);
   }
 
   private void startGooseAnimation(int trackLength) {
