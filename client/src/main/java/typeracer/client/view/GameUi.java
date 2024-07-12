@@ -362,6 +362,7 @@ public class GameUi extends VBox {
                 viewController.endGame();
               }
             });
+    viewController.leaveSessionOrGame();
   }
 
   /**
