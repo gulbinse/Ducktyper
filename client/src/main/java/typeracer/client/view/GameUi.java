@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ListProperty;
@@ -271,39 +272,32 @@ public class GameUi extends VBox {
   }
 
   public void addPlayer(int playerId) {
-    getChildren().add(new Button("Test"));
-    Rectangle racetrack = new Rectangle();
+    Rectangle racetrack = new Rectangle(300, 60, Color.TRANSPARENT);
     ImageView racer =
         new ImageView(new Image(getClass().getResourceAsStream("/images/gooseanimation.gif")));
-    racer.setFitHeight(50);
+    racer.setPreserveRatio(true);
+    racer.setFitWidth(50);
 
     DoubleProperty progressProperty = viewController.getPlayerProgressProperty(playerId);
-
-    racer
-        .xProperty()
-        .bind(
-            Bindings.createDoubleBinding(
-                () -> racetrack.getWidth() * progressProperty.getValue() + racetrack.getX(),
-                progressProperty));
+    DoubleBinding progressBinding = Bindings.createDoubleBinding(() -> (racetrack.getWidth() - racer.getFitWidth()) * progressProperty.getValue() + racetrack.getX(), progressProperty);
+    racer.xProperty().bind(progressBinding);
 
     Label wpmLabel = new Label();
     DoubleProperty wpmProperty = viewController.getPlayerWpmProperty(playerId);
-    StringBinding wpmBinding = Bindings.createStringBinding(() -> wpmProperty.getValue() + " WPM", wpmProperty); // TODO: runden
+    StringBinding wpmBinding = Bindings.createStringBinding(() -> String.format("%.2f", wpmProperty.getValue()) + " WPM", wpmProperty);
     wpmLabel.textProperty().bind(wpmBinding);
 
     Label accuracyLabel = new Label();
     DoubleProperty accuracyProperty = viewController.getPlayerAccuracyProperty(playerId);
-    StringBinding accuracyBinding = Bindings.createStringBinding(() -> accuracyProperty.getValue() * 100 + "% Accuracy", accuracyProperty); // TODO: runden
-    accuracyLabel
-        .textProperty()
-        .bind(accuracyBinding);
+    StringBinding accuracyBinding = Bindings.createStringBinding(() -> String.format("%.2f", accuracyProperty.getValue() * 100) + "% Accuracy", accuracyProperty);
+    accuracyLabel.textProperty().bind(accuracyBinding);
 
     Label errorsLabel = new Label();
     Label usernameLabel = new Label(viewController.getUsernameById(playerId));
 
     HBox stats = new HBox(usernameLabel, wpmLabel, accuracyLabel, errorsLabel);
 
-    HBox playerDisplay = new HBox(new StackPane(racetrack/*, racer*/), stats);
+    HBox playerDisplay = new HBox(new Pane(racetrack, racer), stats);
 
     getChildren().add(playerDisplay);
   }
