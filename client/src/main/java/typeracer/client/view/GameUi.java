@@ -24,6 +24,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.control.TextArea;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 import typeracer.client.ViewController;
@@ -165,20 +166,22 @@ public class GameUi extends VBox {
    * positioned within the UI.
    */
   private void addInputPanel() {
+    TextArea inputText = new TextArea();
+    inputText.setWrapText(true);
+    inputText.setPrefHeight(150);
+    inputText.setMaxWidth(Double.MAX_VALUE);
+    inputText.setPadding(new Insets(10));
+    inputText.setStyle("-fx-font-size: 16px; -fx-alignment: top-left;");
+
+    inputText.setOnKeyTyped(
+            event -> handleTyping(event.getCharacter().charAt(0)));
+
     VBox panel = new VBox();
     panel.setMaxHeight(350);
     panel.setAlignment(Pos.CENTER);
     panel.setPadding(new Insets(10, 50, 10, 50));
-    inputText = new TextField();
-    inputText.setPrefHeight(150);
-    inputText.setMaxWidth(Double.MAX_VALUE);
-    inputText.setPadding(new Insets(10));
-    inputText.setStyle("-fx-alignment: top-left;");
-    inputText.setOnKeyTyped(
-        event ->
-            handleTyping(
-                event.getCharacter().charAt(0))); // TODO: eine Methode um char zurückzugeben
     panel.getChildren().add(inputText);
+
     getChildren().add(panel);
   }
 

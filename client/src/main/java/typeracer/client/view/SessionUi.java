@@ -27,7 +27,6 @@ public class SessionUi extends VBox {
   private Button backButton;
   private ViewController viewController;
   private Label usernameLabel;
-  private boolean isReady;
   private Label sessionIdLabel;
 
   /**
