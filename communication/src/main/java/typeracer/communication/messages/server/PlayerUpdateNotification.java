@@ -14,11 +14,11 @@ public final class PlayerUpdateNotification implements Message {
   private final boolean ready;
 
   /**
-   * Constructs a new PlayerJoinedNotification with the specified arguments.
+   * Constructs a new PlayerUpdateNotification with the specified arguments.
    *
    * @param numPlayers the current number of players in the game
-   * @param playerId the id of the joined player
-   * @param playerName the name of the joined player
+   * @param playerId the id of the updated player
+   * @param playerName the name of the updated player
    * @param ready <code>true</code> if the player is ready, <code>false</code> otherwise
    */
   public PlayerUpdateNotification(int numPlayers, int playerId, String playerName, boolean ready) {
@@ -38,7 +38,7 @@ public final class PlayerUpdateNotification implements Message {
   }
 
   /**
-   * Returns the id of the joined player.
+   * Returns the id of the updated player.
    *
    * @return the player's id
    */
@@ -47,7 +47,7 @@ public final class PlayerUpdateNotification implements Message {
   }
 
   /**
-   * Returns the name of the joined player.
+   * Returns the name of the updated player.
    *
    * @return the player's name
    */
