@@ -108,6 +108,16 @@ public final class Session {
   }
 
   /**
+   * Returns whether the specified player is ready.
+   *
+   * @param playerId the id of the player
+   * @return <code>true</code> if the player is ready, <code>false</code> otherwise
+   */
+  public boolean isPlayerReady(int playerId) {
+    return game.isPlayerReady(playerId);
+  }
+
+  /**
    * Returns whether every player is ready.
    *
    * @return <code>true</code> if every player is ready, <code>false</code> otherwise
