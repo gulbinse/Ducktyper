@@ -107,6 +107,8 @@ public class Player {
    */
   synchronized TypingResult typeCharacter(
       char typedCharacter, String textToType, long gameStartTime) {
+    TypingResult typingResult = TypingResult.INCORRECT;
+
     this.gameStartTime = gameStartTime;
     typingAttempts++;
     int currentTextIndex = state.getCurrentTextIndex();
@@ -131,13 +133,13 @@ public class Player {
       if (Character.isSpaceChar(correctCharacter)) {
         state.incrementNumTypedWords();
       }
-      return TypingResult.CORRECT;
+      typingResult = TypingResult.CORRECT;
     }
     double accuracy =
         (double) state.getCurrentTextIndex() // current text index = correctly typed characters
             / typingAttempts;
     state.setAccuracy(accuracy);
-    return TypingResult.INCORRECT;
+    return typingResult;
   }
 
   /** Updates the typing speeds (e.g. words per minute) of this player. */
