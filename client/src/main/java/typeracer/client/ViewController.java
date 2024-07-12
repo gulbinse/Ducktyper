@@ -14,16 +14,14 @@ import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import typeracer.client.view.GameResultsUi;
 import typeracer.client.view.GameUi;
 import typeracer.client.view.InitialPromptUi;
-import typeracer.client.view.SessionUi;
 import typeracer.client.view.MainMenuUi;
 import typeracer.client.view.PlayerStatsUi;
 import typeracer.client.view.ProfileSettingsUi;
+import typeracer.client.view.SessionUi;
 import typeracer.communication.messages.client.*;
 
 /** Manages the transition between different scenes and states in the TypeRacer game application. */
@@ -114,29 +112,30 @@ public class ViewController extends Application {
    * @param sceneName The name of the view to display.
    */
   public void showScene(SceneName sceneName) {
-    Platform.runLater(() -> {
-      Scene scene = scenes.get(sceneName);
-      if (scene != null) {
-        primaryStage.setScene(scene);
-        primaryStage.show();
-        if (scene.getRoot() instanceof SessionUi sessionUi) {
-          sessionUi.onViewShown();
-        } else if (scene.getRoot() instanceof GameUi gameUi) {
-          gameUi.onViewShown();
-        }
-      } else {
-        showAlert("View not found: " + sceneName);
-      }
-    });
-
+    Platform.runLater(
+        () -> {
+          Scene scene = scenes.get(sceneName);
+          if (scene != null) {
+            primaryStage.setScene(scene);
+            primaryStage.show();
+            if (scene.getRoot() instanceof SessionUi sessionUi) {
+              sessionUi.onViewShown();
+            } else if (scene.getRoot() instanceof GameUi gameUi) {
+              gameUi.onViewShown();
+            }
+          } else {
+            showAlert("View not found: " + sceneName);
+          }
+        });
   }
 
   public void setSessionId(int sessionId) {
-    Platform.runLater(() -> {
-      playerData.setSessionId(sessionId);
-      SessionUi sessionUi = (SessionUi) scenes.get(SceneName.SESSION).getRoot();
-      sessionUi.onViewShown();
-    });
+    Platform.runLater(
+        () -> {
+          playerData.setSessionId(sessionId);
+          SessionUi sessionUi = (SessionUi) scenes.get(SceneName.SESSION).getRoot();
+          sessionUi.onViewShown();
+        });
   }
 
   public int getSessionId() {
@@ -193,16 +192,11 @@ public class ViewController extends Application {
     System.out.println("Request to create session");
   }
 
-  /**
-   * Requests to set the player ready.
-   */
+  /** Requests to set the player ready. */
   public void setPlayerReady() {
     boolean isReady = true;
     client.sendMessage(new ReadyRequest(isReady));
     System.out.println("Player wants to update his readyStatus to: " + isReady);
-    // TODO: add Logic, that makes Client send a ReadyRequest to Server
-    // For Testing purpose only:
-    startNewGame(); // TODO: ist wahrscheinlich falsch!
   }
 
   /**
@@ -211,16 +205,16 @@ public class ViewController extends Application {
    * @param character which the client typed
    */
   public void handleCharacterTyped(char character) {
+    // TODO: add Logic, that makes Client send a CharacterRequest to Server
     client.sendMessage(new CharacterRequest(character));
     System.out.println("Character typed: " + character);
-    // TODO: add Logic, that makes Client send a CharacterRequest to Server
   }
 
   /** Signals User intention to leave the game. */
   public void leaveSessionOrGame() {
+    // TODO: add Logic, that makes Client send a LeaveSessionRequest to Server
     client.sendMessage(new LeaveSessionRequest());
     System.out.println("Leaving session");
-    // TODO: add Logic, that makes Client send a LeaveSessionRequest to Server
     showScene(SceneName.MAIN_MENU);
   }
 
@@ -228,13 +222,15 @@ public class ViewController extends Application {
   // TODO: This method should be called by Client on receiving a GameStateNotification with
   // GameStatus == Running
   public void startNewGame() {
-    Platform.runLater(() -> {
-      showScene(SceneName.GAME);
-      GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
-      if (gameUi != null) {
-        gameUi.onViewShown();
-      }
-    });
+    Platform.runLater(
+        () -> {
+          GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
+          gameUi.addPlayer(getPlayerId());
+          for (int playerId : playerData.getPlayerNamesById().keySet()) {
+            gameUi.addPlayer(playerId);
+          }
+          showScene(SceneName.GAME);
+        });
   }
 
   /**
@@ -318,7 +314,7 @@ public class ViewController extends Application {
    * @return The ID of the current player.
    */
   public int getPlayerId() {
-    return playerData.getId();
+    return playerData.getPlayerId();
   }
 
   /**
@@ -336,7 +332,11 @@ public class ViewController extends Application {
    * @return An observable list containing the usernames of the players.
    */
   public ObservableList<String> getPlayerUsernames() {
-    return FXCollections.observableArrayList(playerData.getPlayerNameById().values());
+    return FXCollections.observableArrayList(playerData.getPlayerNamesById().values());
+  }
+
+  public String getUsernameById(int id) {
+    return playerData.getPlayerNamesById().get(id);
   }
 
   /**

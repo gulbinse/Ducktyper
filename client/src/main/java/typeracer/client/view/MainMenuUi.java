@@ -68,8 +68,8 @@ public class MainMenuUi extends VBox {
         StyleManager.createStyledButton(
             "start new game", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
     joinSessionButton =
-            StyleManager.createStyledButton("Join Session", StyleManager.ORANGE_BUTTON,
-                    StyleManager.STANDARD_FONT);
+        StyleManager.createStyledButton(
+            "Join Session", StyleManager.ORANGE_BUTTON, StyleManager.STANDARD_FONT);
     profileSettingButton =
         StyleManager.createStyledButton(
             "profile settings", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
@@ -84,17 +84,19 @@ public class MainMenuUi extends VBox {
     sessionIdField = new TextField();
     sessionIdField.setPromptText("Enter Session ID");
     sessionIdField.setMaxWidth(200);
-    joinSessionButton.setOnAction(event -> {
-      try {
-        viewController.joinSession(Integer.parseInt(sessionIdField.getText()));
-      } catch (NumberFormatException e) {
-        viewController.showAlert("Please enter a valid session number.");
-      }
-    });
+    joinSessionButton.setOnAction(
+        event -> {
+          try {
+            viewController.joinSession(Integer.parseInt(sessionIdField.getText()));
+          } catch (NumberFormatException e) {
+            viewController.showAlert("Please enter a valid session number.");
+          }
+        });
     VBox sessionBox = new VBox(10, sessionIdField, joinSessionButton);
     sessionBox.setAlignment(Pos.CENTER);
 
-    profileSettingButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.PROFILE_SETTINGS));
+    profileSettingButton.setOnAction(
+        e -> viewController.showScene(ViewController.SceneName.PROFILE_SETTINGS));
     statsButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.STATS));
     exitButton.setOnAction(e -> exitApplication());
 
@@ -107,7 +109,8 @@ public class MainMenuUi extends VBox {
     StyleManager.applyButtonHoverAnimation(
         startGameButton, profileSettingButton, statsButton, exitButton);
 
-    this.getChildren().addAll(startGameButton, sessionBox, profileSettingButton, statsButton, exitButton);
+    this.getChildren()
+        .addAll(startGameButton, sessionBox, profileSettingButton, statsButton, exitButton);
   }
 
   /** Creates and returns a title panel with an image. */

@@ -67,10 +67,12 @@ The message notifying the client whether its HandshakeRequest has been accepted.
 {
     "messageType":"HandshakeResponse",
     "connectionStatus":<STATUS>,
+    "playerId":<ID>,
     "reason":<REASON>
 }
 ```
 - `String <STATUS>`: one of `"ACCEPTED"` or `"DENIED"`
+- `int <ID>`: the assigned id of the player
 - `String <REASON>`: specifies the reason for a denied connection, SUCCESS otherwise
 
 ### CreateSessionResponse
@@ -131,19 +133,21 @@ The message notifying the client whether its typed character was correct.
 ```
 - `boolean <STATUS>`: true if the character was correct, false otherwise
 
-### PlayerJoinedNotification
-The message notifying all clients that a new player has joined the game.
+### PlayerUpdateNotification
+The message notifying all clients that a player has updated.
 ```json
 {
-    "messageType":"PlayerJoinedNotification",
+    "messageType":"PlayerUpdateNotification",
     "numPlayers":<NUM_PLAYERS>,
     "playerId":<ID>,
-    "playerName":<NAME>
+    "playerName":<NAME>,
+    "ready":<STATUS>
 }
 ```
 - `int <NUM_PLAYERS>`: the number of players in the game
-- `int <ID>`: the id of the player who joined the game
-- `String <NAME>`: the name of the player who joined the game
+- `int <ID>`: the id of the updated player
+- `String <NAME>`: the name of the updated player
+- `boolean <STATUS>`: true if the player is ready, false otherwise
 
 ### PlayerLeftNotification
 The message notifying all clients that a player has left the game.

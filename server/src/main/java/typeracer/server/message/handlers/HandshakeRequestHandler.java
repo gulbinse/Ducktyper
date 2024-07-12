@@ -34,10 +34,13 @@ public class HandshakeRequestHandler implements MessageHandler {
 
       HandshakeResponse response;
       switch (status) {
-        case SUCCESS -> response = new HandshakeResponse(PermissionStatus.ACCEPTED, Reason.SUCCESS);
+        case SUCCESS ->
+            response = new HandshakeResponse(PermissionStatus.ACCEPTED, clientId, Reason.SUCCESS);
         case INVALID_USERNAME ->
-            response = new HandshakeResponse(PermissionStatus.DENIED, Reason.INVALID_USERNAME);
-        default -> response = new HandshakeResponse(PermissionStatus.DENIED, Reason.UNKNOWN);
+            response =
+                new HandshakeResponse(PermissionStatus.DENIED, clientId, Reason.INVALID_USERNAME);
+        default ->
+            response = new HandshakeResponse(PermissionStatus.DENIED, clientId, Reason.UNKNOWN);
       }
       ConnectionManager.getInstance().sendMessage(response, clientId);
     } else if (nextHandler != null) {

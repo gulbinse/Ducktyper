@@ -2,7 +2,7 @@ package typeracer.client.messagehandling;
 
 import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
-import typeracer.communication.messages.server.PlayerJoinedNotification;
+import typeracer.communication.messages.server.PlayerUpdateNotification;
 
 /**
  * Handles PlayerJoinedNotification messages in a chain of responsibility pattern. If the message is
@@ -31,8 +31,15 @@ public class PlayerJoinedNotificationHandler implements MessageHandler {
    */
   @Override
   public void handleMessage(Message message) {
-    if (message instanceof PlayerJoinedNotification playerJoinedNotification) {
+    if (message instanceof PlayerUpdateNotification playerJoinedNotification) {
       // set number of the current players
+      // TODO!! benenne alle playerJoinedNotification in playerUpdateNotification um, benenne die
+      //  aufgerufene funktion in .updatePlayer(getPlayerId(), getPlayerName(), isReady()) um,
+      //  benenne die addPlayer Methode in ClientSessionData in updatePlayer um und füge einen ready
+      //  status hinzu. Füge den boolean innerhalb der methode anstatt des default "false" wertes
+      //  ein. Achte darauf, dass auch die default Werte bei CreateSessionResponse richtig gesetzt
+      //  werden, da der spieler hier keine playerUpdateNotification erhält, aber trotzdem bereits
+      //  namen, readystatus, etc. anzeigen muss.
       viewController.addPlayerToGame(
           playerJoinedNotification.getPlayerId(), playerJoinedNotification.getPlayerName());
     } else if (nextHandler != null) {

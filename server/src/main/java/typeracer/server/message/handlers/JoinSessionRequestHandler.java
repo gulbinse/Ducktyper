@@ -3,7 +3,7 @@ package typeracer.server.message.handlers;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.client.JoinSessionRequest;
 import typeracer.communication.messages.server.JoinSessionResponse;
-import typeracer.communication.messages.server.PlayerJoinedNotification;
+import typeracer.communication.messages.server.PlayerUpdateNotification;
 import typeracer.communication.statuscodes.PermissionStatus;
 import typeracer.communication.statuscodes.Reason;
 import typeracer.server.connection.ConnectionManager;
@@ -52,13 +52,26 @@ public class JoinSessionRequestHandler implements MessageHandler {
       }
       ConnectionManager.getInstance().sendMessage(response, clientId);
 
-      // Send PlayerJoinedNotification
       if (status == SessionManager.OperationStatus.SUCCESS) {
         Session session = SessionManager.getInstance().getSessionByClientId(clientId);
         if (session != null) {
+          // Send PlayerUpdateNotification to all players to notify them about the connected client
           int numPlayers = session.numberOfConnectedClients();
           String playerName = ConnectionManager.getInstance().getPlayerName(clientId);
-          session.broadcastMessage(new PlayerJoinedNotification(numPlayers, clientId, playerName));
+          boolean playerReady = session.isPlayerReady(clientId);
+          session.broadcastMessage(
+              new PlayerUpdateNotification(numPlayers, clientId, playerName, playerReady));
+
+          // Send PlayerUpdateNotifications to the connected client for every player in the session
+          for (int playerId : session.getPlayerIds()) {
+            if (playerId != clientId) {
+              String name = ConnectionManager.getInstance().getPlayerName(playerId);
+              boolean ready = session.isPlayerReady(playerId);
+              ConnectionManager.getInstance()
+                  .sendMessage(
+                      new PlayerUpdateNotification(numPlayers, playerId, name, ready), clientId);
+            }
+          }
         }
       }
     } else if (nextHandler != null) {

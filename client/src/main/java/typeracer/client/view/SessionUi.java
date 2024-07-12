@@ -18,8 +18,8 @@ import javafx.scene.shape.Circle;
 import typeracer.client.ViewController;
 
 /**
- * This class represents the UI for the game session view. It includes components such as player list, mode
- * selection dropdown, and buttons to ready up or go back to the main menu.
+ * This class represents the UI for the game session view. It includes components such as player
+ * list, mode selection dropdown, and buttons to ready up or go back to the main menu.
  */
 public class SessionUi extends VBox {
   private ListView<String> playerList;
@@ -85,7 +85,7 @@ public class SessionUi extends VBox {
     backButton =
         StyleManager.createStyledButton(
             "back", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
-    readyButton.setOnAction(e -> viewController.setPlayerReady(isReady));
+    readyButton.setOnAction(e -> viewController.setPlayerReady());
     backButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.MAIN_MENU));
 
     HBox buttonBox = new HBox(10);
