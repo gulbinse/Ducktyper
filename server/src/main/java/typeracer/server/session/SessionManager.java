@@ -70,6 +70,7 @@ public final class SessionManager {
         sessionIdByClientId.remove(clientId);
       }
 
+      session.close();
       sessionBySessionId.remove(sessionId);
     }
   }

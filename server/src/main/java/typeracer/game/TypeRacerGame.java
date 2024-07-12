@@ -194,6 +194,16 @@ public final class TypeRacerGame { // made final to prevent finalizer attacks in
   }
 
   /**
+   * Returns whether the specified player is ready.
+   *
+   * @param playerId the id of the player
+   * @return <code>true</code> if the player is ready, <code>false</code> otherwise
+   */
+  public boolean isPlayerReady(int playerId) {
+    return state.getPlayerById(playerId).isReady();
+  }
+
+  /**
    * Returns whether every player is ready.
    *
    * @return <code>true</code> if every player is ready, <code>false</code> otherwise

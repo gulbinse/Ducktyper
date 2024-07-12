@@ -2,6 +2,7 @@ package typeracer.server.message.handlers;
 
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.client.ReadyRequest;
+import typeracer.communication.messages.server.PlayerUpdateNotification;
 import typeracer.communication.messages.server.ReadyResponse;
 import typeracer.communication.statuscodes.PermissionStatus;
 import typeracer.communication.statuscodes.Reason;
@@ -33,13 +34,20 @@ public class ReadyRequestHandler implements MessageHandler {
       Session session = SessionManager.getInstance().getSessionByClientId(clientId);
       if (session != null) {
         boolean success = session.updateReadiness(clientId, readyRequest.isReady());
-        ReadyResponse response;
         if (success) {
-          response = new ReadyResponse(PermissionStatus.ACCEPTED, Reason.SUCCESS);
+          ReadyResponse response = new ReadyResponse(PermissionStatus.ACCEPTED, Reason.SUCCESS);
+          ConnectionManager.getInstance().sendMessage(response, clientId);
+
+          // Send PlayerUpdateNotification on success
+          int numPlayers = session.numberOfConnectedClients();
+          String playerName = ConnectionManager.getInstance().getPlayerName(clientId);
+          boolean ready = session.isPlayerReady(clientId);
+          session.broadcastMessage(
+              new PlayerUpdateNotification(numPlayers, clientId, playerName, ready));
         } else {
-          response = new ReadyResponse(PermissionStatus.DENIED, Reason.UNKNOWN);
+          ReadyResponse response = new ReadyResponse(PermissionStatus.DENIED, Reason.UNKNOWN);
+          ConnectionManager.getInstance().sendMessage(response, clientId);
         }
-        ConnectionManager.getInstance().sendMessage(response, clientId);
 
         if (session.isEveryoneReady()) {
           session.startGame();
