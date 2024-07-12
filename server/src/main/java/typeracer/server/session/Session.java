@@ -102,6 +102,11 @@ public final class Session {
     return game.typeCharacter(playerId, character);
   }
 
+  /** Closes this session and stops the game. */
+  public void close() {
+    game.stop();
+  }
+
   /**
    * Returns whether every player is ready.
    *
