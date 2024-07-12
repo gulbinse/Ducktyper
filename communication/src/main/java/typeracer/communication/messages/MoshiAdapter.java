@@ -16,9 +16,9 @@ import typeracer.communication.messages.server.GameStateNotification;
 import typeracer.communication.messages.server.HandshakeResponse;
 import typeracer.communication.messages.server.JoinSessionResponse;
 import typeracer.communication.messages.server.LeaveSessionResponse;
-import typeracer.communication.messages.server.PlayerUpdateNotification;
 import typeracer.communication.messages.server.PlayerLeftNotification;
 import typeracer.communication.messages.server.PlayerStateNotification;
+import typeracer.communication.messages.server.PlayerUpdateNotification;
 import typeracer.communication.messages.server.ReadyResponse;
 import typeracer.communication.messages.server.TextNotification;
 

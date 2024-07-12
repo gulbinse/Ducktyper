@@ -18,18 +18,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import typeracer.client.ViewController;
 
@@ -60,6 +52,8 @@ public class GameUi extends VBox {
 
   private ImageView gooseImage;
 
+  private final VBox playersPanel = new VBox();
+
   /**
    * Constructs a new GameUi and initializes its user interface.
    *
@@ -82,9 +76,15 @@ public class GameUi extends VBox {
     addDisplayPanel();
     addInputPanel();
     addStatsPanel();
-    addGooseAnimation();
-    addTopPlayersPanel();
+    addPlayersPanel();
+    // addGooseAnimation();
+    // addTopPlayersPanel();
     addButtonPanel();
+  }
+
+  private void addPlayersPanel() {
+    playersPanel.setAlignment(Pos.CENTER);
+    getChildren().add(playersPanel);
   }
 
   /** Adds a label to display the username. The label is styled and positioned within the UI. */
@@ -182,7 +182,7 @@ public class GameUi extends VBox {
 
     Label wpmLabel = new Label();
     DoubleProperty wpmProperty = viewController.getPlayerWpmProperty(viewController.getPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("%.2f% WPM", wpmProperty));
+    wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
     wpmLabel.setAlignment(Pos.CENTER_LEFT);
 
     Label accuracyLabel = new Label();
@@ -223,6 +223,44 @@ public class GameUi extends VBox {
     gooseImage.setFitHeight(50);
     gooseImage.setPreserveRatio(true);
     getChildren().add(gooseImage);
+  }
+
+  public void addPlayer(int playerId) {
+    Rectangle racetrack = new Rectangle();
+    ImageView racer =
+        new ImageView(new Image(getClass().getResourceAsStream("/images/gooseanimation.gif")));
+
+    // TODO: Bin mir unsicher ob das Binding so funktioniert:
+    DoubleProperty progressProperty = viewController.getPlayerProgressProperty(playerId);
+    racer
+        .xProperty()
+        .bind(
+            Bindings.createDoubleBinding(
+                () -> racetrack.getWidth() * progressProperty.getValue() + racetrack.getX(),
+                progressProperty));
+
+    Label wpmLabel = new Label();
+    DoubleProperty wpmProperty = viewController.getPlayerWpmProperty(playerId);
+    wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
+
+    Label accuracyLabel = new Label();
+    accuracyLabel
+        .textProperty()
+        .bind(
+            viewController
+                .getPlayerAccuracyProperty(playerId)
+                .multiply(100)
+                .asString("%.2f%% Accuracy"));
+
+    Label errorsLabel = new Label();
+    Label usernameLabel = new Label(viewController.getUsernameById(playerId));
+
+    HBox stats = new HBox(usernameLabel, wpmLabel, accuracyLabel, errorsLabel);
+
+    HBox playerDisplay = new HBox(new StackPane(racetrack, racer), stats);
+
+    // TODO: Richtig anzeigen:
+    // playersPanel.getChildren().add(playerDisplay);
   }
 
   private void startGooseAnimation(int trackLength) {

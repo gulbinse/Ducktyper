@@ -40,7 +40,8 @@ public class CreateSessionResponseHandler implements MessageHandler {
       // reason why the session couldn't be created
       System.out.println(
           "Player can't create session because "
-              + createSessionResponse.getReason().getString() + ".");
+              + createSessionResponse.getReason().getString()
+              + ".");
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }

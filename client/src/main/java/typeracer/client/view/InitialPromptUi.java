@@ -68,11 +68,12 @@ public class InitialPromptUi extends VBox {
     VBox inputPanel = createInputPanel();
 
     this.getChildren().addAll(titlePanel, inputPanel);
-    this.setOnKeyPressed(e -> {
-      if (e.getCode().equals(KeyCode.ENTER)) {
-        submitAction();
-      }
-    });
+    this.setOnKeyPressed(
+        e -> {
+          if (e.getCode().equals(KeyCode.ENTER)) {
+            submitAction();
+          }
+        });
   }
 
   /**
@@ -97,7 +98,9 @@ public class InitialPromptUi extends VBox {
     usernameField.getStyleClass().add("username-field");
 
     ImageView submitImage = createSubmitImage();
-    usernameAndButtonPanel.getChildren().addAll(new VBox(new Label("Username:") , usernameField), submitImage);
+    usernameAndButtonPanel
+        .getChildren()
+        .addAll(new VBox(new Label("Username:"), usernameField), submitImage);
 
     ipField = new TextField("localhost");
     ipField.setMaxWidth(150);
@@ -106,7 +109,12 @@ public class InitialPromptUi extends VBox {
     portField.setMaxWidth(150);
     portField.setPromptText("Port");
 
-    inputPanel.getChildren().addAll(usernameAndButtonPanel, new VBox(new Label("Server IP:"), ipField), new VBox(new Label("Port:"), portField));
+    inputPanel
+        .getChildren()
+        .addAll(
+            usernameAndButtonPanel,
+            new VBox(new Label("Server IP:"), ipField),
+            new VBox(new Label("Port:"), portField));
 
     return inputPanel;
   }

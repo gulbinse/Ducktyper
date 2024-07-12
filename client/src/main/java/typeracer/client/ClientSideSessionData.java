@@ -17,9 +17,9 @@ import javafx.collections.ObservableList;
 public class ClientSideSessionData {
 
   private String username;
-  private int id;
+  private int playerId;
   private int sessionId;
-  private final Map<Integer, String> playerNameById = new ConcurrentHashMap<>();
+  private final Map<Integer, String> playerNamesById = new ConcurrentHashMap<>();
   private final Map<Integer, SimpleBooleanProperty> playerReady = new HashMap<>();
   private final Map<Integer, DoubleProperty> playerWpms = new HashMap<>();
   private final Map<Integer, DoubleProperty> playerAccuracies = new HashMap<>();
@@ -37,16 +37,16 @@ public class ClientSideSessionData {
     this.username = username;
   }
 
-  public int getId() {
-    return id;
+  public int getPlayerId() {
+    return playerId;
   }
 
-  public void setId(int id) {
-    this.id = id;
+  public void setPlayerId(int playerId) {
+    this.playerId = playerId;
   }
 
-  public Map<Integer, String> getPlayerNameById() {
-    return playerNameById;
+  public Map<Integer, String> getPlayerNamesById() {
+    return playerNamesById;
   }
 
   public Map<Integer, SimpleBooleanProperty> getPlayerReady() {
@@ -112,7 +112,7 @@ public class ClientSideSessionData {
    * @param playerName of the joined player
    */
   public void addPlayer(int playerId, String playerName) {
-    playerNameById.put(playerId, playerName);
+    playerNamesById.put(playerId, playerName);
     playerReady.put(playerId, new SimpleBooleanProperty(false));
     playerWpms.put(playerId, new SimpleDoubleProperty(0));
     playerAccuracies.put(playerId, new SimpleDoubleProperty(0));
@@ -126,13 +126,13 @@ public class ClientSideSessionData {
    * @param playerId of the player who left
    */
   public void removePlayer(int playerId) {
-    playerNameById.remove(playerId);
+    playerNamesById.remove(playerId);
     playerReady.remove(playerId);
     playerWpms.remove(playerId);
     playerAccuracies.remove(playerId);
     playerProgresses.remove(playerId);
     playerErrors.remove(playerId);
-    String playerName = playerNameById.get(playerId);
+    String playerName = playerNamesById.get(playerId);
     if (topPlayers.get().contains(playerName)) {
       topPlayers.remove(playerName);
     }
