@@ -16,7 +16,7 @@ import typeracer.communication.messages.server.GameStateNotification;
 import typeracer.communication.messages.server.HandshakeResponse;
 import typeracer.communication.messages.server.JoinSessionResponse;
 import typeracer.communication.messages.server.LeaveSessionResponse;
-import typeracer.communication.messages.server.PlayerJoinedNotification;
+import typeracer.communication.messages.server.PlayerUpdateNotification;
 import typeracer.communication.messages.server.PlayerLeftNotification;
 import typeracer.communication.messages.server.PlayerStateNotification;
 import typeracer.communication.messages.server.ReadyResponse;
@@ -48,9 +48,9 @@ public class MoshiAdapter {
                     .withSubtype(HandshakeResponse.class, "HandshakeResponse")
                     .withSubtype(JoinSessionResponse.class, "JoinSessionResponse")
                     .withSubtype(LeaveSessionResponse.class, "LeaveSessionResponse")
-                    .withSubtype(PlayerJoinedNotification.class, "PlayerJoinedNotification")
                     .withSubtype(PlayerLeftNotification.class, "PlayerLeftNotification")
                     .withSubtype(PlayerStateNotification.class, "PlayerStateNotification")
+                    .withSubtype(PlayerUpdateNotification.class, "PlayerUpdateNotification")
                     .withSubtype(ReadyResponse.class, "ReadyResponse")
                     .withSubtype(TextNotification.class, "TextNotification"))
             .build();

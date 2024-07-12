@@ -3,14 +3,15 @@ package typeracer.communication.messages.server;
 import typeracer.communication.messages.Message;
 
 /**
- * Notification indicating that a new player has joined the game. This notification is sent from the
- * server to every client to inform them about the new player's arrival.
+ * Notification indicating that a player has updated. This notification is sent from the server to
+ * every client to inform them about the player's update.
  */
-public final class PlayerJoinedNotification implements Message {
+public final class PlayerUpdateNotification implements Message {
 
   private final int numPlayers;
   private final int playerId;
   private final String playerName;
+  private final boolean ready;
 
   /**
    * Constructs a new PlayerJoinedNotification with the specified arguments.
@@ -18,11 +19,13 @@ public final class PlayerJoinedNotification implements Message {
    * @param numPlayers the current number of players in the game
    * @param playerId the id of the joined player
    * @param playerName the name of the joined player
+   * @param ready <code>true</code> if the player is ready, <code>false</code> otherwise
    */
-  public PlayerJoinedNotification(int numPlayers, int playerId, String playerName) {
+  public PlayerUpdateNotification(int numPlayers, int playerId, String playerName, boolean ready) {
     this.numPlayers = numPlayers;
     this.playerId = playerId;
     this.playerName = playerName;
+    this.ready = ready;
   }
 
   /**
@@ -50,5 +53,14 @@ public final class PlayerJoinedNotification implements Message {
    */
   public String getPlayerName() {
     return playerName;
+  }
+
+  /**
+   * Returns whether the player is ready or not.
+   *
+   * @return <code>true</code> if the player is ready, <code>false</code> otherwise
+   */
+  public boolean isReady() {
+    return ready;
   }
 }
