@@ -153,34 +153,28 @@ public class GameUi extends VBox {
    * copied text.
    * If the typed character is incorrect, it highlights the expected character in red.
    *
-   * @param isCorrect true if the typed character is correct, false otherwise.
+   * @param correctChar true if the typed character is correct, false otherwise.
    */
-  public void updateDisplayText(boolean isCorrect) {
-    String currentUncopiedText = uncopiedGameText.getText();
-    String currentCopiedText = copiedGameText.getText();
+  public void updateDisplayText(boolean correctChar) {
+    Platform.runLater(() -> {
+      String uncopiedText = uncopiedGameText.getText();
+      String copiedText = copiedGameText.getText();
+      String expectedChar;
 
-    if (currentUncopiedText.isEmpty()) {
-      return;
-    }
-
-    char typedCharacter = currentUncopiedText.charAt(0);
-
-    if (isCorrect) {
-      copiedGameText.setText(currentCopiedText + typedCharacter);
-      uncopiedGameText.setText(currentUncopiedText.substring(1));
-
-      expectedCharacter.setText("");
-      expectedCharacter.setUnderline(false);
-      expectedCharacter.setFill(Color.WHITE);
-    } else {
-      expectedCharacter.setText(String.valueOf(typedCharacter));
-      expectedCharacter.setFill(Color.RED);
-      expectedCharacter.setUnderline(true);
-
-    }
-    if (!displayText.getChildren().contains(expectedCharacter)) {
-      displayText.getChildren().add(0, expectedCharacter);
-    }
+      if (Objects.equals(expectedCharacter.getText(), "")){
+        expectedChar = String.valueOf(uncopiedText.charAt(0));
+      }
+      else{
+        expectedChar = expectedCharacter.getText();
+      }
+      if(correctChar) {
+        copiedText = copiedText + expectedChar;
+        uncopiedText = uncopiedText.substring(1);
+        copiedGameText.setText(copiedText);
+        uncopiedGameText.setText(uncopiedText);
+        expectedCharacter.setText("");
+      }
+    });
   }
 
   /**
