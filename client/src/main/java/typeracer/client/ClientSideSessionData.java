@@ -48,15 +48,15 @@ public class ClientSideSessionData {
     }
 
     public Map<Integer, String> getPlayerNamesById() {
-        return playerNamesById;
+        return Map.copyOf(playerNamesById);
     }
 
     public Map<Integer, SimpleBooleanProperty> getPlayerReady() {
-        return playerReady;
+        return Map.copyOf(playerReady);
     }
 
     public Map<Integer, DoubleProperty> getPlayerWpms() {
-        return playerWpms;
+        return Map.copyOf(playerWpms);
     }
 
     public void setPlayerWpms(int playerId, double playerWpm) {
@@ -64,7 +64,7 @@ public class ClientSideSessionData {
     }
 
     public Map<Integer, DoubleProperty> getPlayerAccuracies() {
-        return playerAccuracies;
+        return Map.copyOf(playerAccuracies);
     }
 
     public void setPlayerAccuracies(int playerId, double playerAccuracy) {
@@ -72,7 +72,7 @@ public class ClientSideSessionData {
     }
 
     public Map<Integer, DoubleProperty> getPlayerProgresses() {
-        return playerProgresses;
+        return Map.copyOf(playerProgresses);
     }
 
     public void setPlayerProgresses(int playerId, double playerProgress) {
@@ -80,19 +80,15 @@ public class ClientSideSessionData {
     }
 
     public Map<Integer, IntegerProperty> getPlayerErrors() {
-        return playerErrors;
+        return Map.copyOf(playerErrors);
     }
 
     public void setPlayerErrors(Map<Integer, IntegerProperty> playerErrors) {
-        this.playerErrors = playerErrors;
+        this.playerErrors = Map.copyOf(playerErrors);
     }
 
     public ObservableList<String> getTopPlayers() {
-        return topPlayers.get();
-    }
-
-    public ListProperty<String> topPlayersProperty() {
-        return topPlayers;
+        return FXCollections.unmodifiableObservableList(topPlayers.get());
     }
 
     public void setTopPlayers(ObservableList<String> topPlayers) {

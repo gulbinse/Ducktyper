@@ -19,7 +19,7 @@ import typeracer.communication.messages.client.HandshakeRequest;
  * Network client to play a Typeracer game. Client connects to a server to play the game. Users can
  * join with a username, get notifications and type.
  */
-public class Client {
+final class Client {
   private static int DEFAULT_PORT = 4441;
   private static final String DEFAULT_USERNAME = "alina";
   private static final String DEFAULT_ADDRESS = "localhost";
