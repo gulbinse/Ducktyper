@@ -215,7 +215,7 @@ public class ViewController extends Application {
     // TODO: add Logic, that makes Client send a LeaveSessionRequest to Server
     client.sendMessage(new LeaveSessionRequest());
     System.out.println("Leaving session");
-    showScene(SceneName.MAIN_MENU);
+//    showScene(SceneName.MAIN_MENU);
   }
 
   /** Starts a new game by fetching the game text and updating the UI accordingly. */
