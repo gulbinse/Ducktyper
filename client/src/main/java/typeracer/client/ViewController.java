@@ -246,9 +246,7 @@ public class ViewController extends Application {
    */
   public void updatePlayer(int playerId, String playerName, boolean ready) {
     boolean isNew = playerData.updatePlayer(playerId, playerName, ready);
-    System.out.println(isNew);
     if (isNew) {
-      System.out.println("hallo");
       Platform.runLater(
           () -> {
             SessionUi sessionUi = (SessionUi) scenes.get(SceneName.SESSION).getRoot();
@@ -265,6 +263,14 @@ public class ViewController extends Application {
    */
   public void removePlayerFromGame(int playerId) {
     playerData.removePlayer(playerId);
+    Platform.runLater(
+        () -> {
+          SessionUi sessionUi = (SessionUi) scenes.get(SceneName.SESSION).getRoot();
+          sessionUi.removePlayerLabel(playerId);
+
+          GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
+          gameUi.removePlayer(playerId);
+        });
   }
 
   /** Ends the current game, updates stats, and switches the UI to display game results. */

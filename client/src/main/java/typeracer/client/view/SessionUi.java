@@ -20,11 +20,16 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import typeracer.client.ViewController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This class represents the UI for the game session view. It includes components such as player
  * list, mode selection dropdown, and buttons to ready up or go back to the main menu.
  */
 public class SessionUi extends VBox {
+
+  private final Map<Integer, HBox> playerLabelById = new HashMap<>();
   private VBox playerList;
   private Button readyButton;
   private Button backButton;
@@ -114,6 +119,13 @@ public class SessionUi extends VBox {
     label.getChildren().addAll(readyStatus, name);
 
     playerList.getChildren().add(label);
+    playerLabelById.put(playerId, label);
+  }
+
+  public void removePlayerLabel(int playerId) {
+    HBox label = playerLabelById.getOrDefault(playerId, null);
+    playerList.getChildren().remove(label);
+    playerLabelById.remove(playerId);
   }
 
   // Simulated method to fetch game mode for a given session

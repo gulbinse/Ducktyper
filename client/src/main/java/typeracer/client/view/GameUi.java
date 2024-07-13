@@ -23,6 +23,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.text.TextFlow;
 import typeracer.client.ViewController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Represents the game user interface for the TypeRacer game. This class sets up the GUI elements
  * that display the game UI, including the typing area, statistics, and top players.
@@ -50,6 +53,7 @@ public class GameUi extends VBox {
     private Label usernameLabel;
 
     private final VBox playersPanel = new VBox();
+    private final Map<Integer, VBox> playerDisplayById = new HashMap<>();
 
     /**
      * Constructs a new GameUi and initializes its user interface.
@@ -260,6 +264,13 @@ public class GameUi extends VBox {
         HBox.setHgrow(racetrack, Priority.ALWAYS);
 
         getChildren().add(getChildren().size() - 1, playerDisplay);
+        playerDisplayById.put(playerId, playerDisplay);
+    }
+
+    public void removePlayer(int playerId) {
+        VBox playerDisplay = playerDisplayById.getOrDefault(playerId, null);
+        getChildren().remove(playerDisplay);
+        playerDisplayById.remove(playerId);
     }
 
     /**
