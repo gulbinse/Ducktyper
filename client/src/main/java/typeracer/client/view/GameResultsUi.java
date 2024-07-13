@@ -1,6 +1,7 @@
 package typeracer.client.view;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -27,6 +28,7 @@ public class GameResultsUi extends VBox {
   /** The controller managing views and handling interactions. */
   private final ViewController viewController;
 
+  private VBox gameResults;
   /**
    * Constructs a new GameResultsUi and initializes its user interface.
    *
@@ -50,7 +52,8 @@ public class GameResultsUi extends VBox {
     titleLabel.setFont(StyleManager.BOLD_FONT);
     titleLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: black;");
 
-    VBox statsBox = createStatsBox();
+//    VBox statsBox = createStatsBox();
+//    gameResults = statsBox;
     // VBox leaderboardPanel = createLeaderboard();
     // leaderboardPanel.setPadding(new Insets(20, 0, 20, 0));
 
@@ -64,13 +67,12 @@ public class GameResultsUi extends VBox {
     HBox buttonBox = new HBox(20, playAgainButton, mainMenuButton);
     buttonBox.setAlignment(Pos.CENTER);
 
-    this.getChildren().addAll(titleLabel, statsBox, buttonBox);
+    this.getChildren().addAll(titleLabel, buttonBox);
 
     playAgainButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.SESSION));
     mainMenuButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.MAIN_MENU));
 
     StyleManager.applyFadeInAnimation(titleLabel, 1000);
-    StyleManager.applyFadeInAnimation(statsBox, 1200);
     // StyleManager.applyFadeInAnimation(leaderboardPanel, 1400);
     StyleManager.applyFadeInAnimation(buttonBox, 1600);
 
@@ -83,45 +85,49 @@ public class GameResultsUi extends VBox {
    *
    * @return A VBox containing the "Your Stats" label, WPM label, and Errors label.
    */
-  private VBox createStatsBox() {
+//  private VBox createStatsBox() {
+//
+//    return statsBox;
+//  }
+
+  public void onViewShown(){
     VBox statsBox = new VBox(10);
+
     statsBox.setAlignment(Pos.CENTER);
     statsBox.setBackground(
-        new Background(new BackgroundFill(StyleManager.GREY_BOX, CornerRadii.EMPTY, Insets.EMPTY)));
+            new Background(new BackgroundFill(StyleManager.GREY_BOX, CornerRadii.EMPTY, Insets.EMPTY)));
     statsBox.setPadding(new Insets(15));
     statsBox.setBorder(
-        new Border(
-            new BorderStroke(
-                Paint.valueOf("black"),
-                BorderStrokeStyle.SOLID,
-                CornerRadii.EMPTY,
-                new BorderWidths(1))));
+            new Border(
+                    new BorderStroke(
+                            Paint.valueOf("black"),
+                            BorderStrokeStyle.SOLID,
+                            CornerRadii.EMPTY,
+                            new BorderWidths(1))));
 
     Label statsLabel = new Label("Your Stats:");
     statsLabel.setFont(StyleManager.ITALIC_FONT);
+    VBox.setMargin(statsLabel, new Insets(0, 0, 10, 0));
+
+    int playerId = viewController.getPlayerId();
 
     Label wpmLabel = new Label();
-    DoubleProperty wpmProperty = viewController.getPlayerWpmProperty(viewController.getPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("WPM: %.2f", wpmProperty));
+    DoubleProperty wpmProperty = viewController.getPlayerWpmProperty(playerId);
+    StringBinding wpmBinding = Bindings.createStringBinding(() -> String.format("%.2f", wpmProperty.getValue()) + " WPM", wpmProperty);
+    wpmLabel.textProperty().bind(wpmBinding);
     wpmLabel.setFont(StyleManager.STANDARD_FONT);
 
     Label accuracyLabel = new Label();
-    accuracyLabel
-        .textProperty()
-        .bind(
-            viewController
-                .getPlayerAccuracyProperty(viewController.getPlayerId())
-                .multiply(100)
-                .asString("Accuracy: %.2f%%"));
+    DoubleProperty accuracyProperty = viewController.getPlayerAccuracyProperty(playerId);
+    StringBinding accuracyBinding = Bindings.createStringBinding(() -> String.format("%.2f", accuracyProperty.getValue() * 100) + "% Accuracy", accuracyProperty);
+    accuracyLabel.textProperty().bind(accuracyBinding);
     accuracyLabel.setFont(StyleManager.STANDARD_FONT);
 
     statsBox.getChildren().addAll(statsLabel, wpmLabel, accuracyLabel);
     VBox.setMargin(statsBox, new Insets(10, 200, 10, 200));
-    VBox.setMargin(statsLabel, new Insets(0, 0, 10, 0));
 
-    return statsBox;
+    getChildren().add(getChildren().size() - 1, statsBox);
   }
-
   /*
    * Creates the leaderboard panel displaying player rankings.
    *

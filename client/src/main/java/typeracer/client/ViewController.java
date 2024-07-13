@@ -129,6 +129,10 @@ public class ViewController extends Application {
         });
   }
 
+  public void setPlayerId(int playerId) {
+    playerData.setPlayerId(playerId);
+  }
+
   public void setSessionId(int sessionId) {
     Platform.runLater(
         () -> {
@@ -248,6 +252,8 @@ public class ViewController extends Application {
   // == Finished
   public void endGame() {
     showScene(SceneName.GAME_RESULTS);
+    GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
+    gameUi.onViewShown();
   }
 
   /**
