@@ -48,11 +48,11 @@ public class ClientSideSessionData {
     }
 
     public Map<Integer, String> getPlayerNamesById() {
-        return playerNamesById;
+        return Map.copyOf(playerNamesById);
     }
 
     public Map<Integer, SimpleBooleanProperty> getPlayerReady() {
-        return playerReady;
+        return Map.copyOf(playerReady);
     }
 
     public Map<Integer, DoubleProperty> getPlayerWpms() {
@@ -80,19 +80,15 @@ public class ClientSideSessionData {
     }
 
     public Map<Integer, IntegerProperty> getPlayerErrors() {
-        return playerErrors;
+        return Map.copyOf(playerErrors);
     }
 
     public void setPlayerErrors(Map<Integer, IntegerProperty> playerErrors) {
-        this.playerErrors = playerErrors;
+        this.playerErrors = Map.copyOf(playerErrors);
     }
 
     public ObservableList<String> getTopPlayers() {
-        return topPlayers.get();
-    }
-
-    public ListProperty<String> topPlayersProperty() {
-        return topPlayers;
+        return FXCollections.unmodifiableObservableList(topPlayers.get());
     }
 
     public void setTopPlayers(ObservableList<String> topPlayers) {

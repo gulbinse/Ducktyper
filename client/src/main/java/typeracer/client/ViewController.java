@@ -55,11 +55,11 @@ public class ViewController extends Application {
   private static final int DEFAULT_WINDOW_WIDTH = 800;
   private static final int DEFAULT_WINDOW_HEIGHT = 650;
 
-  private Map<SceneName, Scene> scenes;
+  private final Map<SceneName, Scene> scenes;
 
   private Stage primaryStage;
   private final Client client;
-  private ClientSideSessionData playerData = new ClientSideSessionData();
+  private final ClientSideSessionData playerData = new ClientSideSessionData();
 
   /**
    * Constructs a ViewController with a given stage and client. Initializes the view mappings and
@@ -68,7 +68,6 @@ public class ViewController extends Application {
   public ViewController() {
     scenes = new HashMap<>();
     this.client = new Client(this);
-    //addDummyPlayer();
   }
 
   /**
@@ -78,7 +77,8 @@ public class ViewController extends Application {
    */
   @Override
   public void start(Stage primaryStage) {
-    this.primaryStage = primaryStage;
+      this.primaryStage = primaryStage;
+
     primaryStage.setTitle("Ducktyper");
 
     addScene(SceneName.INITIAL_PROMPT, new InitialPromptUi(this, primaryStage));
@@ -129,6 +129,10 @@ public class ViewController extends Application {
         });
   }
 
+  public void setPlayerId(int playerId) {
+    playerData.setPlayerId(playerId);
+  }
+
   public void setSessionId(int sessionId) {
     Platform.runLater(
         () -> {
@@ -167,7 +171,6 @@ public class ViewController extends Application {
    * @throws IOException If an I/O error occurs when attempting to connect to the server.
    */
   public void connectToServer(String ip, int port, String username) throws IOException {
-    // TODO: add Logic, that makes Client connect to Server and transfer username
     client.connect(ip, port, username);
     System.out.println("Connected to server at " + ip + ":" + port);
     playerData.setUsername(username);
@@ -179,7 +182,6 @@ public class ViewController extends Application {
    * @param sessionId of session the player wants to join
    */
   public void joinSession(int sessionId) {
-    // TODO: add Logic, that makes Client send a JoinSessionRequest to Server
     client.sendMessage(new JoinSessionRequest(sessionId));
     setSessionId(sessionId);
     System.out.println("Request to join session " + sessionId);
@@ -187,7 +189,6 @@ public class ViewController extends Application {
 
   /** Called when User tries to create a session by pressing button in GUI. */
   public void createSession() {
-    // TODO: add Logic, that makes Client send a CreateSessionRequest to Server
     client.sendMessage(new CreateSessionRequest());
     System.out.println("Request to create session");
   }
@@ -205,22 +206,18 @@ public class ViewController extends Application {
    * @param character which the client typed
    */
   public void handleCharacterTyped(char character) {
-    // TODO: add Logic, that makes Client send a CharacterRequest to Server
     client.sendMessage(new CharacterRequest(character));
     System.out.println("Character typed: " + character);
   }
 
   /** Signals User intention to leave the game. */
   public void leaveSessionOrGame() {
-    // TODO: add Logic, that makes Client send a LeaveSessionRequest to Server
     client.sendMessage(new LeaveSessionRequest());
     System.out.println("Leaving session");
-    showScene(SceneName.MAIN_MENU);
+//    showScene(SceneName.MAIN_MENU);
   }
 
   /** Starts a new game by fetching the game text and updating the UI accordingly. */
-  // TODO: This method should be called by Client on receiving a GameStateNotification with
-  // GameStatus == Running
   public void startNewGame() {
     Platform.runLater(
         () -> {
@@ -238,7 +235,6 @@ public class ViewController extends Application {
    * @param playerId of joined player
    * @param playerName of joined player
    */
-  // TODO: this method should be called by Client on receiving a PlayerJoinedNotification
   public void addPlayerToGame(int playerId, String playerName) {
     playerData.addPlayer(playerId, playerName);
   }
@@ -248,16 +244,16 @@ public class ViewController extends Application {
    *
    * @param playerId of the player who left
    */
-  // TODO: this method should be called by Client on receiving a PlayerLeftNotification
   public void removePlayerFromGame(int playerId) {
     playerData.removePlayer(playerId);
   }
 
   /** Ends the current game, updates stats, and switches the UI to display game results. */
-  // TODO: This method should be called by view on receiving a GameStateNotification with GameStatus
   // == Finished
   public void endGame() {
     showScene(SceneName.GAME_RESULTS);
+    GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
+    gameUi.onViewShown();
   }
 
   /**
@@ -265,7 +261,6 @@ public class ViewController extends Application {
    *
    * @param isCorrect boolean if the typed character is correct
    */
-  // TODO: This method should be called by view on receiving a CharacterResponse
   public void handleCharacterAnswer(boolean isCorrect) {
     GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
     gameUi.updateDisplayText(isCorrect);
@@ -276,8 +271,6 @@ public class ViewController extends Application {
    *
    * @param newText The new game text to set.
    */
-  // TODO: This method should be called by view on receiving a TextNotification. We have to make
-  // sure, that we always have a text when the game starts
   public void setGameText(String newText) {
     playerData.setGameText(newText);
   }
@@ -290,7 +283,6 @@ public class ViewController extends Application {
    * @param playerAccuracy of the player
    * @param playerProgress of the player
    */
-  // TODO: This method should be called by Client, when it receives a PlayerStateNotification
   public void updatePlayerStateInformation(
       int playerId, double playerWpm, double playerAccuracy, double playerProgress) {
     Platform.runLater(() -> {
@@ -385,11 +377,6 @@ public class ViewController extends Application {
    */
   private PlayerStatsUi getPlayerStatsUi() {
     return (PlayerStatsUi) scenes.get(SceneName.STATS).getRoot();
-  }
-
-  // for testing purpose only
-  private void addDummyPlayer() {
-    addPlayerToGame(1, "dummyPlayer");
   }
 
   /**
