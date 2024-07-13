@@ -13,6 +13,11 @@ To start a server:
 ./gradlew :server:run
 ```
 
+You can provide additional arguments on the command-line with
+```
+--args"--port PORT"
+```
+
 To start a GUI of the Ducktyper game:
 ```
 ./gradlew run
