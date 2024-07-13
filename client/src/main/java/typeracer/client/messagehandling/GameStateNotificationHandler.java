@@ -1,5 +1,6 @@
 package typeracer.client.messagehandling;
 
+import javafx.application.Platform;
 import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.GameStateNotification;
@@ -38,7 +39,7 @@ public class GameStateNotificationHandler implements MessageHandler {
             break;
           case FINISHED:
             // ends the game
-            viewController.endGame();
+            Platform.runLater(() -> viewController.endGame());
             break;
           case WAITING_FOR_PLAYERS:
             System.out.println("Game is waiting for players.");

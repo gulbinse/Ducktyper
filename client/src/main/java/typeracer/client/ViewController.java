@@ -55,6 +55,9 @@ public class ViewController extends Application {
   private static final int DEFAULT_WINDOW_WIDTH = 800;
   private static final int DEFAULT_WINDOW_HEIGHT = 650;
 
+  private static final int MINIMUM_WINDOW_WIDTH = 800;
+  private static final int MINIMUM_WINDOW_HEIGHT = 650;
+
   private final Map<SceneName, Scene> scenes;
 
   private Stage primaryStage;
@@ -77,7 +80,10 @@ public class ViewController extends Application {
    */
   @Override
   public void start(Stage primaryStage) {
-      this.primaryStage = primaryStage;
+    this.primaryStage = primaryStage;
+
+    primaryStage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
+    primaryStage.setMinWidth(MINIMUM_WINDOW_WIDTH);
 
     primaryStage.setTitle("Ducktyper");
 
