@@ -50,6 +50,10 @@ public final class TypeRacerGame { // made final to prevent finalizer attacks in
 
   /** Starts a new game with a new text. */
   public void start() {
+    if (getStatus() == GameStatus.RUNNING) {
+      return;
+    }
+
     if (getPlayerList().isEmpty()) {
       throw new AssertionError("There are currently no players in the game");
     }
