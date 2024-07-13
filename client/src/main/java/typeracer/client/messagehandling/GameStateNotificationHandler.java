@@ -31,6 +31,7 @@ public class GameStateNotificationHandler implements MessageHandler {
   @Override
   public void handleMessage(Message message) {
     if (message instanceof GameStateNotification gameStateNotification) {
+
       switch (gameStateNotification.getGameStatus()) {
         case RUNNING:
           viewController.startNewGame();
