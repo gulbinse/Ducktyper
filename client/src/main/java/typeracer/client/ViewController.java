@@ -52,11 +52,11 @@ public class ViewController extends Application {
   }
 
   private static final String STYLESHEET_PATH = "/styles.css";
-  private static final int DEFAULT_WINDOW_WIDTH = 800;
-  private static final int DEFAULT_WINDOW_HEIGHT = 650;
+  private static final int DEFAULT_WINDOW_WIDTH = 1024;
+  private static final int DEFAULT_WINDOW_HEIGHT = 576;
 
-  private static final int MINIMUM_WINDOW_WIDTH = 800;
-  private static final int MINIMUM_WINDOW_HEIGHT = 650;
+  private static final int MINIMUM_WINDOW_WIDTH = 896;
+  private static final int MINIMUM_WINDOW_HEIGHT = 554;
 
   private final Map<SceneName, Scene> scenes;
 

@@ -91,30 +91,45 @@ public class InitialPromptUi extends VBox {
             new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
     HBox usernameAndButtonPanel = new HBox(10);
-    usernameAndButtonPanel.setAlignment(Pos.CENTER);
+    usernameAndButtonPanel.setAlignment(Pos.BASELINE_LEFT);
 
     usernameField = new TextField("TheRealDonaldDuck");
     usernameField.setMaxWidth(300);
-    usernameField.getStyleClass().add("username-field");
+    usernameField.getStyleClass().add("startScreen-input-field");
+    Label usernameLabel = new Label("Username:");
+    usernameLabel.getStyleClass().add("inputField-label");
 
     ImageView submitImage = createSubmitImage();
     usernameAndButtonPanel
         .getChildren()
-        .addAll(new VBox(new Label("Username:"), usernameField), submitImage);
+        .addAll(usernameLabel, usernameField, submitImage);
 
+    HBox ipFieldBox = new HBox(10);
     ipField = new TextField("localhost");
     ipField.setMaxWidth(150);
+    ipField.getStyleClass().add("startScreen-input-field");
+    Label ipLabel = new Label("Server-IP:");
+    ipLabel.getStyleClass().add("inputField-label");
+    ipFieldBox.setAlignment(Pos.BASELINE_LEFT);
+    ipFieldBox.getChildren().addAll(ipLabel, ipField);
 
+    HBox portFieldBox = new HBox(10);
     portField = new TextField("4441");
     portField.setMaxWidth(150);
     portField.setPromptText("Port");
+    portField.getStyleClass().add("startScreen-input-field");
+    Label portLabel = new Label("Port:");
+    portLabel.getStyleClass().add("inputField-label");
+    portFieldBox.setAlignment(Pos.BASELINE_LEFT);
+    portFieldBox.getChildren().addAll(portLabel, portField);
+
 
     inputPanel
         .getChildren()
         .addAll(
             usernameAndButtonPanel,
-            new VBox(new Label("Server IP:"), ipField),
-            new VBox(new Label("Port:"), portField));
+            ipFieldBox,
+            portFieldBox);
 
     return inputPanel;
   }
@@ -180,7 +195,6 @@ public class InitialPromptUi extends VBox {
     imagePanel.getChildren().add(duckImageView);
 
     applyFadeInAnimation(duckImageView);
-    applyContinuousRotateAnimation(duckImageView);
 
     return imagePanel;
   }
