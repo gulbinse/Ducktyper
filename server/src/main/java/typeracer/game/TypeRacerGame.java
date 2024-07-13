@@ -117,13 +117,15 @@ public final class TypeRacerGame { // made final to prevent finalizer attacks in
   public TypingResult typeCharacter(
       int id, char character) { // TODO: Does this have to be synchronized?
     if (getIds().contains(id)) {
+      TypingResult typingResult = TypingResult.PLAYER_FINISHED_ALREADY;
       if (!isGameFinished()) {
         Player player = state.getPlayerById(id);
         if (!player.isFinished()) {
-          return player.typeCharacter(character, state.getTextToType(), gameStartTime);
+          typingResult = player.typeCharacter(character, state.getTextToType(), gameStartTime);
+          isGameFinished();
         }
       }
-      return TypingResult.PLAYER_FINISHED_ALREADY;
+      return typingResult;
     } else {
       throw new IllegalArgumentException(id + "is an invalid playerID");
     }
