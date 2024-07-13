@@ -124,7 +124,7 @@ public class GameResultsUi extends VBox {
     accuracyLabel.setFont(StyleManager.STANDARD_FONT);
 
     statsBox.getChildren().addAll(statsLabel, wpmLabel, accuracyLabel);
-    VBox.setMargin(statsBox, new Insets(10, 200, 10, 200));
+    VBox.setMargin(statsBox, new Insets(10, 50, 10, 50));
 
     getChildren().add(getChildren().size() - 1, statsBox);
   }
