@@ -89,9 +89,17 @@ public class TextSource {
 
       StringBuilder textBuilder = new StringBuilder();
       while (line != null) {
-        textBuilder.append(line).append(System.lineSeparator());
-        line = reader.readLine();
+        textBuilder.append(line).append(" ");
+
+        // skip all newlines
+        do {
+          line = reader.readLine();
+          if (line == null) {
+            break;
+          }
+        } while (line.isEmpty());
       }
+      textBuilder.deleteCharAt(textBuilder.length() - 1); // Remove last space character
       currentText = textBuilder.toString();
     }
   }
