@@ -55,7 +55,7 @@ public class MainMenuUi extends VBox {
             BackgroundRepeat.NO_REPEAT,
             BackgroundRepeat.NO_REPEAT,
             BackgroundPosition.CENTER,
-            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false)));
+            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true)));
     this.setBackground(background);
     this.setAlignment(Pos.CENTER);
     this.setSpacing(15);

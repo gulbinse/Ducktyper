@@ -54,11 +54,11 @@ public class ViewController extends Application {
   }
 
   private static final String STYLESHEET_PATH = "/styles.css";
-  private static final int DEFAULT_WINDOW_WIDTH = 1024;
-  private static final int DEFAULT_WINDOW_HEIGHT = 576;
+  private static final int DEFAULT_WINDOW_WIDTH = 1920 / 2 - 200;
+  private static final int DEFAULT_WINDOW_HEIGHT = 1080 / 2 + 30;
 
-  private static final int MINIMUM_WINDOW_WIDTH = 896;
-  private static final int MINIMUM_WINDOW_HEIGHT = 554;
+  private static final int MINIMUM_WINDOW_WIDTH = 1920 / 4 - 200;
+  private static final int MINIMUM_WINDOW_HEIGHT = 1080 / 4 + 30;
 
   private final Map<SceneName, Scene> scenes;
 
@@ -87,6 +87,9 @@ public class ViewController extends Application {
 
     primaryStage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
     primaryStage.setMinWidth(MINIMUM_WINDOW_WIDTH);
+
+    primaryStage.setWidth(DEFAULT_WINDOW_WIDTH);
+    primaryStage.setHeight(DEFAULT_WINDOW_HEIGHT);
 
     primaryStage.setTitle("Ducktyper");
 
