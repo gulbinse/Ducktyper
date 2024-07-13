@@ -416,7 +416,10 @@ public class ViewController extends Application {
    * @param message The message to display in the alert.
    */
   public void showAlert(String message) {
-    Alert alert = new Alert(Alert.AlertType.ERROR, message);
-    alert.showAndWait();
+    Platform.runLater(() -> {
+      Alert alert = new Alert(Alert.AlertType.ERROR, message);
+      alert.showAndWait();
+    });
+
   }
 }

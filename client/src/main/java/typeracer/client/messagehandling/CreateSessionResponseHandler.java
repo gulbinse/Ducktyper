@@ -43,6 +43,7 @@ public class CreateSessionResponseHandler implements MessageHandler {
           "Player can't create session because "
               + createSessionResponse.getReason().getString()
               + ".");
+      viewController.showAlert("Player can't create session because: " + createSessionResponse.getReason().getString());
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }

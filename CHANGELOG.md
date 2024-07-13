@@ -11,6 +11,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - "Smurf" mode
   - Display number of Typing errors
 
+## [1.0.0] - 2024-07-13
+
+### Added
+- Connection between client and GUI: (everyone)
+  - Showing players & their ready-status in lobby (#47) (Adrian)
+  - `createLobby` method in client (Eric)
+  - Methods sending messages in `ViewController` (Alina)
+  - Working text display and Ready-Button (Ali, Eric)
+- Minimum width and height for GUI windows (#50) (Tobi)
+- Better GUI (#45) (everyone)
+  - Cool background images (Tobi)
+  - Session-ID-Label (Ali, Eric)
+  - Default values for username, IP and port (Eric)
+  - Enter key as alternative to clicking join (Eric)
+  - Show fancy racetracks (Adrian, Eric)
+  - Show and update values in game screen (Adrian, Eric)
+  - Show current position in text to type (Tobi)
+  - Wrapping for inputted text (Ali)
+  - Displaying statistics in game results screen (Tobi)
+  - Error message for trying to join nonexistent sessions (Eric)
+- Clientside functionality to join & create sessions (Ali, Eric)
+- The players ID added to the `HandshakeResponse` (Adrian)
+- Check whether player is ready (Adrian)
+
+### Changed
+- Cleaned up client and GUI: (Tobi, Eric)
+  - Move Data from `ViewController` to `ClientSidePlayerData` (Tobi)
+  - Restructured `ViewController` (Tobi, Eric)
+- Handle `GameStateNotification`s with `GameState`s instead of `String`s (Eric)
+- Renamed "Lobby" to "Session" for consistency (Eric)
+- `PlayerJoinedNotification` to `PlayerUpdateNotification` (Adrian)
+
+### Removed
+- unused methods in `ViewController` (Tobi, Eric)
+
+### Fixed
+- Race Condition closing the Socket preemptively (Alina, Adrian)
+- Sessions not closing correctly when empty (Adrian)
+- WPM calculation wrong by a factor of 20.000.000.000 (Eric)
+- Accuracy calculation showing wrong value (Eric)
+- Game not finishing correctly (Tobi, Eric)
+
 ## [0.2.0] - 2024-06-30
 
 ### Added

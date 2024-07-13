@@ -40,7 +40,8 @@ public class HandShakeResponseHandler implements MessageHandler {
             break;
           case DENIED:
             System.out.println(
-                "Denied connection because :" + handShakeResponse.getReason().getString());
+                "Denied connection because: " + handShakeResponse.getReason().getString());
+            viewController.showAlert("Denied connection because: " + handShakeResponse.getReason().getString());
             break;
           default:
             if (nextHandler != null) {
