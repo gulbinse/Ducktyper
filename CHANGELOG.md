@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Show current position in text to type (Tobi)
   - Wrapping for inputted text (Ali)
   - Displaying statistics in game results screen (Tobi)
+  - Error message for trying to join nonexistent sessions (Eric)
 - Clientside functionality to join & create sessions (Ali, Eric)
 - The players ID added to the `HandshakeResponse` (Adrian)
 - Check whether player is ready (Adrian)

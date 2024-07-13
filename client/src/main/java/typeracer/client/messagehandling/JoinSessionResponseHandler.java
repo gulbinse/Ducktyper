@@ -40,7 +40,8 @@ public class JoinSessionResponseHandler implements MessageHandler {
           break;
         case DENIED:
           System.out.println(
-              "Player can't join because " + joinSessionResponse.getReason().getString() + ".");
+              "Player can't join because: " + joinSessionResponse.getReason().getString());
+          viewController.showAlert("Player can't join because: " + joinSessionResponse.getReason().getString());
           break;
         default:
           if (nextHandler != null) {
