@@ -56,7 +56,7 @@ public class ClientSideSessionData {
     }
 
     public Map<Integer, DoubleProperty> getPlayerWpms() {
-        return Map.copyOf(playerWpms);
+        return playerWpms;
     }
 
     public void setPlayerWpms(int playerId, double playerWpm) {
@@ -64,7 +64,7 @@ public class ClientSideSessionData {
     }
 
     public Map<Integer, DoubleProperty> getPlayerAccuracies() {
-        return Map.copyOf(playerAccuracies);
+        return playerAccuracies;
     }
 
     public void setPlayerAccuracies(int playerId, double playerAccuracy) {
@@ -72,7 +72,7 @@ public class ClientSideSessionData {
     }
 
     public Map<Integer, DoubleProperty> getPlayerProgresses() {
-        return Map.copyOf(playerProgresses);
+        return playerProgresses;
     }
 
     public void setPlayerProgresses(int playerId, double playerProgress) {
