@@ -117,7 +117,7 @@ public class PlayerStatsUi extends VBox {
 
     VBox.setMargin(wpmLabel, new Insets(10, 50, 10, 50));
     VBox.setMargin(accuracyLabel, new Insets(10, 50, 10, 50));
-    VBox.setMargin(statsBox, new Insets(10, 200, 10, 200));
+    VBox.setMargin(statsBox, new Insets(10, 50, 10, 50));
 
     statsBox.getChildren().addAll(wpmLabel, accuracyLabel);
     return statsBox;
