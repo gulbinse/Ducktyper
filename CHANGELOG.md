@@ -34,9 +34,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Error messages for denied requests (Eric)
   - Hidden ducks as easter egg (Eric)
   - Scalable UI (Eric)
+  - Button to copy Session ID (Eric)
+  - Prettier displaying of statistics (Adrian, Eric)
 - Clientside functionality to join & create sessions (Ali, Eric)
 - The players ID added to the `HandshakeResponse` (Adrian)
 - Check whether player is ready (Adrian)
+- Missing Javadocs (Alina)
 
 ### Changed
 - Cleaned up client and GUI: (Tobi, Eric)
@@ -48,13 +51,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Removed
 - unused methods in `ViewController` (Tobi, Eric)
+- "Play again" button (Adrian, Eric)
 
 ### Fixed
 - Race Condition closing the Socket preemptively (Alina, Adrian)
 - Sessions not closing correctly when empty (Adrian)
 - WPM calculation wrong by a factor of 20.000.000.000 (Eric)
+- WPM still updating when player finished (Eric)
 - Accuracy calculation showing wrong value (Eric)
 - Game not finishing correctly (Tobi, Eric)
+- Game sometimes not starting correctly (Adrian)
+- Remove left players from UI (Adrian)
+- Show initial prompt on connection loss (Adrian)
+- Reset scenes when switching to main menu (Eric)
 
 ## [0.2.0] - 2024-06-30
 
