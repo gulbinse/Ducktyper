@@ -242,7 +242,6 @@ public class InitialPromptUi extends VBox {
     try {
       int portNumber = Integer.parseInt(port);
       viewController.connectToServer(ip, portNumber, username);
-      viewController.showScene(ViewController.SceneName.MAIN_MENU);
     } catch (NumberFormatException e) {
       viewController.showAlert("Please enter a valid port number.");
     } catch (Exception e) {
