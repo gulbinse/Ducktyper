@@ -50,7 +50,7 @@ public final class TypeRacerGame { // made final to prevent finalizer attacks in
 
   /** Starts a new game with a new text. */
   public void start() {
-    if (getStatus() == GameStatus.RUNNING) {
+    if (getStatus() != GameStatus.WAITING_FOR_PLAYERS) {
       return;
     }
 
