@@ -3,6 +3,7 @@ This program is a multi-player typewriter game.
 
 ## Requirements
 Java-Version: Java 21
+Gradle-Version: Gradle 8.7
 
 ## Usage
 Make sure the server is running before starting the GUI to use full functionality of the game.
