@@ -201,6 +201,8 @@ final class Client {
       }
     } catch (IOException e) {
       throw new RuntimeException(e);
+    } finally {
+      viewController.showScene(ViewController.SceneName.INITIAL_PROMPT);
     }
   }
 }
