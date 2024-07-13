@@ -30,7 +30,6 @@ public class JoinSessionResponseHandler implements MessageHandler {
    */
   @Override
   public void handleMessage(Message message) {
-    System.out.println(message);
     if (message instanceof JoinSessionResponse joinSessionResponse) {
 
       switch ((joinSessionResponse.getJoinStatus())) {
@@ -44,12 +43,8 @@ public class JoinSessionResponseHandler implements MessageHandler {
           viewController.showAlert("Player can't join because: " + joinSessionResponse.getReason().getString());
           break;
         default:
-          if (nextHandler != null) {
-            nextHandler.handleMessage(message);
-          }
           break;
       }
-
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }

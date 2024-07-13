@@ -36,7 +36,7 @@ public class ReadyResponseHandler implements MessageHandler {
           System.out.println("Player is ready.");
           break;
         case DENIED:
-          System.out.println("Player is not ready.");
+          System.out.println("ReadyRequest has been denied.");
           break;
         default:
           break;

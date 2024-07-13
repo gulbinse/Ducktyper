@@ -44,9 +44,6 @@ public class HandShakeResponseHandler implements MessageHandler {
             viewController.showAlert("Denied connection because: " + handShakeResponse.getReason().getString());
             break;
           default:
-            if (nextHandler != null) {
-              nextHandler.handleMessage(message);
-            }
             break;
         }
       } else if (nextHandler != null) {
