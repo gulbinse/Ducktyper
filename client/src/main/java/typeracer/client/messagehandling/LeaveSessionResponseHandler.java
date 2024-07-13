@@ -35,7 +35,7 @@ public class LeaveSessionResponseHandler implements MessageHandler {
     if (message instanceof LeaveSessionResponse leaveSessionResponse &&
         leaveSessionResponse.getLeaveStatus() == PermissionStatus.ACCEPTED) {
       System.out.println("Player can leave the session.");
-      viewController.endGame();
+      viewController.leaveSession();
       // DENIED response
       } else if (message instanceof LeaveSessionResponse leaveSessionResponse &&
       leaveSessionResponse.getLeaveStatus() == PermissionStatus.DENIED) {

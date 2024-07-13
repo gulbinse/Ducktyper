@@ -6,8 +6,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -92,7 +90,7 @@ public class SessionUi extends VBox {
         StyleManager.createStyledButton(
             "back", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
     readyButton.setOnAction(e -> viewController.setPlayerReady());
-    backButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.MAIN_MENU));
+    backButton.setOnAction(e -> viewController.leaveSessionOrGame());
 
     HBox buttonBox = new HBox(10);
     buttonBox.setAlignment(Pos.CENTER);

@@ -33,7 +33,7 @@ public class PlayerLeftNotificationHandler implements MessageHandler {
     if (message instanceof PlayerLeftNotification playerLeftNotification) {
       System.out.println("Player " + playerLeftNotification.getPlayerId() + " left the game.");
       System.out.println("There are " + playerLeftNotification.getNumPlayers() + " players left.");
-      viewController.removePlayerFromGame(playerLeftNotification.getPlayerId());
+      viewController.removePlayerFromSession(playerLeftNotification.getPlayerId());
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }

@@ -63,6 +63,7 @@ public class ViewController extends Application {
   private final Map<SceneName, Scene> scenes;
 
   private Stage primaryStage;
+  private SceneName currentScene;
   private final Client client;
   private final ClientSideSessionData playerData = new ClientSideSessionData();
 
@@ -123,6 +124,7 @@ public class ViewController extends Application {
     Platform.runLater(
         () -> {
           Scene scene = scenes.get(sceneName);
+          currentScene = sceneName;
           if (scene != null) {
             primaryStage.setScene(scene);
             primaryStage.show();
@@ -221,8 +223,7 @@ public class ViewController extends Application {
   /** Signals User intention to leave the game. */
   public void leaveSessionOrGame() {
     client.sendMessage(new LeaveSessionRequest());
-    System.out.println("Leaving session");
-//    showScene(SceneName.MAIN_MENU);
+    System.out.println("Leaving game");
   }
 
   /** Starts a new game by fetching the game text and updating the UI accordingly. */
@@ -261,7 +262,7 @@ public class ViewController extends Application {
    *
    * @param playerId of the player who left
    */
-  public void removePlayerFromGame(int playerId) {
+  public void removePlayerFromSession(int playerId) {
     playerData.removePlayer(playerId);
     Platform.runLater(
         () -> {
@@ -275,11 +276,17 @@ public class ViewController extends Application {
 
   /** Ends the current game, updates stats, and switches the UI to display game results. */
   // == Finished
-  public void endGame() {
+  public void leaveSession() {
     Platform.runLater(() -> {
-      showScene(SceneName.GAME_RESULTS);
-      GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
-      gameUi.onViewShown();
+      switch (currentScene) {
+        case GAME -> {
+          showScene(SceneName.GAME_RESULTS);
+          GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
+          gameUi.onViewShown();
+        }
+        case SESSION -> showScene(SceneName.MAIN_MENU);
+      }
+
     });
   }
 
