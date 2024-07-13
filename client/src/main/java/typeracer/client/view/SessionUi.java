@@ -1,13 +1,15 @@
 package typeracer.client.view;
 
+import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -16,6 +18,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import typeracer.client.ViewController;
 
 import java.util.HashMap;
@@ -79,6 +82,26 @@ public class SessionUi extends VBox {
     sessionIdLabel = new Label("Session ID: Not set");
     sessionIdLabel.setFont(StyleManager.BOLD_FONT);
 
+    Label copiedSessionId = new Label("Copied Session ID to clipboard.");
+    copiedSessionId.setOpacity(0);
+    Button copySessionIdButton = StyleManager.createStyledButton(
+        "Copy Session ID", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
+    copySessionIdButton.setOnAction(e -> {
+      Clipboard clipboard = Clipboard.getSystemClipboard();
+      ClipboardContent content = new ClipboardContent();
+      content.putString(Integer.toString(viewController.getSessionId()));
+      clipboard.setContent(content);
+      FadeTransition fadeIn = new FadeTransition(Duration.millis(1500), copiedSessionId);
+      fadeIn.setFromValue(0.0);
+      fadeIn.setToValue(1.0);
+      copiedSessionId.setText("Copied Session ID to clipboard.");
+      copiedSessionId.setOpacity(1);
+      fadeIn.setCycleCount(2);
+      fadeIn.setAutoReverse(true);
+      fadeIn.play();
+      copiedSessionId.setOpacity(0);
+    });
+
     playerList = new VBox();
     playerList.setPrefHeight(200);
     playerList.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(5), Insets.EMPTY)));
@@ -96,7 +119,11 @@ public class SessionUi extends VBox {
     buttonBox.setAlignment(Pos.CENTER);
     buttonBox.getChildren().addAll(backButton, readyButton);
 
-    this.getChildren().addAll(titleImageView, usernameLabel, sessionIdLabel, playerList, buttonBox);
+    VBox sessionIdArea = new VBox(10);
+    sessionIdArea.setAlignment(Pos.CENTER);
+    sessionIdArea.getChildren().addAll(sessionIdLabel, copySessionIdButton, copiedSessionId);
+
+    this.getChildren().addAll(titleImageView, usernameLabel, sessionIdArea, playerList, buttonBox);
   }
 
   public void addPlayerLabel(int playerId) {
