@@ -5,12 +5,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import typeracer.client.ViewController;
+
+import java.util.Objects;
 
 /**
  * Represents the main menu user interface for the TypeRacer game. This class sets up the GUI
@@ -52,10 +50,15 @@ public class MainMenuUi extends VBox {
    * button actions.
    */
   private void initializeUi() {
+    Background background = new Background(new BackgroundImage(
+            new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/Menu_screen_noText.png"))),
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.CENTER,
+            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false)));
+    this.setBackground(background);
     this.setAlignment(Pos.CENTER);
     this.setSpacing(15);
-    this.setBackground(
-        new Background(new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, null)));
 
     VBox titlePanel = createTitlePanel();
     this.getChildren().add(titlePanel);
@@ -84,6 +87,7 @@ public class MainMenuUi extends VBox {
     sessionIdField = new TextField();
     sessionIdField.setPromptText("Enter Session ID");
     sessionIdField.setMaxWidth(200);
+    sessionIdField.getStyleClass().add("startScreen-input-field");
     joinSessionButton.setOnAction(
         event -> {
           try {
