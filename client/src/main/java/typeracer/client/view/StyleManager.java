@@ -47,6 +47,9 @@ public class StyleManager {
   /** Italic font for UI text. */
   public static final Font ITALIC_FONT = Font.font("Arial", FontPosture.ITALIC, 16);
 
+  /** Bold italic font for emphasized UI text. */
+  public static final Font BOLD_ITALIC_FONT = Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 18);
+
   /** Default constructor for the StyleManager class. Initializes a new instance of StyleManager. */
   public StyleManager() {}
 

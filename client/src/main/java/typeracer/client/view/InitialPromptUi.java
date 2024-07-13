@@ -239,6 +239,11 @@ public class InitialPromptUi extends VBox {
       return;
     }
 
+    if (username.length() > 18) {
+      viewController.showAlert("Username must not be longer than 18 characters.");
+      return;
+    }
+
     try {
       int portNumber = Integer.parseInt(port);
       viewController.connectToServer(ip, portNumber, username);

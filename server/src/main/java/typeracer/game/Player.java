@@ -123,18 +123,20 @@ public class Player {
       assert newTextIndex == currentTextIndex + 1;
 
       // Update progress only if typing was successful, to avoid unnecessary updates
-      double progress = (double) newTextIndex / textToType.length();
-      assert 0 <= progress && progress <= 1;
-      state.setProgress(progress);
-      if (newTextIndex + 1 >= textToType.length()) {
-        setIsFinished(true);
-      }
+
 
       if (Character.isSpaceChar(correctCharacter)) {
         state.incrementNumTypedWords();
       }
       typingResult = TypingResult.CORRECT;
     }
+    double progress = (double) state.getCurrentTextIndex() / textToType.length();
+    assert 0 <= progress && progress <= 1;
+    state.setProgress(progress);
+    if (progress >= 1) {
+      setIsFinished(true);
+    }
+
     double accuracy =
         (double) state.getCurrentTextIndex() // current text index = correctly typed characters
             / typingAttempts;
@@ -144,22 +146,24 @@ public class Player {
 
   /** Updates the typing speeds (e.g. words per minute) of this player. */
   public void updateAllTypingSpeeds() {
-    if (!isFinished()) {
       updateWordsPerMinute();
       updateCharactersPerMinute();
-    }
   }
 
   private synchronized void updateWordsPerMinute() {
-    double wordsPerMinute =
-        getGeneralTypingSpeed(state.getNumTypedWords(), MINUTES_TO_NANO_SECONDS_FACTOR);
-    state.setWordsPerMinute(wordsPerMinute);
+    if (!isFinished()) {
+        double wordsPerMinute =
+          getGeneralTypingSpeed(state.getNumTypedWords(), MINUTES_TO_NANO_SECONDS_FACTOR);
+      state.setWordsPerMinute(wordsPerMinute);
+    }
   }
 
   private synchronized void updateCharactersPerMinute() {
-    double charactersPerMinute =
-        getGeneralTypingSpeed(state.getCurrentTextIndex(), MINUTES_TO_NANO_SECONDS_FACTOR);
-    state.setCharactersPerMinute(charactersPerMinute);
+    if (!isFinished()) {
+      double charactersPerMinute =
+          getGeneralTypingSpeed(state.getCurrentTextIndex(), MINUTES_TO_NANO_SECONDS_FACTOR);
+      state.setCharactersPerMinute(charactersPerMinute);
+    }
   }
 
   /**

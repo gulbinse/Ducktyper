@@ -65,7 +65,10 @@ public class ViewController extends Application {
   private Stage primaryStage;
   private SceneName currentScene;
   private final Client client;
-  private final ClientSideSessionData playerData = new ClientSideSessionData();
+  private ClientSideSessionData playerData = new ClientSideSessionData();
+  private String username;
+  private int playerId;
+
 
   /**
    * Constructs a ViewController with a given stage and client. Initializes the view mappings and
@@ -93,8 +96,7 @@ public class ViewController extends Application {
 
     primaryStage.setTitle("Ducktyper");
 
-
-    addAllScenes(primaryStage);
+    addAllScenes();
 
     Platform.runLater(() -> showScene(SceneName.INITIAL_PROMPT));
     primaryStage.setResizable(true);
@@ -132,15 +134,16 @@ public class ViewController extends Application {
               gameUi.onViewShown();
             } else if (scene.getRoot() instanceof MainMenuUi) {
               scenes.clear();
-              addAllScenes(primaryStage);
+              addAllScenes();
+              playerData = new ClientSideSessionData();
             }
           } else {
-            showAlert("View not found: " + sceneName);
+            showAlert("Scene not found: " + sceneName);
           }
         });
   }
 
-  private void addAllScenes(Stage primaryStage) {
+  private void addAllScenes() {
     addScene(SceneName.INITIAL_PROMPT, new InitialPromptUi(this, primaryStage));
     addScene(SceneName.MAIN_MENU, new MainMenuUi(this));
     addScene(SceneName.GAME, new GameUi(this));
@@ -151,7 +154,7 @@ public class ViewController extends Application {
   }
 
   public void setPlayerId(int playerId) {
-    playerData.setPlayerId(playerId);
+    this.playerId = playerId;
   }
 
   public void setSessionId(int sessionId) {
@@ -194,7 +197,7 @@ public class ViewController extends Application {
   public void connectToServer(String ip, int port, String username) throws IOException {
     client.connect(ip, port, username);
     System.out.println("Connected to server at " + ip + ":" + port);
-    playerData.setUsername(username);
+    this.username = username;
   }
 
   /**
@@ -216,7 +219,7 @@ public class ViewController extends Application {
 
   /** Requests to set the player ready. */
   public void setPlayerReady() {
-    boolean isReady = !playerData.getPlayerReady().get(playerData.getPlayerId()).get();
+    boolean isReady = !playerData.getPlayerReady().get(playerId).get();
     client.sendMessage(new ReadyRequest(isReady));
     System.out.println("Player wants to update his readyStatus to: " + isReady);
   }
@@ -343,7 +346,7 @@ public class ViewController extends Application {
    * @return The username of the player.
    */
   public String getUsername() {
-    return playerData.getUsername();
+    return username;
   }
 
   /**
@@ -352,7 +355,7 @@ public class ViewController extends Application {
    * @return The ID of the current player.
    */
   public int getPlayerId() {
-    return playerData.getPlayerId();
+    return playerId;
   }
 
   /**

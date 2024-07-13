@@ -57,26 +57,19 @@ public class GameResultsUi extends VBox {
     // VBox leaderboardPanel = createLeaderboard();
     // leaderboardPanel.setPadding(new Insets(20, 0, 20, 0));
 
-    Button playAgainButton =
-        StyleManager.createStyledButton(
-            "play again", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
     Button mainMenuButton =
         StyleManager.createStyledButton(
             "main menu", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
 
-    HBox buttonBox = new HBox(20, playAgainButton, mainMenuButton);
-    buttonBox.setAlignment(Pos.CENTER);
+    this.getChildren().addAll(titleLabel, mainMenuButton);
 
-    this.getChildren().addAll(titleLabel, buttonBox);
-
-    playAgainButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.SESSION));
     mainMenuButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.MAIN_MENU));
 
     StyleManager.applyFadeInAnimation(titleLabel, 1000);
     // StyleManager.applyFadeInAnimation(leaderboardPanel, 1400);
-    StyleManager.applyFadeInAnimation(buttonBox, 1600);
+    StyleManager.applyFadeInAnimation(mainMenuButton, 1600);
 
-    StyleManager.applyButtonHoverAnimation(playAgainButton, mainMenuButton);
+    StyleManager.applyButtonHoverAnimation(mainMenuButton);
   }
 
   /**
