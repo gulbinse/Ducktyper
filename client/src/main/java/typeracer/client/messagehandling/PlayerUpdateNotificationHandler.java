@@ -31,9 +31,9 @@ public class PlayerUpdateNotificationHandler implements MessageHandler {
    */
   @Override
   public void handleMessage(Message message) {
-    if (message instanceof PlayerUpdateNotification playerJoinedNotification) {
+    if (message instanceof PlayerUpdateNotification playerUpdateNotification) {
       viewController.updatePlayer(
-          playerJoinedNotification.getPlayerId(), playerJoinedNotification.getPlayerName(), playerJoinedNotification.isReady());
+          playerUpdateNotification.getPlayerId(), playerUpdateNotification.getPlayerName(), playerUpdateNotification.isReady());
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }

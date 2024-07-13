@@ -19,8 +19,6 @@ import javafx.collections.ObservableList;
  */
 public class ClientSideSessionData {
 
-    private String username;
-    private int playerId;
     private int sessionId;
     private final Map<Integer, String> playerNamesById = new ConcurrentHashMap<>();
     private final Map<Integer, SimpleBooleanProperty> playerReady = new HashMap<>();
@@ -30,22 +28,6 @@ public class ClientSideSessionData {
     private Map<Integer, IntegerProperty> playerErrors = new HashMap<>();
     private final ListProperty<String> topPlayers = new SimpleListProperty<>(FXCollections.observableArrayList());
     String gameText;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public int getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(int playerId) {
-        this.playerId = playerId;
-    }
 
     public Map<Integer, String> getPlayerNamesById() {
         return Map.copyOf(playerNamesById);
