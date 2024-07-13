@@ -161,7 +161,7 @@ final class Client {
     MessageHandler playerLeftNotificationHandler =
         new PlayerLeftNotificationHandler(gameStateNotificationHandler, viewController);
     MessageHandler playerJoinedNotificationHandler =
-        new PlayerJoinedNotificationHandler(playerLeftNotificationHandler, viewController);
+        new PlayerUpdateNotificationHandler(playerLeftNotificationHandler, viewController);
     MessageHandler joinSessionResponseHandler =
         new JoinSessionResponseHandler(playerJoinedNotificationHandler, viewController);
     return new LeaveSessionResponseHandler(joinSessionResponseHandler, viewController);
