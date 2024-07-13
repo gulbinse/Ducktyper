@@ -60,7 +60,7 @@ public class ViewController extends Application {
   private static final int MINIMUM_WINDOW_WIDTH = 400;
   private static final int MINIMUM_WINDOW_HEIGHT = 600;
 
-  private final Map<SceneName, Scene> scenes;
+  private Map<SceneName, Scene> scenes;
 
   private Stage primaryStage;
   private SceneName currentScene;
@@ -93,13 +93,8 @@ public class ViewController extends Application {
 
     primaryStage.setTitle("Ducktyper");
 
-    addScene(SceneName.INITIAL_PROMPT, new InitialPromptUi(this, primaryStage));
-    addScene(SceneName.MAIN_MENU, new MainMenuUi(this));
-    addScene(SceneName.GAME, new GameUi(this));
-    addScene(SceneName.STATS, new PlayerStatsUi(this));
-    addScene(SceneName.PROFILE_SETTINGS, new ProfileSettingsUi(this));
-    addScene(SceneName.GAME_RESULTS, new GameResultsUi(this));
-    addScene(SceneName.SESSION, new SessionUi(this));
+
+    addAllScenes(primaryStage);
 
     Platform.runLater(() -> showScene(SceneName.INITIAL_PROMPT));
     primaryStage.setResizable(true);
@@ -135,11 +130,24 @@ public class ViewController extends Application {
               sessionUi.onViewShown();
             } else if (scene.getRoot() instanceof GameUi gameUi) {
               gameUi.onViewShown();
+            } else if (scene.getRoot() instanceof MainMenuUi) {
+              scenes.clear();
+              addAllScenes(primaryStage);
             }
           } else {
             showAlert("View not found: " + sceneName);
           }
         });
+  }
+
+  private void addAllScenes(Stage primaryStage) {
+    addScene(SceneName.INITIAL_PROMPT, new InitialPromptUi(this, primaryStage));
+    addScene(SceneName.MAIN_MENU, new MainMenuUi(this));
+    addScene(SceneName.GAME, new GameUi(this));
+    addScene(SceneName.STATS, new PlayerStatsUi(this));
+    addScene(SceneName.PROFILE_SETTINGS, new ProfileSettingsUi(this));
+    addScene(SceneName.GAME_RESULTS, new GameResultsUi(this));
+    addScene(SceneName.SESSION, new SessionUi(this));
   }
 
   public void setPlayerId(int playerId) {
