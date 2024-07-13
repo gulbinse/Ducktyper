@@ -240,25 +240,33 @@ public class GameUi extends VBox {
         DoubleProperty wpmProperty = viewController.getPlayerWpmProperty(playerId);
         StringBinding wpmBinding = Bindings.createStringBinding(() -> String.format("%.2f", wpmProperty.getValue()) + " WPM", wpmProperty);
         wpmLabel.textProperty().bind(wpmBinding);
+        wpmLabel.setFont(StyleManager.BOLD_ITALIC_FONT);
+        wpmLabel.setTextFill(StyleManager.GREY_BOX);
 
         Label accuracyLabel = new Label();
         DoubleProperty accuracyProperty = viewController.getPlayerAccuracyProperty(playerId);
         StringBinding accuracyBinding = Bindings.createStringBinding(() -> String.format("%.2f", accuracyProperty.getValue() * 100) + "% Accuracy", accuracyProperty);
         accuracyLabel.textProperty().bind(accuracyBinding);
+        accuracyLabel.setFont(StyleManager.BOLD_ITALIC_FONT);
+        accuracyLabel.setTextFill(StyleManager.GREY_BOX);
 
         Label errorsLabel = new Label();
-        Label usernameLabel = new Label(viewController.getUsernameById(playerId));
 
-        HBox stats = new HBox();
+        Label usernameLabel = new Label(viewController.getUsernameById(playerId));
+        usernameLabel.setFont(StyleManager.BOLD_ITALIC_FONT);
+        usernameLabel.setTextFill(StyleManager.GREY_BOX);
+        usernameLabel.setPadding(new Insets(0, 10, 0, 10));
+
+        HBox stats = new HBox(10);
         stats.getChildren().addAll(wpmLabel, accuracyLabel, errorsLabel);
         stats.setAlignment(Pos.CENTER);
 
-        VBox banner = new VBox(5);
+        HBox banner = new HBox(20);
         banner.getChildren().addAll(usernameLabel, stats);
-        banner.setAlignment(Pos.CENTER);
-        banner.setBackground(new Background(new BackgroundFill(StyleManager.GREY_BOX, CornerRadii.EMPTY, Insets.EMPTY)));
+        banner.setAlignment(Pos.CENTER_LEFT);
+        //banner.setBackground(new Background(new BackgroundFill(StyleManager.GREY_BOX, CornerRadii.EMPTY, Insets.EMPTY)));
 
-        VBox playerDisplay = new VBox(banner, new Pane(new StackPane(racetrack, raceBorder, line, line2), racer));
+        VBox playerDisplay = new VBox(new Pane(new StackPane(racetrack, raceBorder, line, line2, banner), racer));
         playerDisplay.setPadding(new Insets(10, 50, 10, 50));
         playerDisplay.setAlignment(Pos.CENTER);
         HBox.setHgrow(racetrack, Priority.ALWAYS);
