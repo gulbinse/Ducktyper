@@ -100,8 +100,8 @@ public class TextSource {
         } while (line.isEmpty());
       }
       textBuilder.deleteCharAt(textBuilder.length() - 1); // Remove last space character
-      //currentText = textBuilder.toString();
-      currentText = "ABCDEFG";
+      currentText = textBuilder.toString();
+      currentText = "ABC DEF G";
     }
   }
 

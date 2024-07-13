@@ -144,8 +144,10 @@ public class Player {
 
   /** Updates the typing speeds (e.g. words per minute) of this player. */
   public void updateAllTypingSpeeds() {
-    updateWordsPerMinute();
-    updateCharactersPerMinute();
+    if (!isFinished()) {
+      updateWordsPerMinute();
+      updateCharactersPerMinute();
+    }
   }
 
   private synchronized void updateWordsPerMinute() {
