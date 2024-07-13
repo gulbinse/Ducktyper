@@ -52,7 +52,11 @@ public class ClientSideSessionData {
     }
 
     public Map<Integer, SimpleBooleanProperty> getPlayerReady() {
-        return Map.copyOf(playerReady);
+        return playerReady;
+    }
+
+    public void setPlayerReady(int playerId, boolean ready) {
+        playerReady.computeIfAbsent(playerId, k -> new SimpleBooleanProperty()).set(ready);
     }
 
     public Map<Integer, DoubleProperty> getPlayerWpms() {
@@ -111,13 +115,15 @@ public class ClientSideSessionData {
      * @param playerId   of the joined player
      * @param playerName of the joined player
      */
-    public void addPlayer(int playerId, String playerName) {
+    public boolean updatePlayer(int playerId, String playerName, boolean ready) {
+        boolean isNew = !playerNamesById.containsKey(playerId);
         playerNamesById.put(playerId, playerName);
-        playerReady.put(playerId, new SimpleBooleanProperty(false));
+        setPlayerReady(playerId, ready);
         playerWpms.put(playerId, new SimpleDoubleProperty(0));
         playerAccuracies.put(playerId, new SimpleDoubleProperty(0));
         playerProgresses.put(playerId, new SimpleDoubleProperty(0));
         playerErrors.put(playerId, new SimpleIntegerProperty(0));
+        return isNew;
     }
 
     /**

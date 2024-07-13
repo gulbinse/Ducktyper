@@ -40,8 +40,8 @@ public class PlayerJoinedNotificationHandler implements MessageHandler {
       //  ein. Achte darauf, dass auch die default Werte bei CreateSessionResponse richtig gesetzt
       //  werden, da der spieler hier keine playerUpdateNotification erhält, aber trotzdem bereits
       //  namen, readystatus, etc. anzeigen muss.
-      viewController.addPlayerToGame(
-          playerJoinedNotification.getPlayerId(), playerJoinedNotification.getPlayerName());
+      viewController.updatePlayer(
+          playerJoinedNotification.getPlayerId(), playerJoinedNotification.getPlayerName(), playerJoinedNotification.isReady());
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }

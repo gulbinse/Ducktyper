@@ -1,5 +1,7 @@
 package typeracer.client.view;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -15,6 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import typeracer.client.ViewController;
 
 /**
@@ -22,7 +25,7 @@ import typeracer.client.ViewController;
  * list, mode selection dropdown, and buttons to ready up or go back to the main menu.
  */
 public class SessionUi extends VBox {
-  private ListView<String> playerList;
+  private VBox playerList;
   private Button readyButton;
   private Button backButton;
   private ViewController viewController;
@@ -73,10 +76,9 @@ public class SessionUi extends VBox {
     sessionIdLabel = new Label("Session ID: Not set");
     sessionIdLabel.setFont(StyleManager.BOLD_FONT);
 
-    playerList = new ListView<>();
+    playerList = new VBox();
     playerList.setPrefHeight(200);
-    playerList.setItems(viewController.getPlayerUsernames());
-    customizePlayerList();
+    playerList.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(5), Insets.EMPTY)));
 
     readyButton =
         StyleManager.createStyledButton(
@@ -94,33 +96,24 @@ public class SessionUi extends VBox {
     this.getChildren().addAll(titleImageView, usernameLabel, sessionIdLabel, playerList, buttonBox);
   }
 
-  /** Customizes the player list by setting a custom cell factory to display player statuses. */
-  private void customizePlayerList() {
-    playerList.setCellFactory(
-        lv ->
-            new ListCell<String>() {
-              private final Circle statusCircle = new Circle(5);
-              private final Label nameLabel = new Label();
-              private final HBox cellLayout = new HBox(10, statusCircle, nameLabel);
+  public void addPlayerLabel(int playerId) {
+    HBox label = new HBox(10);
+    label.setAlignment(Pos.CENTER_LEFT);
+    label.setPadding(new Insets(10, 10, 10, 10));
+    label.setBackground(new Background(new BackgroundFill(playerList.getChildren().size() % 2 == 0 ? Color.LIGHTGRAY : StyleManager.GREY_BOX, CornerRadii.EMPTY, Insets.EMPTY)));
 
-              @Override
-              protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                  setGraphic(null);
-                } else {
-                  String[] parts = item.split(" - ");
-                  if (parts.length > 1) {
-                    nameLabel.setText(parts[0]);
-                    statusCircle.setFill("Active".equals(parts[1]) ? Color.GREEN : Color.RED);
-                  } else {
-                    nameLabel.setText(parts[0]);
-                    statusCircle.setFill(Color.GRAY);
-                  }
-                  setGraphic(cellLayout);
-                }
-              }
-            });
+    Circle readyStatus = new Circle(5);
+    BooleanProperty readyProperty = viewController.getPlayerReadyProperty(playerId);
+    readyStatus.fillProperty().bind(Bindings.createObjectBinding(() -> {
+      boolean ready = readyProperty.getValue();
+      return ready ? Color.GREEN : Color.RED;
+    }, readyProperty));
+
+    Text name = new Text(viewController.getUsernameById(playerId));
+
+    label.getChildren().addAll(readyStatus, name);
+
+    playerList.getChildren().add(label);
   }
 
   // Simulated method to fetch game mode for a given session
@@ -133,6 +126,5 @@ public class SessionUi extends VBox {
   public void onViewShown() {
     updateUsernameLabel();
     sessionIdLabel.setText("Session ID: " + viewController.getSessionId());
-    playerList.refresh();
   }
 }

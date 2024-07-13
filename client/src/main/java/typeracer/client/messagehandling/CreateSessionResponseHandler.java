@@ -35,6 +35,7 @@ public class CreateSessionResponseHandler implements MessageHandler {
       // switches to the session scene if the message contains an ID for the session
       viewController.setSessionId(createSessionResponse.getSessionId());
       viewController.showScene(ViewController.SceneName.SESSION);
+      viewController.updatePlayer(viewController.getPlayerId(), viewController.getUsername(), viewController.getPlayerReadyProperty(viewController.getPlayerId()).getValue());
     } else if (message instanceof CreateSessionResponse createSessionResponse
         && createSessionResponse.getReason() != null) {
       // reason why the session couldn't be created

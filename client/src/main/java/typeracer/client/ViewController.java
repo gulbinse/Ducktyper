@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -195,7 +197,7 @@ public class ViewController extends Application {
 
   /** Requests to set the player ready. */
   public void setPlayerReady() {
-    boolean isReady = true;
+    boolean isReady = !playerData.getPlayerReady().get(playerData.getPlayerId()).get();
     client.sendMessage(new ReadyRequest(isReady));
     System.out.println("Player wants to update his readyStatus to: " + isReady);
   }
@@ -227,6 +229,7 @@ public class ViewController extends Application {
           }
           showScene(SceneName.GAME);
         });
+
   }
 
   /**
@@ -235,8 +238,18 @@ public class ViewController extends Application {
    * @param playerId of joined player
    * @param playerName of joined player
    */
-  public void addPlayerToGame(int playerId, String playerName) {
-    playerData.addPlayer(playerId, playerName);
+  public void updatePlayer(int playerId, String playerName, boolean ready) {
+    boolean isNew = playerData.updatePlayer(playerId, playerName, ready);
+    System.out.println(isNew);
+    if (isNew) {
+      System.out.println("hallo");
+      Platform.runLater(
+          () -> {
+            SessionUi sessionUi = (SessionUi) scenes.get(SceneName.SESSION).getRoot();
+            sessionUi.addPlayerLabel(playerId);
+          });
+
+    }
   }
 
   /**
@@ -251,9 +264,11 @@ public class ViewController extends Application {
   /** Ends the current game, updates stats, and switches the UI to display game results. */
   // == Finished
   public void endGame() {
-    showScene(SceneName.GAME_RESULTS);
-    GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
-    gameUi.onViewShown();
+    Platform.runLater(() -> {
+      showScene(SceneName.GAME_RESULTS);
+      GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
+      gameUi.onViewShown();
+    });
   }
 
   /**
@@ -330,6 +345,10 @@ public class ViewController extends Application {
 
   public String getUsernameById(int id) {
     return playerData.getPlayerNamesById().get(id);
+  }
+
+  public BooleanProperty getPlayerReadyProperty(int playerId) {
+    return playerData.getPlayerReady().computeIfAbsent(playerId, k -> new SimpleBooleanProperty());
   }
 
   /**
