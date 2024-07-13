@@ -114,9 +114,10 @@ public final class SessionManager {
       session.unhandlePlayer(clientId);
       sessionIdByClientId.remove(clientId);
 
-      // Delete empty sessions
-      if (session.isEmpty()) {
+      if (session.isEmpty()) { // Delete empty sessions
         closeSession(sessionId);
+      } else if (session.isEveryoneReady()) { // Start game if everyone is ready now
+        session.startGame();
       }
 
       return true;
