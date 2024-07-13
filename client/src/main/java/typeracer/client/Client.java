@@ -133,6 +133,14 @@ final class Client {
     new Thread(() -> receiveMessage(socket)).start();
   }
 
+  /**
+   * Creates a connection to the server using the given IP adress and port,
+   * starts the session with the given username.
+   *
+   * @param ip ip address of the server
+   * @param port port number of the server
+   * @param username username used for the session
+   */
   public void connect(String ip, int port, String username) {
     InetSocketAddress address = new InetSocketAddress(ip, port);
     try {
@@ -144,6 +152,11 @@ final class Client {
     }
   }
 
+  /**
+   * Chain of message handlers for processing the different types of messages.
+   *
+   * @return the first handler in the chain of message handlers
+   */
   private MessageHandler createMessageHandlerChain() {
     MessageHandler characterResponseHandler = new CharacterResponseHandler(null, viewController);
     MessageHandler handShakeResponseHandler =
@@ -167,6 +180,12 @@ final class Client {
     return new LeaveSessionResponseHandler(joinSessionResponseHandler, viewController);
   }
 
+  /**
+   * Handles incoming messages by passing them to the chain of message handlers.
+   *
+   * @param message
+   * @throws IOException
+   */
   public void handleMessage(Message message) throws IOException {
     messageHandlerChain.handleMessage(message);
   }
@@ -195,7 +214,6 @@ final class Client {
       while (socket.isConnected()
           && !socket.isClosed()
           && (serverMessage = reader.readLine()) != null) {
-//        System.out.println(serverMessage);
         Message message = moshiAdapter.fromJson(serverMessage);
         handleMessage(message);
       }
