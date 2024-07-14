@@ -108,7 +108,7 @@ public class PlayerStatsUi extends VBox {
     roundsLabel.setAlignment(Pos.CENTER_LEFT);
 
     Label wpmLabel = new Label();
-    wpmLabel.setText(String.format("Average WPM: %.2f", viewController.getAverageWPM()));
+    wpmLabel.setText(String.format("Average WPM: %.2f", viewController.getAverageWpm()));
     wpmLabel.setAlignment(Pos.CENTER_LEFT);
 
     Label accuracyLabel = new Label();

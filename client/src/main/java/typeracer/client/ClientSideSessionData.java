@@ -156,7 +156,7 @@ public class ClientSideSessionData {
    */
   public boolean updatePlayer(int playerId, String playerName, boolean ready) {
 
-    boolean isNew = !playerNamesById.containsKey(playerId);
+    final boolean isNew = !playerNamesById.containsKey(playerId);
 
     playerNamesById.put(playerId, playerName);
     setPlayerReady(playerId, ready);

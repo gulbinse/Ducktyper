@@ -47,7 +47,6 @@ final class Client {
 
     String username = DEFAULT_USERNAME;
     String serverAddress = DEFAULT_ADDRESS;
-    int port = DEFAULT_PORT;
     // check validity
     if (!isValidName(username)) {
       printErrorMessage("Invalid username: " + username);
@@ -64,6 +63,7 @@ final class Client {
     }
     assert ip != null;
 
+    int port = DEFAULT_PORT;
     if (!isValidPort(port)) {
       printErrorMessage("The port number should be in the range of 1024~65535.");
       return;

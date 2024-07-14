@@ -308,7 +308,7 @@ public class GameUi extends VBox {
     accuracyLabel.setFont(StyleManager.BOLD_ITALIC_FONT);
     accuracyLabel.setTextFill(Color.BLACK);
 
-    Label errorsLabel = new Label();
+    final Label errorsLabel = new Label();
 
     Label usernameLabel = new Label(viewController.getUsernameById(playerId));
     usernameLabel.setFont(StyleManager.BOLD_ITALIC_FONT);
