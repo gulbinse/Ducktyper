@@ -2,11 +2,17 @@ package typeracer.client.view;
 
 import java.util.Objects;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import typeracer.client.ViewController;
 
 /**
@@ -17,17 +23,6 @@ import typeracer.client.ViewController;
 public class MainMenuUi extends VBox {
 
   private ViewController viewController;
-
-  /** Button to start a new game. */
-  private Button startGameButton;
-
-  /** Button to view player statistics. */
-  private Button statsButton;
-
-  /** Button to exit the game. */
-  private Button exitButton;
-
-  private Button joinSessionButton;
 
   private TextField sessionIdField;
 
