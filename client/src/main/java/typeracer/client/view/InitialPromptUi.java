@@ -23,6 +23,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import typeracer.client.ViewController;
 
+import java.util.Objects;
+
 /**
  * Represents the initial prompt user interface for the TypeRacer game. This class sets up the GUI
  * elements that prompt the user to enter their username.
@@ -136,7 +138,7 @@ public class InitialPromptUi extends VBox {
    */
   private ImageView createSubmitImage() {
     ImageView submitImage =
-        new ImageView(new Image(getClass().getResourceAsStream("/images/button.png")));
+        new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/button.png"))));
     submitImage.setFitHeight(50);
     submitImage.setFitWidth(50);
     submitImage.setEffect(new DropShadow());

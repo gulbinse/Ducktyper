@@ -4,6 +4,10 @@ import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -110,6 +114,43 @@ public class StyleManager {
 //    button.setMaxSize(120, 40);
     button.setPrefSize(160, 40);
     return button;
+  }
+
+    /**
+     * Creates a button for the Main Menu.
+     *
+     * @param image of what the button should look like
+     * @return an ImageView that acts like a button
+     */
+  public static ImageView createMainMenueButton(Image image) {
+      ImageView submitImage =
+              new ImageView(image);
+      submitImage.setFitHeight(50);
+      submitImage.setPreserveRatio(true);
+
+      submitImage.setOnMouseEntered(
+              e -> {
+                  submitImage.setScaleX(1.1);
+                  submitImage.setScaleY(1.1);
+              });
+      submitImage.setOnMouseExited(
+              e -> {
+                  submitImage.setScaleX(1.0);
+                  submitImage.setScaleY(1.0);
+              }
+      );
+      submitImage.setOnMouseReleased(
+              e -> {
+                  submitImage.setScaleX(1.0);
+                  submitImage.setScaleY(1.0);
+              });
+      return submitImage;
+  }
+
+  public static Region createBulletListSpacer(){
+      Region spacerBulltepoints = new Region();
+      spacerBulltepoints.setPrefWidth(20);
+      return spacerBulltepoints;
   }
 
   /**
