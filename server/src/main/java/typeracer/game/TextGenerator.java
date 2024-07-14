@@ -6,8 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -15,9 +16,9 @@ import java.util.Random;
  */
 public class TextGenerator {
   private final String corpus;
-  private String[] preprocessedCorpus;
-  private Map<String, Map<String, Integer>> model = new HashMap<>();
-  private Map<String, Integer> startingProbabilities = new HashMap<>();
+  private List<String> preprocessedCorpus = new ArrayList<>();
+  private HashMap<String, HashMap<String, Integer>> model = new HashMap<>();
+  private HashMap<String, Integer> startingProbabilities = new HashMap<>();
   private final Random random = new Random();
 
   /**
@@ -35,10 +36,11 @@ public class TextGenerator {
    *
    * @return the preprocessed corpus as an array of words.
    */
-  private String[] preprocessCorpus() {
+  private List<String> preprocessCorpus() {
     System.out.println("Preprocessing corpus...");
-    preprocessedCorpus = corpus.toLowerCase().trim().replaceAll("\\p{Punct}|[^\\p{ASCII}]",
-            "").split("\\s+");
+    preprocessedCorpus = List.of(corpus.toLowerCase().trim().replaceAll("\\p{Punct}|[^\\p{ASCII}]",
+        "").split("[\\s \\t\\p{Cntrl}\\p{javaWhitespace}]+", 0));
+    preprocessedCorpus = preprocessedCorpus.stream().filter(word -> !word.isEmpty() && !word.isBlank()).toList();
     System.out.println("Corpus preprocessed.");
     return preprocessedCorpus;
   }
@@ -51,67 +53,65 @@ public class TextGenerator {
    */
   public void trainModel(String uniqueModelName) {
     File modelFile = new File(uniqueModelName + ".model");
-    if (modelFile.exists()) {
-      try {
-        ObjectInputStream modelInputStream = new ObjectInputStream(new FileInputStream(
-                modelFile));
-        model = (HashMap<String, Map<String, Integer>>) modelInputStream.readObject();
-        modelInputStream.close();
-
-        ObjectInputStream startingProbabilitiesInputStream = new ObjectInputStream(new
-                FileInputStream(uniqueModelName + ".sProbs"));
-        startingProbabilities = (HashMap<String, Integer>) startingProbabilitiesInputStream.
-                readObject();
-        startingProbabilitiesInputStream.close();
-      } catch (IOException | ClassNotFoundException e) {
-        throw new RuntimeException(e);
-      }
+    File startingProbabilitiesFile = new File(uniqueModelName + ".sProbs");
+    if (modelFile.exists() && startingProbabilitiesFile.exists()) {
+      loadModelFromFiles(modelFile, startingProbabilitiesFile);
     } else {
       System.out.println("Training model...");
       preprocessCorpus();
-      for (int i = 0; i < preprocessedCorpus.length - 1; i++) {
-        String currentWord = preprocessedCorpus[i];
-        model.putIfAbsent(currentWord, new HashMap<>());
-        startingProbabilities.putIfAbsent(currentWord, 1);
-        Map<String, Integer> frequencyDistribution = model.get(currentWord);
-        for (String word : preprocessedCorpus) {
-          if (currentWord.equals(word)) {
-            startingProbabilities.put(word, startingProbabilities.get(word) + 1);
-            String followingWord = preprocessedCorpus[i+1];
-            frequencyDistribution.putIfAbsent(followingWord, 0);
-            frequencyDistribution.put(followingWord, frequencyDistribution.get(followingWord) + 1);
+      for (int i = 0; i < preprocessedCorpus.size() - 1; i++) {
+        String currentWord = preprocessedCorpus.get(i);
+        int currentPosition = i;
+        model.computeIfAbsent(currentWord, k -> {
+          startingProbabilities.put(currentWord, 0);
+          HashMap<String, Integer> frequencyDistribution = new HashMap<>();
+          for (int j = currentPosition; j < preprocessedCorpus.size() - 1; j++) {
+            if (currentWord.equals(preprocessedCorpus.get(j))) {
+              startingProbabilities.put(currentWord, startingProbabilities.get(currentWord) + 1);
+              String followingWord = preprocessedCorpus.get(j + 1);
+              frequencyDistribution.putIfAbsent(followingWord, 0);
+              frequencyDistribution.put(followingWord, frequencyDistribution.get(followingWord) + 1);
+            }
           }
-        }
+          return frequencyDistribution;
+        });
       }
-      for (String word : preprocessedCorpus) {
-        //normalizeDistribution(model.get(word));
-      }
-      //normalizeDistribution(startingProbabilities);
-
-      try {
-        ObjectOutputStream modelOutputStream = new ObjectOutputStream(new FileOutputStream(
-                uniqueModelName + ".model"));
-        modelOutputStream.writeObject(model);
-        modelOutputStream.flush();
-        modelOutputStream.close();
-
-        ObjectOutputStream startingProbabilitiesOutputStream = new ObjectOutputStream(new
-                FileOutputStream(uniqueModelName +  ".sProbs"));
-        startingProbabilitiesOutputStream.writeObject(startingProbabilities);
-        startingProbabilitiesOutputStream.flush();
-        startingProbabilitiesOutputStream.close();
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-
+      writeModelToFile(uniqueModelName);
       System.out.println("Model trained.");
     }
   }
 
-  /**private void normalizeDistribution(Map<String, Double> distribution) {
-    double sum = distribution.values().stream().reduce(0.0, Double::sum);
-    distribution.replaceAll((w, frequency) -> frequency / sum);
-  }**/
+  private void writeModelToFile(String uniqueModelName) {
+    try {
+      ObjectOutputStream modelOutputStream = new ObjectOutputStream(new FileOutputStream(
+              uniqueModelName + ".model"));
+      modelOutputStream.writeObject(model);
+      modelOutputStream.flush();
+      modelOutputStream.close();
+
+      ObjectOutputStream startingProbabilitiesOutputStream = new ObjectOutputStream(new
+              FileOutputStream(uniqueModelName +  ".sProbs"));
+      startingProbabilitiesOutputStream.writeObject(startingProbabilities);
+      startingProbabilitiesOutputStream.flush();
+      startingProbabilitiesOutputStream.close();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void loadModelFromFiles(File modelFile, File startingProbabilitiesFile) {
+    try {
+      ObjectInputStream modelInputStream = new ObjectInputStream(new FileInputStream(modelFile));
+      model = (HashMap<String, HashMap<String, Integer>>) modelInputStream.readObject();
+      modelInputStream.close();
+
+      ObjectInputStream startingProbabilitiesInputStream = new ObjectInputStream(new FileInputStream(startingProbabilitiesFile));
+      startingProbabilities = (HashMap<String, Integer>) startingProbabilitiesInputStream.readObject();
+      startingProbabilitiesInputStream.close();
+    } catch (IOException | ClassNotFoundException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   /**
    * Generates a sequence of text based on the trained model.
@@ -131,7 +131,11 @@ public class TextGenerator {
 
     String newWord = startingWord;
     for (int i = 0; i < words; i++) {
-      newWord = sampleFromDistribution(model.get(newWord));
+      if (model.get(newWord) == null || newWord.isBlank()) {
+        newWord = sampleFromDistribution(startingProbabilities);
+      } else {
+        newWord = sampleFromDistribution(model.get(newWord));
+      }
       output.append(newWord);
       if (i < words - 1) {
         output.append(" ");
@@ -148,14 +152,14 @@ public class TextGenerator {
    * @param distribution the frequency distribution of words.
    * @return a randomly selected word from the distribution.
    */
-  private String sampleFromDistribution(Map<String, Integer> distribution) {
+  private String sampleFromDistribution(HashMap<String, Integer> distribution) {
     int index = random.nextInt(distribution.values().stream().reduce(0, Integer::sum));
     int accumulator = 0;
     for (String word : distribution.keySet()) {
-      accumulator += distribution.get(word);
       if (accumulator >= index) {
         return word;
       }
+      accumulator += distribution.get(word);
     }
     assert false;
     return "";

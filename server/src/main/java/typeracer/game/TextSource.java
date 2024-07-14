@@ -203,7 +203,7 @@ public class TextSource {
    * @param textGenerator the TextGenerator to use for generating text.
    */
   public void setTextGeneratedFromTextGenerator(TextGenerator textGenerator)  {
-    currentText = textGenerator.generateText(100);
+    currentText = textGenerator.generateText(100).replaceAll(" +", " ");
   }
 
   /**
