@@ -42,7 +42,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The players ID added to the `HandshakeResponse` (Adrian)
 - Check whether player is ready (Adrian)
 - Missing Javadocs (Alina)
-- Push-Up message if Server crashes
+- Push-Up message if Server crashes (Tobi)
+- Push-Up message if Server is unreachable (Adrian)
+- Average player stats over several rounds (Adrian)
+- Underline the next character the player has to write (Alina)
+- GUI suggestions and protocol sessions (Alina)
 
 ### Changed
 - Cleaned up client and GUI: (Tobi, Eric)
@@ -54,11 +58,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Initial Screen button order (Tobi)
 - Main Menu screen button design (Tobi)
 - increased Text Size of displayed Text in game (Tobi)
+- More readable player list background color scheme in lobby (Adrian)
+- README (Alina)
 
 ### Removed
 - unused methods in `ViewController` (Tobi, Eric)
 - "Play again" button (Adrian, Eric)
 - removed started animation (Tobi)
+- player settings (Alina)
 
 ### Fixed
 - Race Condition closing the Socket preemptively (Alina, Adrian)
