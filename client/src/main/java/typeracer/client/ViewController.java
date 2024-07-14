@@ -75,6 +75,9 @@ public class ViewController extends Application {
   private ClientSideSessionData playerData = new ClientSideSessionData();
   private String username;
   private int playerId;
+  private int roundsPlayed;
+  private double averageWPM;
+  private double averageAccuracy;
 
   /**
    * Constructs a ViewController with a given stage and client. Initializes the view mappings and
@@ -323,10 +326,35 @@ public class ViewController extends Application {
             showScene(SceneName.GAME_RESULTS);
             GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
             gameUi.onViewShown();
+
+            // Update average stats if 100% finished
+            if (getPlayerProgressProperty(playerId).get() >= 1) {
+              double wpm = getPlayerWpmProperty(playerId).get();
+              double accuracy = getPlayerAccuracyProperty(playerId).get();
+              roundPlayed(wpm, accuracy);
+            }
           } else {
             showScene(SceneName.MAIN_MENU);
           }
         });
+  }
+
+  public void roundPlayed(double wpm, double accuracy) {
+    roundsPlayed++;
+    averageWPM = ((averageWPM * (roundsPlayed - 1)) + wpm) / roundsPlayed;
+    averageAccuracy = ((averageAccuracy * (roundsPlayed - 1)) + accuracy) / roundsPlayed;
+  }
+
+  public int getRoundsPlayed() {
+    return roundsPlayed;
+  }
+
+  public double getAverageWPM() {
+    return averageWPM;
+  }
+
+  public double getAverageAccuracy() {
+    return averageAccuracy;
   }
 
   /**

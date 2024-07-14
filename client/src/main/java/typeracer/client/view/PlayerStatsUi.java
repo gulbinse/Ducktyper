@@ -104,27 +104,24 @@ public class PlayerStatsUi extends VBox {
                 CornerRadii.EMPTY,
                 new BorderWidths(1))));
 
+    Label roundsLabel = new Label();
+    roundsLabel.setText("Rounds played: " + viewController.getRoundsPlayed());
+    roundsLabel.setAlignment(Pos.CENTER_LEFT);
+
     Label wpmLabel = new Label();
-    Label accuracyLabel = new Label();
-
-    DoubleProperty wpmProperty = viewController.getPlayerWpmProperty(viewController.getPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
-    accuracyLabel
-        .textProperty()
-        .bind(
-            viewController
-                .getPlayerAccuracyProperty(viewController.getPlayerId())
-                .multiply(100)
-                .asString("%.2f%% Accuracy"));
-
+    wpmLabel.setText(String.format("Average WPM: %.2f", viewController.getAverageWPM()));
     wpmLabel.setAlignment(Pos.CENTER_LEFT);
-    accuracyLabel.setAlignment(Pos.CENTER_RIGHT);
 
+    Label accuracyLabel = new Label();
+    accuracyLabel.setText(String.format("Average accuracy: %.2f%%", viewController.getAverageAccuracy() * 100));
+    accuracyLabel.setAlignment(Pos.CENTER_LEFT);
+
+    VBox.setMargin(roundsLabel, new Insets(10, 50, 10, 50));
     VBox.setMargin(wpmLabel, new Insets(10, 50, 10, 50));
     VBox.setMargin(accuracyLabel, new Insets(10, 50, 10, 50));
     VBox.setMargin(statsBox, new Insets(10, 50, 10, 50));
 
-    statsBox.getChildren().addAll(wpmLabel, accuracyLabel);
+    statsBox.getChildren().addAll(roundsLabel, wpmLabel, accuracyLabel);
     return statsBox;
   }
 
