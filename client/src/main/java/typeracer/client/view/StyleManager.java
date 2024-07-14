@@ -21,10 +21,14 @@ public class StyleManager {
    * The color used for the start screen background. This color is defined as a web color with the
    * hex code "#2374AB".
    */
+
+
   public static final Color START_SCREEN = Color.web("#2374AB");
 
-  /** Color for green buttons. */
   public static final Color GREEN_BUTTON = Color.web("#009900");
+
+  /** Color for green buttons. */
+  public static final Color STANDARD_BUTTON = Color.web("#08415C");
 
   /** Color for blue buttons. */
   public static final Color BLUE_BUTTON = Color.web("#007FFF");
@@ -69,18 +73,18 @@ public class StyleManager {
         "-fx-background-color: "
             + hexColor
             + "; -fx-text-fill: white; -fx-border-width: "
-            + "0; -fx-border-color: transparent;";
-    String hoverStyle =
-        "-fx-background-color: "
-            + hexColor
-            + "; -fx-text-fill: white; -fx-border-color: "
-            + "white; -fx-border-width: 2px;";
+            + "2; -fx-border-color: #52CCC1";
+//    String hoverStyle =
+//        "-fx-background-color: "
+//            + hexColor
+//            + "; -fx-text-fill: white; -fx-border-color: "
+//            + "#52CCC1; -fx-border-width: 2px;";
 
     button.setStyle(defaultStyle);
     button.setFont(font);
     button.setOnMouseEntered(
         e -> {
-          button.setStyle(hoverStyle);
+//          button.setStyle(hoverStyle);
           ScaleTransition scaleUp = new ScaleTransition(Duration.millis(200), button);
           scaleUp.setToX(1.1);
           scaleUp.setToY(1.1);
@@ -103,9 +107,9 @@ public class StyleManager {
           clickScale.setAutoReverse(true);
           clickScale.play();
         });
-    button.setMinSize(120, 40);
-    button.setMaxSize(120, 40);
-    button.setPrefSize(120, 40);
+//    button.setMinSize(120, 40);
+//    button.setMaxSize(120, 40);
+    button.setPrefSize(160, 40);
     return button;
   }
 

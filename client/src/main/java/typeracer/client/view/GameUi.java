@@ -46,6 +46,8 @@ public class GameUi extends VBox {
     Text expectedCharacter = new Text();
     Text copiedGameText = new Text();
 
+    private static String TEXT_SIZE = "-fx-font-size: 16px;";
+
     Color colorOfUncopiedGame = Color.BLACK;
     Color colorOfExpectedCharacter = Color.RED;
     Color colorOfCopiedGame = Color.WHITE;
@@ -114,6 +116,9 @@ public class GameUi extends VBox {
         uncopiedGameText.setFill(colorOfUncopiedGame);
         expectedCharacter.setFill(colorOfExpectedCharacter);
         copiedGameText.setFill(colorOfCopiedGame);
+        uncopiedGameText.setStyle(TEXT_SIZE);
+        expectedCharacter.setStyle(TEXT_SIZE);
+        copiedGameText.setStyle(TEXT_SIZE);
         displayText = new TextFlow();
         displayText.setPrefHeight(150);
         displayText.setMaxWidth(Double.MAX_VALUE);

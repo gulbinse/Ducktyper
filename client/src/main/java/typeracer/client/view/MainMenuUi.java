@@ -69,19 +69,19 @@ public class MainMenuUi extends VBox {
 
     startGameButton =
         StyleManager.createStyledButton(
-            "start new game", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
+            "New Session", StyleManager.STANDARD_BUTTON, StyleManager.STANDARD_FONT);
     joinSessionButton =
         StyleManager.createStyledButton(
-            "Join Session", StyleManager.ORANGE_BUTTON, StyleManager.STANDARD_FONT);
+            "Join Session", StyleManager.STANDARD_BUTTON, StyleManager.STANDARD_FONT);
     profileSettingButton =
         StyleManager.createStyledButton(
-            "profile settings", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
+            "Profile", StyleManager.STANDARD_BUTTON, StyleManager.STANDARD_FONT);
     statsButton =
         StyleManager.createStyledButton(
-            "view stats", StyleManager.ORANGE_BUTTON, StyleManager.STANDARD_FONT);
+            "Stats", StyleManager.STANDARD_BUTTON, StyleManager.STANDARD_FONT);
     exitButton =
         StyleManager.createStyledButton(
-            "exit", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
+            "Exit", StyleManager.STANDARD_BUTTON, StyleManager.STANDARD_FONT);
 
     startGameButton.setOnAction(e -> viewController.createSession());
     sessionIdField = new TextField();
@@ -111,7 +111,7 @@ public class MainMenuUi extends VBox {
     StyleManager.applyFadeInAnimation(exitButton, 1500);
 
     StyleManager.applyButtonHoverAnimation(
-        startGameButton, profileSettingButton, statsButton, exitButton);
+        startGameButton,joinSessionButton, profileSettingButton, statsButton, exitButton);
 
     this.getChildren()
         .addAll(startGameButton, sessionBox, profileSettingButton, statsButton, exitButton);
