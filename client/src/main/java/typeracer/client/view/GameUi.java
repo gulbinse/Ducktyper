@@ -205,7 +205,10 @@ public class GameUi extends VBox {
    * @param typedCharacter the character that was typed.
    */
   private void handleTyping(char typedCharacter) {
-    viewController.handleCharacterTyped(typedCharacter);
+    if (typedCharacter != '\b') {
+      System.out.println(typedCharacter);
+      viewController.handleCharacterTyped(typedCharacter);
+    }
   }
 
   /**
