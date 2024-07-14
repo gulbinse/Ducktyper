@@ -6,7 +6,6 @@ Java-Version: Java 21
 Gradle-Version: Gradle 8.7
 
 ## Usage
-Make sure the server is running before starting the GUI to use full functionality of the game.
 
 To start a server:
 ```
@@ -27,6 +26,15 @@ To start a GUI of the Ducktyper game:
 The communication between the server and clients (players) is described in a JSON protocol.
 The details of this protocol are provided in a separate document:
 [Protocol](project_planning/protocol.md)
+
+## Features
+- Hidden Ducks!
+- Singleplayer support
+- Multiplayer support
+- Multi-Lobby support
+- Player Stats
+- Automatic text generation
+- Fancy racetracks
 
 ## Developers
 The Ducktyper game was developed by the following team:
