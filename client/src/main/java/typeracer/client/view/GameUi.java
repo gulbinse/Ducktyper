@@ -170,6 +170,7 @@ public class GameUi extends VBox {
             copiedGameText.setText(copiedText);
             uncopiedGameText.setText(uncopiedText);
             expectedCharacter.setText("");
+            expectedCharacter.setUnderline(true);
           }
         });
   }

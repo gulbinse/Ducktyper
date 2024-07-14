@@ -33,8 +33,6 @@ public class PlayerLeftNotificationHandler implements MessageHandler {
   @Override
   public void handleMessage(Message message) {
     if (message instanceof PlayerLeftNotification playerLeftNotification) {
-      System.out.println("Player " + playerLeftNotification.getPlayerId() + " left the game.");
-      System.out.println("There are " + playerLeftNotification.getNumPlayers() + " players left.");
       viewController.removePlayerFromSession(playerLeftNotification.getPlayerId());
 
     } else if (nextHandler != null) {
