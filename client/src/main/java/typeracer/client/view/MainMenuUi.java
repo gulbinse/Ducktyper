@@ -76,7 +76,7 @@ public class MainMenuUi extends VBox {
 
     startGameButton =
         StyleManager.createStyledButton(
-            "start new game", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
+            "create session", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
     joinSessionButton =
         StyleManager.createStyledButton(
             "join session", StyleManager.ORANGE_BUTTON, StyleManager.STANDARD_FONT);
@@ -102,6 +102,10 @@ public class MainMenuUi extends VBox {
     sessionIdField.setPromptText("Enter Session ID");
     sessionIdField.setMaxWidth(200);
     sessionIdField.getStyleClass().add("startScreen-input-field");
+
+    Region spacerBetweenButtons = new Region();
+    spacerBetweenButtons.setPrefHeight(50);
+
     joinSessionButton.setOnAction(
         event -> {
           try {
@@ -128,7 +132,8 @@ public class MainMenuUi extends VBox {
         startGameButton, profileSettingButton, statsButton, exitButton);
 
     this.getChildren()
-        .addAll(startGameButton, sessionBox, profileSettingButton, statsButton, exitButton);
+        .addAll(startGameButton, spacerBetweenButtons, sessionBox, profileSettingButton,
+                statsButton, exitButton);
   }
 
   /** Creates and returns a title panel with an image. */
