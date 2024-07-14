@@ -1,7 +1,7 @@
 package typeracer.client.messagehandling;
 
 import typeracer.client.ViewController;
-import typeracer.communication.messages.*;
+import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.ReadyResponse;
 import typeracer.communication.statuscodes.PermissionStatus;
 
