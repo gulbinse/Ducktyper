@@ -102,6 +102,7 @@ public class MainMenuUi extends VBox {
     sessionIdField = new TextField();
     sessionIdField.setPromptText("Enter Session ID");
     sessionIdField.setMaxWidth(200);
+    sessionIdField.setStyle("-fx-alignment: center;");
     sessionIdField.getStyleClass().add("startScreen-input-field");
 
     Region spacerBetweenButtons = new Region();
