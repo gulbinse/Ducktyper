@@ -7,6 +7,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -112,9 +113,9 @@ public class SessionUi extends VBox {
         });
 
     playerList = new VBox();
-    playerList.setPrefHeight(200);
+    playerList.setPrefHeight(180);
     playerList.setBackground(
-        new Background(new BackgroundFill(Color.WHITE, new CornerRadii(5), Insets.EMPTY)));
+        new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
 
     readyButton =
         StyleManager.createStyledButton(
@@ -145,12 +146,6 @@ public class SessionUi extends VBox {
     HBox label = new HBox(10);
     label.setAlignment(Pos.CENTER_LEFT);
     label.setPadding(new Insets(10, 10, 10, 10));
-    label.setBackground(
-        new Background(
-            new BackgroundFill(
-                playerList.getChildren().size() % 2 == 0 ? Color.LIGHTGRAY : StyleManager.GREY_BOX,
-                CornerRadii.EMPTY,
-                Insets.EMPTY)));
 
     Circle readyStatus = new Circle(5);
     BooleanProperty readyProperty = viewController.getPlayerReadyProperty(playerId);
@@ -170,6 +165,8 @@ public class SessionUi extends VBox {
 
     playerList.getChildren().add(label);
     playerLabelById.put(playerId, label);
+
+    repaintPlayerListBackgrounds();
   }
 
   /**
@@ -181,6 +178,21 @@ public class SessionUi extends VBox {
     HBox label = playerLabelById.getOrDefault(playerId, null);
     playerList.getChildren().remove(label);
     playerLabelById.remove(playerId);
+    repaintPlayerListBackgrounds();
+  }
+
+  private void repaintPlayerListBackgrounds() {
+    for (int i = 0; i < playerList.getChildren().size(); i++) {
+      Node node = playerList.getChildren().get(i);
+      if (node instanceof HBox playerLabel) {
+        playerLabel.setBackground(
+            new Background(
+                new BackgroundFill(
+                    i % 2 == 0 ? Color.LIGHTGRAY : StyleManager.GREY_BOX,
+                    CornerRadii.EMPTY,
+                    Insets.EMPTY)));
+      }
+    }
   }
 
   // Simulated method to fetch game mode for a given session
