@@ -37,10 +37,8 @@ public class ReadyResponseHandler implements MessageHandler {
         case ACCEPTED:
           System.out.println("Player is ready.");
           break;
-        case DENIED:
-          System.out.println("ReadyRequest has been denied.");
-          break;
         default:
+          System.out.println("ReadyRequest has been denied.");
           break;
       }
     } else if (nextHandler != null) {

@@ -36,6 +36,7 @@ public class PlayerUpdateNotificationHandler implements MessageHandler {
     if (message instanceof PlayerUpdateNotification playerUpdateNotification) {
       viewController.updatePlayer(
           playerUpdateNotification.getPlayerId(), playerUpdateNotification.getPlayerName(), playerUpdateNotification.isReady());
+
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }
