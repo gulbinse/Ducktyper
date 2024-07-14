@@ -15,11 +15,13 @@ public class LeaveSessionResponseHandler implements MessageHandler {
   private final ViewController viewController;
 
   /**
-   * Constructor with the next handler in chain.
+   * Constructs a LeaveSessionResponseHandler.
+   * Initializes the handler with the specified next handler and view controller.
    *
-   * @param nextHandler the next handler in message handling chain
+   * @param nextHandler the next handler in the chain of responsibility.
+   * @param viewController the view controller used to update the view.
    */
-  public LeaveSessionResponseHandler(MessageHandler nextHandler, ViewController viewController) {
+  LeaveSessionResponseHandler(MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;
     this.viewController = viewController;
   }

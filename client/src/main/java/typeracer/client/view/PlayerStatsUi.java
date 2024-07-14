@@ -42,14 +42,19 @@ public class PlayerStatsUi extends VBox {
   /** Label for displaying the average accuracy. */
   private Label averageAccuracyLabel;
 
+  private PlayerStatsUi(ViewController viewController) {
+    this.viewController = viewController;
+  }
+
   /**
-   * Constructs a new PlayerStatsUi and initializes its user interface.
+   * Creates a new PlayerStatsUi and initializes its user interface.
    *
    * @param viewController the controller to manage views and handle interactions.
    */
-  public PlayerStatsUi(ViewController viewController) {
-    this.viewController = viewController;
-    initializeUi();
+  public static PlayerStatsUi create(ViewController viewController) {
+    PlayerStatsUi playerStatsUi = new PlayerStatsUi(viewController);
+    playerStatsUi.initializeUi();
+    return playerStatsUi;
   }
 
   /**

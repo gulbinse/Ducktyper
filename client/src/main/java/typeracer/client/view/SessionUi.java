@@ -1,11 +1,14 @@
 package typeracer.client.view;
 
+import java.util.HashMap;
+import java.util.Map;
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
@@ -21,9 +24,6 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import typeracer.client.ViewController;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * This class represents the UI for the game session view. It includes components such as player
  * list, mode selection dropdown, and buttons to ready up or go back to the main menu.
@@ -38,15 +38,20 @@ public class SessionUi extends VBox {
   private Label usernameLabel;
   private Label sessionIdLabel;
 
+  private SessionUi(ViewController viewController) {
+    this.viewController = viewController;
+  }
+
   /**
-   * Constructor to initialize the Session UI.
+   * Creates and initializes the Session UI.
    *
    * @param viewController the controller to manage views.
    */
-  public SessionUi(ViewController viewController) {
-    this.viewController = viewController;
-    initializeUi();
-    updateUsernameLabel();
+  public static SessionUi create(ViewController viewController) {
+    SessionUi sessionUi = new SessionUi(viewController);
+    sessionUi.initializeUi();
+    sessionUi.updateUsernameLabel();
+    return sessionUi;
   }
 
   /**
@@ -84,27 +89,32 @@ public class SessionUi extends VBox {
 
     Label copiedSessionId = new Label("Copied Session ID to clipboard.");
     copiedSessionId.setOpacity(0);
-    Button copySessionIdButton = StyleManager.createStyledButton(
-        "Copy Session ID", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
-    copySessionIdButton.setOnAction(e -> {
-      Clipboard clipboard = Clipboard.getSystemClipboard();
-      ClipboardContent content = new ClipboardContent();
-      content.putString(Integer.toString(viewController.getSessionId()));
-      clipboard.setContent(content);
-      FadeTransition fadeIn = new FadeTransition(Duration.millis(1500), copiedSessionId);
-      fadeIn.setFromValue(0.0);
-      fadeIn.setToValue(1.0);
-      copiedSessionId.setText("Copied Session ID to clipboard.");
-      copiedSessionId.setOpacity(1);
-      fadeIn.setCycleCount(2);
-      fadeIn.setAutoReverse(true);
-      fadeIn.play();
-      copiedSessionId.setOpacity(0);
-    });
+    Button copySessionIdButton =
+        StyleManager.createStyledButton(
+            "Copy Session ID", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
+    copySessionIdButton.setPrefWidth(150);
+    copySessionIdButton.setMaxWidth(150);
+    copySessionIdButton.setOnAction(
+        e -> {
+          Clipboard clipboard = Clipboard.getSystemClipboard();
+          ClipboardContent content = new ClipboardContent();
+          content.putString(Integer.toString(viewController.getSessionId()));
+          clipboard.setContent(content);
+          FadeTransition fadeIn = new FadeTransition(Duration.millis(1500), copiedSessionId);
+          fadeIn.setFromValue(0.0);
+          fadeIn.setToValue(1.0);
+          copiedSessionId.setText("Copied Session ID to clipboard.");
+          copiedSessionId.setOpacity(1);
+          fadeIn.setCycleCount(2);
+          fadeIn.setAutoReverse(true);
+          fadeIn.play();
+          copiedSessionId.setOpacity(0);
+        });
 
     playerList = new VBox();
     playerList.setPrefHeight(200);
-    playerList.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(5), Insets.EMPTY)));
+    playerList.setBackground(
+        new Background(new BackgroundFill(Color.WHITE, new CornerRadii(5), Insets.EMPTY)));
 
     readyButton =
         StyleManager.createStyledButton(
@@ -126,18 +136,33 @@ public class SessionUi extends VBox {
     this.getChildren().addAll(titleImageView, usernameLabel, sessionIdArea, playerList, buttonBox);
   }
 
+  /**
+   * Adds a label for a player to the player list.
+   *
+   * @param playerId the ID of the player to add.
+   */
   public void addPlayerLabel(int playerId) {
     HBox label = new HBox(10);
     label.setAlignment(Pos.CENTER_LEFT);
     label.setPadding(new Insets(10, 10, 10, 10));
-    label.setBackground(new Background(new BackgroundFill(playerList.getChildren().size() % 2 == 0 ? Color.LIGHTGRAY : StyleManager.GREY_BOX, CornerRadii.EMPTY, Insets.EMPTY)));
+    label.setBackground(
+        new Background(
+            new BackgroundFill(
+                playerList.getChildren().size() % 2 == 0 ? Color.LIGHTGRAY : StyleManager.GREY_BOX,
+                CornerRadii.EMPTY,
+                Insets.EMPTY)));
 
     Circle readyStatus = new Circle(5);
     BooleanProperty readyProperty = viewController.getPlayerReadyProperty(playerId);
-    readyStatus.fillProperty().bind(Bindings.createObjectBinding(() -> {
-      boolean ready = readyProperty.getValue();
-      return ready ? Color.GREEN : Color.RED;
-    }, readyProperty));
+    readyStatus
+        .fillProperty()
+        .bind(
+            Bindings.createObjectBinding(
+                () -> {
+                  boolean ready = readyProperty.getValue();
+                  return ready ? Color.GREEN : Color.RED;
+                },
+                readyProperty));
 
     Text name = new Text(viewController.getUsernameById(playerId));
 
@@ -147,6 +172,11 @@ public class SessionUi extends VBox {
     playerLabelById.put(playerId, label);
   }
 
+  /**
+   * Removes the player label for the specified player ID.
+   *
+   * @param playerId the ID of the player whose label is to be removed.
+   */
   public void removePlayerLabel(int playerId) {
     HBox label = playerLabelById.getOrDefault(playerId, null);
     playerList.getChildren().remove(label);

@@ -61,6 +61,13 @@ public class TextSource {
     }
   }
 
+  /**
+   * Sets the text generated from the default corpus file.
+   * This method loads the default corpus file from the classpath,
+   * converts its URL to a URI, and generates text from it.
+   *
+   * @throws IOException if an I/O error occurs.
+   */
   public void setTextGeneratedFromDefaultCorpus() throws IOException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     URL textFileUrl = classLoader.getResource(DEFAULT_CORPUS_FILE_PATH);
@@ -73,7 +80,8 @@ public class TextSource {
   }
 
   /**
-   * Sets a text randomly from one of the files in the default folder {@value TEXT_SOURCE_FOLDER}.
+   * Sets a text randomly from one of the files in the default folder {@value
+   * TEXT_SOURCE_FOLDER}.
    *
    * @throws IOException when exceptions with reading the file occur
    */
@@ -115,6 +123,15 @@ public class TextSource {
     currentText = getTextFromFile(file);
   }
 
+  /**
+   * Reads the content of a file and returns it as a single string.
+   * This method reads the file line by line, concatenates the lines into a single string,
+   * and skips any empty lines.
+   *
+   * @param file the file to read from.
+   * @return the content of the file as a single string.
+   * @throws IOException if an I/O error occurs.
+   */
   private String getTextFromFile(File file) throws IOException {
     try (BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
       String line = reader.readLine();
@@ -149,6 +166,12 @@ public class TextSource {
     setTextFromFile(file);
   }
 
+  /**
+   * Sets the text generated from a randomly selected corpus file.
+   *
+   * @param files the list of corpus files to choose from.
+   * @throws IOException if an I/O error occurs.
+   */
   public void setTextGeneratedFromCorpora(@NotNull List<File> files) throws IOException {
     assert !files.isEmpty();
     int fileNum = random.nextInt(files.size());
@@ -157,12 +180,23 @@ public class TextSource {
     setTextGeneratedFromCorpus(file);
   }
 
+  /**
+   * Sets the text generated from the specified corpus file.
+   *
+   * @param file the corpus file to use for generating text.
+   * @throws IOException if an I/O error occurs.
+   */
   public void setTextGeneratedFromCorpus(File file) throws IOException {
     TextGenerator textGenerator = new TextGenerator(getTextFromFile(file));
     textGenerator.trainModel(file.getName());
     setTextGeneratedFromTextGenerator(textGenerator);
   }
 
+  /**
+   * Sets the current text using the specified TextGenerator.
+   *
+   * @param textGenerator the TextGenerator to use for generating text.
+   */
   public void setTextGeneratedFromTextGenerator(TextGenerator textGenerator)  {
     currentText = textGenerator.generateText(100);
   }

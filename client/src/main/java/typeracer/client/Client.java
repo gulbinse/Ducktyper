@@ -10,7 +10,18 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import typeracer.client.messagehandling.*;
+import typeracer.client.messagehandling.CharacterResponseHandler;
+import typeracer.client.messagehandling.CreateSessionResponseHandler;
+import typeracer.client.messagehandling.GameStateNotificationHandler;
+import typeracer.client.messagehandling.HandShakeResponseHandler;
+import typeracer.client.messagehandling.JoinSessionResponseHandler;
+import typeracer.client.messagehandling.LeaveSessionResponseHandler;
+import typeracer.client.messagehandling.MessageHandler;
+import typeracer.client.messagehandling.PlayerLeftNotificationHandler;
+import typeracer.client.messagehandling.PlayerStateNotificationHandler;
+import typeracer.client.messagehandling.PlayerUpdateNotificationHandler;
+import typeracer.client.messagehandling.ReadyResponseHandler;
+import typeracer.client.messagehandling.TextNotificationHandler;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.MoshiAdapter;
 import typeracer.communication.messages.client.HandshakeRequest;
@@ -37,7 +48,6 @@ final class Client {
     String username = DEFAULT_USERNAME;
     String serverAddress = DEFAULT_ADDRESS;
     int port = DEFAULT_PORT;
-
     // check validity
     if (!isValidName(username)) {
       printErrorMessage("Invalid username: " + username);
@@ -134,8 +144,8 @@ final class Client {
   }
 
   /**
-   * Creates a connection to the server using the given IP adress and port,
-   * starts the session with the given username.
+   * Creates a connection to the server using the given IP adress and port, starts the session with
+   * the given username.
    *
    * @param ip ip address of the server
    * @param port port number of the server
@@ -158,33 +168,33 @@ final class Client {
    * @return the first handler in the chain of message handlers
    */
   private MessageHandler createMessageHandlerChain() {
-    MessageHandler characterResponseHandler = new CharacterResponseHandler(null, viewController);
+    MessageHandler characterResponseHandler = MessageHandler.create(CharacterResponseHandler.class, null, viewController);
     MessageHandler handShakeResponseHandler =
-        new HandShakeResponseHandler(characterResponseHandler, viewController);
+        MessageHandler.create(HandShakeResponseHandler.class, characterResponseHandler, viewController);
     MessageHandler createSessionResponseHandler =
-        new CreateSessionResponseHandler(handShakeResponseHandler, viewController);
+        MessageHandler.create(CreateSessionResponseHandler.class, handShakeResponseHandler, viewController);
     MessageHandler readyResponseHandler =
-        new ReadyResponseHandler(createSessionResponseHandler, viewController);
+        MessageHandler.create(ReadyResponseHandler.class, createSessionResponseHandler, viewController);
     MessageHandler textNotificationHandler =
-        new TextNotificationHandler(readyResponseHandler, viewController);
+        MessageHandler.create(TextNotificationHandler.class, readyResponseHandler, viewController);
     MessageHandler playerStateNotificationHandler =
-        new PlayerStateNotificationHandler(textNotificationHandler, viewController);
+        MessageHandler.create(PlayerStateNotificationHandler.class, textNotificationHandler, viewController);
     MessageHandler gameStateNotificationHandler =
-        new GameStateNotificationHandler(playerStateNotificationHandler, viewController);
+        MessageHandler.create(GameStateNotificationHandler.class, playerStateNotificationHandler, viewController);
     MessageHandler playerLeftNotificationHandler =
-        new PlayerLeftNotificationHandler(gameStateNotificationHandler, viewController);
+        MessageHandler.create(PlayerLeftNotificationHandler.class, gameStateNotificationHandler, viewController);
     MessageHandler playerJoinedNotificationHandler =
-        new PlayerUpdateNotificationHandler(playerLeftNotificationHandler, viewController);
+        MessageHandler.create(PlayerUpdateNotificationHandler.class, playerLeftNotificationHandler, viewController);
     MessageHandler joinSessionResponseHandler =
-        new JoinSessionResponseHandler(playerJoinedNotificationHandler, viewController);
-    return new LeaveSessionResponseHandler(joinSessionResponseHandler, viewController);
+        MessageHandler.create(JoinSessionResponseHandler.class, playerJoinedNotificationHandler, viewController);
+    return MessageHandler.create(LeaveSessionResponseHandler.class, joinSessionResponseHandler, viewController);
   }
 
   /**
-   * Handles incoming messages by passing them to the chain of message handlers.
+   * Handles the incoming message by passing it to the message handler chain.
    *
-   * @param message
-   * @throws IOException
+   * @param message the message to be handled.
+   * @throws IOException if an I/O error occurs during message handling.
    */
   public void handleMessage(Message message) throws IOException {
     messageHandlerChain.handleMessage(message);

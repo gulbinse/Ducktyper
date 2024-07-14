@@ -35,14 +35,19 @@ public class MainMenuUi extends VBox {
 
   private TextField sessionIdField;
 
+  private MainMenuUi(ViewController viewController) {
+    this.viewController = viewController;
+  }
+
   /**
-   * Constructs a new MainMenuUi and initializes its user interface.
+   * Creates a new MainMenuUi and initializes its user interface.
    *
    * @param viewController The controller to manage views and handle interactions.
    */
-  public MainMenuUi(ViewController viewController) {
-    this.viewController = viewController;
-    initializeUi();
+  public static MainMenuUi create(ViewController viewController) {
+    MainMenuUi mainMenuUi = new MainMenuUi(viewController);
+    mainMenuUi.initializeUi();
+    return mainMenuUi;
   }
 
   /**
@@ -51,11 +56,13 @@ public class MainMenuUi extends VBox {
    */
   private void initializeUi() {
     Background background = new Background(new BackgroundImage(
-            new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/Menu_screen_noText.png"))),
+            new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/"
+                    + "Menu_screen_noText.png"))),
             BackgroundRepeat.NO_REPEAT,
             BackgroundRepeat.NO_REPEAT,
             BackgroundPosition.CENTER,
-            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true)));
+            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false,
+                    false, true)));
     this.setBackground(background);
     this.setAlignment(Pos.CENTER);
     this.setSpacing(15);
@@ -83,11 +90,22 @@ public class MainMenuUi extends VBox {
         StyleManager.createStyledButton(
             "Exit", StyleManager.STANDARD_BUTTON, StyleManager.STANDARD_FONT);
 
+    double buttonWidth = 150;
+    startGameButton.setMinWidth(buttonWidth);
+    joinSessionButton.setMinWidth(buttonWidth);
+    profileSettingButton.setMinWidth(buttonWidth);
+    statsButton.setMinWidth(buttonWidth);
+    exitButton.setMinWidth(buttonWidth);
+
     startGameButton.setOnAction(e -> viewController.createSession());
     sessionIdField = new TextField();
     sessionIdField.setPromptText("Enter Session ID");
     sessionIdField.setMaxWidth(200);
     sessionIdField.getStyleClass().add("startScreen-input-field");
+
+    Region spacerBetweenButtons = new Region();
+    spacerBetweenButtons.setPrefHeight(50);
+
     joinSessionButton.setOnAction(
         event -> {
           try {
@@ -114,7 +132,8 @@ public class MainMenuUi extends VBox {
         startGameButton,joinSessionButton, profileSettingButton, statsButton, exitButton);
 
     this.getChildren()
-        .addAll(startGameButton, sessionBox, profileSettingButton, statsButton, exitButton);
+        .addAll(startGameButton, spacerBetweenButtons, sessionBox, profileSettingButton,
+                statsButton, exitButton);
   }
 
   /** Creates and returns a title panel with an image. */

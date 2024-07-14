@@ -28,16 +28,20 @@ public class GameResultsUi extends VBox {
   /** The controller managing views and handling interactions. */
   private final ViewController viewController;
 
-  private VBox gameResults;
+  private GameResultsUi(ViewController viewController) {
+    super(10);
+    this.viewController = viewController;
+  }
+
   /**
-   * Constructs a new GameResultsUi and initializes its user interface.
+   * Creates a new GameResultsUi and initializes its user interface.
    *
    * @param viewController The controller to manage views and handle interactions.
    */
-  public GameResultsUi(ViewController viewController) {
-    super(10);
-    this.viewController = viewController;
-    initializeUi();
+  public static GameResultsUi create(ViewController viewController) {
+    GameResultsUi gameResultsUi = new GameResultsUi(viewController);
+    gameResultsUi.initializeUi();
+    return gameResultsUi;
   }
 
   /** Initializes the UI elements of the GameResultsUi pane. */

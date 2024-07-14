@@ -3,6 +3,8 @@ package typeracer.client;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -16,6 +18,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import typeracer.client.view.GameResultsUi;
 import typeracer.client.view.GameUi;
@@ -24,7 +27,11 @@ import typeracer.client.view.MainMenuUi;
 import typeracer.client.view.PlayerStatsUi;
 import typeracer.client.view.ProfileSettingsUi;
 import typeracer.client.view.SessionUi;
-import typeracer.communication.messages.client.*;
+import typeracer.communication.messages.client.CharacterRequest;
+import typeracer.communication.messages.client.CreateSessionRequest;
+import typeracer.communication.messages.client.JoinSessionRequest;
+import typeracer.communication.messages.client.LeaveSessionRequest;
+import typeracer.communication.messages.client.ReadyRequest;
 
 /** Manages the transition between different scenes and states in the TypeRacer game application. */
 public class ViewController extends Application {
@@ -60,15 +67,14 @@ public class ViewController extends Application {
   private static final int MINIMUM_WINDOW_WIDTH = 400;
   private static final int MINIMUM_WINDOW_HEIGHT = 600;
 
-  private Map<SceneName, Scene> scenes;
+  private final Map<SceneName, Scene> scenes;
 
-  private Stage primaryStage;
+  private final Stage stage = new Stage();
   private SceneName currentScene;
   private final Client client;
   private ClientSideSessionData playerData = new ClientSideSessionData();
   private String username;
   private int playerId;
-
 
   /**
    * Constructs a ViewController with a given stage and client. Initializes the view mappings and
@@ -86,22 +92,21 @@ public class ViewController extends Application {
    */
   @Override
   public void start(Stage primaryStage) {
-    this.primaryStage = primaryStage;
 
-    primaryStage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
-    primaryStage.setMinWidth(MINIMUM_WINDOW_WIDTH);
+    stage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
+    stage.setMinWidth(MINIMUM_WINDOW_WIDTH);
 
-    primaryStage.setWidth(DEFAULT_WINDOW_WIDTH);
-    primaryStage.setHeight(DEFAULT_WINDOW_HEIGHT);
+    stage.setWidth(DEFAULT_WINDOW_WIDTH);
+    stage.setHeight(DEFAULT_WINDOW_HEIGHT);
 
-    primaryStage.setTitle("Ducktyper");
+    stage.setTitle("Ducktyper");
 
     addAllScenes();
 
     Platform.runLater(() -> showScene(SceneName.INITIAL_PROMPT));
-    primaryStage.setResizable(true);
-    primaryStage.setOnCloseRequest(event -> System.exit(0));
-    primaryStage.show();
+    stage.setResizable(true);
+    stage.setOnCloseRequest(event -> System.exit(0));
+    stage.show();
   }
 
   /** Helper method to add views to the map. */
@@ -126,8 +131,8 @@ public class ViewController extends Application {
           Scene scene = scenes.get(sceneName);
           currentScene = sceneName;
           if (scene != null) {
-            primaryStage.setScene(scene);
-            primaryStage.show();
+            stage.setScene(scene);
+            stage.show();
             if (scene.getRoot() instanceof SessionUi sessionUi) {
               sessionUi.onViewShown();
             } else if (scene.getRoot() instanceof GameUi gameUi) {
@@ -143,20 +148,33 @@ public class ViewController extends Application {
         });
   }
 
+  /**
+   * Adds all the scenes to the application.
+   */
   private void addAllScenes() {
-    addScene(SceneName.INITIAL_PROMPT, new InitialPromptUi(this, primaryStage));
-    addScene(SceneName.MAIN_MENU, new MainMenuUi(this));
-    addScene(SceneName.GAME, new GameUi(this));
-    addScene(SceneName.STATS, new PlayerStatsUi(this));
-    addScene(SceneName.PROFILE_SETTINGS, new ProfileSettingsUi(this));
-    addScene(SceneName.GAME_RESULTS, new GameResultsUi(this));
-    addScene(SceneName.SESSION, new SessionUi(this));
+    addScene(SceneName.INITIAL_PROMPT, InitialPromptUi.create(this));
+    addScene(SceneName.MAIN_MENU, MainMenuUi.create(this));
+    addScene(SceneName.GAME, GameUi.create(this));
+    addScene(SceneName.STATS, PlayerStatsUi.create(this));
+    addScene(SceneName.PROFILE_SETTINGS, ProfileSettingsUi.create(this));
+    addScene(SceneName.GAME_RESULTS, GameResultsUi.create(this));
+    addScene(SceneName.SESSION, SessionUi.create(this));
   }
 
+  /**
+   * Sets the player ID.
+   *
+   * @param playerId the player's unique identifier.
+   */
   public void setPlayerId(int playerId) {
     this.playerId = playerId;
   }
 
+  /**
+   * Sets the session ID and updates the session UI.
+   *
+   * @param sessionId the session's unique identifier.
+   */
   public void setSessionId(int sessionId) {
     Platform.runLater(
         () -> {
@@ -166,6 +184,11 @@ public class ViewController extends Application {
         });
   }
 
+  /**
+   * Retrieves the current session ID.
+   *
+   * @return the session's unique identifier.
+   */
   public int getSessionId() {
     return playerData.getSessionId();
   }
@@ -188,11 +211,13 @@ public class ViewController extends Application {
   }
 
   /**
-   * Connects to the server with the given IP address and port number.
+   * Connects to the server using the specified IP address, port, and username.
+   * This method establishes a connection to the server and sets the username for the client.
    *
-   * @param ip The IP address of the server.
-   * @param port The port number of the server.
-   * @throws IOException If an I/O error occurs when attempting to connect to the server.
+   * @param ip the IP address of the server.
+   * @param port the port number of the server.
+   * @param username the username to be used for the connection.
+   * @throws IOException if an I/O error occurs when attempting to connect.
    */
   public void connectToServer(String ip, int port, String username) throws IOException {
     client.connect(ip, port, username);
@@ -219,7 +244,7 @@ public class ViewController extends Application {
 
   /** Requests to set the player ready. */
   public void setPlayerReady() {
-    boolean isReady = !playerData.getPlayerReady().get(playerId).get();
+    boolean isReady = !playerData.getPlayerReadyProperty(playerId).get();
     client.sendMessage(new ReadyRequest(isReady));
     System.out.println("Player wants to update his readyStatus to: " + isReady);
   }
@@ -250,14 +275,16 @@ public class ViewController extends Application {
           }
           showScene(SceneName.GAME);
         });
-
   }
 
   /**
-   * Adds a player to the game on client side.
+   * Updates the player's information and adds a player label if the player is new.
+   * This method updates the player's name and ready status. If the player is new, it schedules
+   * the addition of the player's label to the session UI on the JavaFX application thread.
    *
-   * @param playerId of joined player
-   * @param playerName of joined player
+   * @param playerId the ID of the player to update.
+   * @param playerName the name of the player.
+   * @param ready the ready status of the player.
    */
   public void updatePlayer(int playerId, String playerName, boolean ready) {
     boolean isNew = playerData.updatePlayer(playerId, playerName, ready);
@@ -267,7 +294,6 @@ public class ViewController extends Application {
             SessionUi sessionUi = (SessionUi) scenes.get(SceneName.SESSION).getRoot();
             sessionUi.addPlayerLabel(playerId);
           });
-
     }
   }
 
@@ -291,17 +317,16 @@ public class ViewController extends Application {
   /** Ends the current game, updates stats, and switches the UI to display game results. */
   // == Finished
   public void leaveSession() {
-    Platform.runLater(() -> {
-      switch (currentScene) {
-        case GAME -> {
-          showScene(SceneName.GAME_RESULTS);
-          GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
-          gameUi.onViewShown();
-        }
-        default -> showScene(SceneName.MAIN_MENU);
-      }
-    });
-
+    Platform.runLater(
+        () -> {
+          if (currentScene == SceneName.GAME) {
+            showScene(SceneName.GAME_RESULTS);
+            GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
+            gameUi.onViewShown();
+          } else {
+            showScene(SceneName.MAIN_MENU);
+          }
+        });
   }
 
   /**
@@ -312,6 +337,12 @@ public class ViewController extends Application {
   public void handleCharacterAnswer(boolean isCorrect) {
     GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
     gameUi.updateDisplayText(isCorrect);
+  }
+
+  /** Sets the icon image of the Stage to a typewriter image. */
+  public void setIconImage() {
+    Image img = new Image(getClass().getResourceAsStream("/images/duck.png"));
+    stage.getIcons().add(img);
   }
 
   /**
@@ -333,11 +364,12 @@ public class ViewController extends Application {
    */
   public void updatePlayerStateInformation(
       int playerId, double playerWpm, double playerAccuracy, double playerProgress) {
-    Platform.runLater(() -> {
-      playerData.setPlayerWpms(playerId, playerWpm);
-      playerData.setPlayerAccuracies(playerId, playerAccuracy);
-      playerData.setPlayerProgresses(playerId, playerProgress);
-    });
+    Platform.runLater(
+        () -> {
+          playerData.setPlayerWpms(playerId, playerWpm);
+          playerData.setPlayerAccuracies(playerId, playerAccuracy);
+          playerData.setPlayerProgresses(playerId, playerProgress);
+        });
   }
 
   /**
@@ -376,12 +408,24 @@ public class ViewController extends Application {
     return FXCollections.observableArrayList(playerData.getPlayerNamesById().values());
   }
 
+  /**
+   * Retrieves the username associated with a specific player ID.
+   *
+   * @param id the player's ID.
+   * @return the username, or null if no player is found with the provided ID.
+   */
   public String getUsernameById(int id) {
     return playerData.getPlayerNamesById().get(id);
   }
 
+  /**
+   * Retrieves or creates a property to track whether a player is ready.
+   *
+   * @param playerId the ID of the player.
+   * @return a BooleanProperty reflecting the player's ready status.
+   */
   public BooleanProperty getPlayerReadyProperty(int playerId) {
-    return playerData.getPlayerReady().computeIfAbsent(playerId, k -> new SimpleBooleanProperty());
+    return playerData.getPlayerReadyProperty(playerId);
   }
 
   /**
@@ -391,7 +435,7 @@ public class ViewController extends Application {
    * @return The WPM property for the player.
    */
   public DoubleProperty getPlayerWpmProperty(int playerId) {
-    return playerData.getPlayerWpms().computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
+    return playerData.getPlayerWpmProperty(playerId);
   }
 
   /**
@@ -401,21 +445,18 @@ public class ViewController extends Application {
    * @return The accuracy property for the player.
    */
   public DoubleProperty getPlayerAccuracyProperty(int playerId) {
-    return playerData
-        .getPlayerAccuracies()
-        .computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
+    return playerData.getPlayerAccuracyProperty(playerId);
   }
 
   /**
-   * Returns the progress property for the specified player ID.
+   * Gets the progress property of the player with the specified ID.
+   * If the player's progress property does not exist, it is created and initialized to 0.0.
    *
-   * @param playerId The ID of the player.
-   * @return The progress property for the player.
+   * @param playerId the ID of the player.
+   * @return the DoubleProperty representing the player's progress.
    */
   public DoubleProperty getPlayerProgressProperty(int playerId) {
-    return playerData
-        .getPlayerProgresses()
-        .computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
+    return playerData.getPlayerProgressProperty(playerId);
   }
 
   public ListProperty<String> getTopPlayersProperty() {
@@ -437,10 +478,10 @@ public class ViewController extends Application {
    * @param message The message to display in the alert.
    */
   public void showAlert(String message) {
-    Platform.runLater(() -> {
-      Alert alert = new Alert(Alert.AlertType.ERROR, message);
-      alert.showAndWait();
-    });
-
+    Platform.runLater(
+        () -> {
+          Alert alert = new Alert(Alert.AlertType.ERROR, message);
+          alert.showAndWait();
+        });
   }
 }
