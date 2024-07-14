@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Methods sending messages in `ViewController` (Alina)
   - Working text display and Ready-Button (Ali, Eric)
 - Minimum width and height for GUI windows (#50) (Tobi)
+- Automatic text generation from text corpora via markov chain (Eric)
+  - Model gets saved automatically when trained to reduce generation time (Eric)
 - Better GUI (#45) (everyone)
   - Cool background images (Tobi)
   - Session-ID-Label (Ali, Eric)

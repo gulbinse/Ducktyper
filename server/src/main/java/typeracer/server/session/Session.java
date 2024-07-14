@@ -132,7 +132,7 @@ public final class Session {
    * @return <code>true</code> if the game has started, <code>false</code> otherwise
    */
   public boolean hasGameStarted() {
-    return game.getStatus() == GameStatus.RUNNING;
+    return game.getStatus() != GameStatus.WAITING_FOR_PLAYERS;
   }
 
   /**

@@ -2,6 +2,8 @@ package typeracer.client.view;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.RotateTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -14,6 +16,8 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -90,46 +94,36 @@ public class InitialPromptUi extends VBox {
         new Background(
             new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
-    HBox usernameAndButtonPanel = new HBox(10);
-    usernameAndButtonPanel.setAlignment(Pos.BASELINE_LEFT);
-
     usernameField = new TextField("TheRealDonaldDuck");
+    usernameField.setPromptText("Username");
     usernameField.setMaxWidth(300);
+    usernameField.setStyle("-fx-alignment: center;");
     usernameField.getStyleClass().add("startScreen-input-field");
-    Label usernameLabel = new Label("Username:");
-    usernameLabel.getStyleClass().add("inputField-label");
+    usernameField.setFocusTraversable(false);
+
+    ipField = new TextField("localhost");
+    ipField.setPromptText("Server-IP");
+    ipField.setMaxWidth(300);
+    ipField.setStyle("-fx-alignment: center;");
+    ipField.getStyleClass().add("startScreen-input-field");
+    ipField.setFocusTraversable(false);
+
+    portField = new TextField("4441");
+    portField.setPromptText("Port");
+    portField.setMaxWidth(300);
+    portField.setStyle("-fx-alignment: center;");
+    portField.getStyleClass().add("startScreen-input-field");
+    portField.setFocusTraversable(false);
 
     ImageView submitImage = createSubmitImage();
-    usernameAndButtonPanel
-        .getChildren()
-        .addAll(usernameLabel, usernameField, submitImage);
-
-    HBox ipFieldBox = new HBox(10);
-    ipField = new TextField("localhost");
-    ipField.setMaxWidth(150);
-    ipField.getStyleClass().add("startScreen-input-field");
-    Label ipLabel = new Label("Server-IP:");
-    ipLabel.getStyleClass().add("inputField-label");
-    ipFieldBox.setAlignment(Pos.BASELINE_LEFT);
-    ipFieldBox.getChildren().addAll(ipLabel, ipField);
-
-    HBox portFieldBox = new HBox(10);
-    portField = new TextField("4441");
-    portField.setMaxWidth(150);
-    portField.setPromptText("Port");
-    portField.getStyleClass().add("startScreen-input-field");
-    Label portLabel = new Label("Port:");
-    portLabel.getStyleClass().add("inputField-label");
-    portFieldBox.setAlignment(Pos.BASELINE_LEFT);
-    portFieldBox.getChildren().addAll(portLabel, portField);
-
 
     inputPanel
         .getChildren()
         .addAll(
-            usernameAndButtonPanel,
-            ipFieldBox,
-            portFieldBox);
+            submitImage,
+            usernameField,
+            ipField,
+            portField);
 
     return inputPanel;
   }

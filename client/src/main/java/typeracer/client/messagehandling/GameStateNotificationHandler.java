@@ -38,7 +38,7 @@ public class GameStateNotificationHandler implements MessageHandler {
           break;
         case FINISHED:
           // ends the game
-          viewController.leaveSession();
+          viewController.leaveSessionOrGame();
           break;
         case WAITING_FOR_PLAYERS:
           System.out.println("Game is waiting for players.");
