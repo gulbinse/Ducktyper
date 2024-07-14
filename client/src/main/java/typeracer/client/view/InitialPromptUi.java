@@ -181,8 +181,6 @@ public class InitialPromptUi extends VBox {
     duckImageView.setPreserveRatio(true);
     imagePanel.getChildren().add(duckImageView);
 
-    applyFadeInAnimation(duckImageView);
-
     return imagePanel;
   }
 
@@ -197,19 +195,6 @@ public class InitialPromptUi extends VBox {
     fade.setFromValue(0);
     fade.setToValue(1);
     fade.play();
-  }
-
-  /**
-   * Applies a fade-in animation to the given ImageView. The animation fades the ImageView from
-   * fully transparent to fully opaque over 2 seconds.
-   *
-   * @param imageView The ImageView to apply the fade-in animation to.
-   */
-  private void applyFadeInAnimation(ImageView imageView) {
-    RotateTransition rotate = new RotateTransition(Duration.seconds(2), imageView);
-    rotate.setByAngle(360);
-    rotate.setCycleCount(1);
-    rotate.play();
   }
 
   /**
