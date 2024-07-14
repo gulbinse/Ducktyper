@@ -15,9 +15,13 @@ import org.jetbrains.annotations.NotNull;
 /** Provides a text to use as prompt for the game. */
 public class TextSource {
   private static final String TEXT_SOURCE_FOLDER = "text_sources";
+  private static final String CORPUS_SOURCE_FOLDER = "corpus_sources";
   private static final String DEFAULT_TEXT_FILE = "bee_movie.txt";
+  private static final String DEFAULT_CORPUS_FILE = "alice_in_wonderland.txt";
   private static final String DEFAULT_TEXT_FILE_PATH =
       TEXT_SOURCE_FOLDER + File.separator + DEFAULT_TEXT_FILE;
+  private static final String DEFAULT_CORPUS_FILE_PATH =
+      CORPUS_SOURCE_FOLDER + File.separator + DEFAULT_CORPUS_FILE;
   private static final String DEFAULT_TEXT =
       """
           According to all known laws of aviation, there is no way a bee should be able to fly.
@@ -59,16 +63,52 @@ public class TextSource {
   }
 
   /**
+   * Sets the text generated from the default corpus file. This method loads the default corpus file
+   * from the classpath, converts its URL to a URI, and generates text from it.
+   *
+   * @throws IOException if an I/O error occurs.
+   */
+  public void setTextGeneratedFromDefaultCorpus() throws IOException {
+    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    URL textFileUrl = classLoader.getResource(DEFAULT_CORPUS_FILE_PATH);
+    assert textFileUrl != null;
+    try {
+      setTextGeneratedFromCorpus(new File(textFileUrl.toURI()));
+    } catch (URISyntaxException e) {
+      throw new RuntimeException("Error with converting default text file URL to URI");
+    }
+  }
+
+  /**
    * Sets a text randomly from one of the files in the default folder {@value TEXT_SOURCE_FOLDER}.
+   *
+   * @throws IOException when exceptions with reading the file occur
+   */
+  public void setRandomTextFromAllCorpora() throws IOException {
+    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    URL textFolderUrl = classLoader.getResource(CORPUS_SOURCE_FOLDER);
+    assert textFolderUrl != null;
+    try {
+      File[] files = new File(textFolderUrl.toURI()).listFiles();
+      assert files != null;
+      List<File> fileList = Arrays.stream(files).filter(file -> !file.isDirectory()).toList();
+      setTextGeneratedFromCorpora(fileList);
+    } catch (URISyntaxException e) {
+      throw new RuntimeException("Error with converting default text folder URL to URI");
+    }
+  }
+
+  /**
+   * Sets a text randomly chosen from one of the default files in {@value TEXT_SOURCE_FOLDER}.
    *
    * @throws IOException when exceptions with reading the file occur
    */
   public void setRandomTextFromDefaultFiles() throws IOException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    URL textFolderUrl = classLoader.getResource(TEXT_SOURCE_FOLDER);
-    assert textFolderUrl != null;
+    URL corpusFolderUrl = classLoader.getResource(TEXT_SOURCE_FOLDER);
+    assert corpusFolderUrl != null;
     try {
-      File[] files = new File(textFolderUrl.toURI()).listFiles();
+      File[] files = new File(corpusFolderUrl.toURI()).listFiles();
       assert files != null;
       List<File> fileList = Arrays.stream(files).filter(file -> !file.isDirectory()).toList();
       setRandomTextFromFiles(fileList);
@@ -84,15 +124,35 @@ public class TextSource {
    * @throws IOException when exceptions with reading the file occur
    */
   public void setTextFromFile(File file) throws IOException {
+    currentText = getTextFromFile(file);
+  }
+
+  /**
+   * Reads the content of a file and returns it as a single string. This method reads the file line
+   * by line, concatenates the lines into a single string, and skips any empty lines.
+   *
+   * @param file the file to read from.
+   * @return the content of the file as a single string.
+   * @throws IOException if an I/O error occurs.
+   */
+  private String getTextFromFile(File file) throws IOException {
     try (BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
       String line = reader.readLine();
 
       StringBuilder textBuilder = new StringBuilder();
       while (line != null) {
-        textBuilder.append(line).append(System.lineSeparator());
-        line = reader.readLine();
+        textBuilder.append(line).append(" ");
+
+        // skip all newlines
+        do {
+          line = reader.readLine();
+          if (line == null) {
+            break;
+          }
+        } while (line.isEmpty());
       }
-      currentText = textBuilder.toString();
+      textBuilder.deleteCharAt(textBuilder.length() - 1); // Remove last space character
+      return textBuilder.toString();
     }
   }
 
@@ -107,6 +167,41 @@ public class TextSource {
     int fileNum = random.nextInt(files.size());
     File file = files.get(fileNum);
     setTextFromFile(file);
+  }
+
+  /**
+   * Sets the text generated from a randomly selected corpus file.
+   *
+   * @param files the list of corpus files to choose from.
+   * @throws IOException if an I/O error occurs.
+   */
+  public void setTextGeneratedFromCorpora(@NotNull List<File> files) throws IOException {
+    assert !files.isEmpty();
+    int fileNum = random.nextInt(files.size());
+    File file = files.get(fileNum);
+    System.out.println("A text, generated by a model trained on " + file.getName());
+    setTextGeneratedFromCorpus(file);
+  }
+
+  /**
+   * Sets the text generated from the specified corpus file.
+   *
+   * @param file the corpus file to use for generating text.
+   * @throws IOException if an I/O error occurs.
+   */
+  public void setTextGeneratedFromCorpus(File file) throws IOException {
+    TextGenerator textGenerator = new TextGenerator(getTextFromFile(file));
+    textGenerator.trainModel(file.getName());
+    setTextGeneratedFromTextGenerator(textGenerator);
+  }
+
+  /**
+   * Sets the current text using the specified TextGenerator.
+   *
+   * @param textGenerator the TextGenerator to use for generating text.
+   */
+  public void setTextGeneratedFromTextGenerator(TextGenerator textGenerator) {
+    currentText = textGenerator.generateText(100).replaceAll(" +", " ");
   }
 
   /**

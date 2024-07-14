@@ -6,7 +6,7 @@ import typeracer.server.utils.TypingResult;
 public class Player {
   private final int id;
   private final PlayerState state;
-  private static final long MINUTES_TO_NANO_SECONDS_FACTOR = 10 ^ 9;
+  private static final long MINUTES_TO_NANO_SECONDS_FACTOR = 60_000_000_000L;
   private long gameStartTime;
   private int typingAttempts = 0;
 
@@ -115,29 +115,31 @@ public class Player {
     // Update typing speeds in every case, since it might change with a wrong character as well
     updateAllTypingSpeeds();
 
+    TypingResult typingResult = TypingResult.INCORRECT;
     if (typedCharacter == correctCharacter) {
       state.incrementCurrentTextIndex();
       int newTextIndex = state.getCurrentTextIndex(); // Should be incremented by one
       assert newTextIndex == currentTextIndex + 1;
 
       // Update progress only if typing was successful, to avoid unnecessary updates
-      double progress = (double) newTextIndex / textToType.length();
-      assert 0 <= progress && progress <= 1;
-      state.setProgress(progress);
-      if (progress >= 1) {
-        setIsFinished(true);
-      }
 
       if (Character.isSpaceChar(correctCharacter)) {
         state.incrementNumTypedWords();
       }
-      return TypingResult.CORRECT;
+      typingResult = TypingResult.CORRECT;
     }
+    double progress = (double) state.getCurrentTextIndex() / textToType.length();
+    assert 0 <= progress && progress <= 1;
+    state.setProgress(progress);
+    if (progress >= 1) {
+      setIsFinished(true);
+    }
+
     double accuracy =
         (double) state.getCurrentTextIndex() // current text index = correctly typed characters
             / typingAttempts;
     state.setAccuracy(accuracy);
-    return TypingResult.INCORRECT;
+    return typingResult;
   }
 
   /** Updates the typing speeds (e.g. words per minute) of this player. */
@@ -147,15 +149,19 @@ public class Player {
   }
 
   private synchronized void updateWordsPerMinute() {
-    double wordsPerMinute =
-        getGeneralTypingSpeed(state.getNumTypedWords(), MINUTES_TO_NANO_SECONDS_FACTOR);
-    state.setWordsPerMinute(wordsPerMinute);
+    if (!isFinished()) {
+      double wordsPerMinute =
+          getGeneralTypingSpeed(state.getNumTypedWords(), MINUTES_TO_NANO_SECONDS_FACTOR);
+      state.setWordsPerMinute(wordsPerMinute);
+    }
   }
 
   private synchronized void updateCharactersPerMinute() {
-    double charactersPerMinute =
-        getGeneralTypingSpeed(state.getCurrentTextIndex(), MINUTES_TO_NANO_SECONDS_FACTOR);
-    state.setCharactersPerMinute(charactersPerMinute);
+    if (!isFinished()) {
+      double charactersPerMinute =
+          getGeneralTypingSpeed(state.getCurrentTextIndex(), MINUTES_TO_NANO_SECONDS_FACTOR);
+      state.setCharactersPerMinute(charactersPerMinute);
+    }
   }
 
   /**

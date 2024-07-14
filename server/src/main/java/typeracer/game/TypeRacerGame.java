@@ -39,7 +39,7 @@ public final class TypeRacerGame { // made final to prevent finalizer attacks in
   public TypeRacerGame(Session session) {
     TextSource textSource = new TextSource();
     try {
-      textSource.setRandomTextFromDefaultFiles();
+      textSource.setTextGeneratedFromDefaultCorpus();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -50,6 +50,10 @@ public final class TypeRacerGame { // made final to prevent finalizer attacks in
 
   /** Starts a new game with a new text. */
   public void start() {
+    if (getStatus() != GameStatus.WAITING_FOR_PLAYERS) {
+      return;
+    }
+
     if (getPlayerList().isEmpty()) {
       throw new AssertionError("There are currently no players in the game");
     }
@@ -72,8 +76,9 @@ public final class TypeRacerGame { // made final to prevent finalizer attacks in
   public void stop() {
     GameStatus finished = GameStatus.FINISHED;
     state.setGameStatus(finished);
-    session.broadcastMessage(new GameStateNotification(finished));
     notifier.stop();
+    broadcastPlayerStates();
+    session.broadcastMessage(new GameStateNotification(finished));
   }
 
   /**
@@ -110,16 +115,17 @@ public final class TypeRacerGame { // made final to prevent finalizer attacks in
    * @param character the character that is typed
    * @return The result of the typing attempt
    */
-  public TypingResult typeCharacter(
-      int id, char character) { // TODO: Does this have to be synchronized?
+  public TypingResult typeCharacter(int id, char character) {
     if (getIds().contains(id)) {
+      TypingResult typingResult = TypingResult.PLAYER_FINISHED_ALREADY;
       if (!isGameFinished()) {
         Player player = state.getPlayerById(id);
         if (!player.isFinished()) {
-          return player.typeCharacter(character, state.getTextToType(), gameStartTime);
+          typingResult = player.typeCharacter(character, state.getTextToType(), gameStartTime);
+          isGameFinished();
         }
       }
-      return TypingResult.PLAYER_FINISHED_ALREADY;
+      return typingResult;
     } else {
       throw new IllegalArgumentException(id + "is an invalid playerID");
     }
@@ -191,6 +197,16 @@ public final class TypeRacerGame { // made final to prevent finalizer attacks in
               + " ready, but game status is "
               + getStatus());
     }
+  }
+
+  /**
+   * Returns whether the specified player is ready.
+   *
+   * @param playerId the id of the player
+   * @return <code>true</code> if the player is ready, <code>false</code> otherwise
+   */
+  public boolean isPlayerReady(int playerId) {
+    return state.getPlayerById(playerId).isReady();
   }
 
   /**

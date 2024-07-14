@@ -5,8 +5,8 @@ import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.PlayerLeftNotification;
 
 /**
- * Handles PlayerLeftNotification messages in a chain of responsibility pattern. If the message is not of
- * the specified type, it will be passed to the next handler in the chain, if any.
+ * Handles PlayerLeftNotification messages in a chain of responsibility pattern. If the message is
+ * not of the specified type, it will be passed to the next handler in the chain, if any.
  */
 public class PlayerLeftNotificationHandler implements MessageHandler {
 
@@ -14,11 +14,13 @@ public class PlayerLeftNotificationHandler implements MessageHandler {
   private final ViewController viewController;
 
   /**
-   * Constructor with the next handler in chain.
+   * Constructs a PlayerLeftNotificationHandler. Initializes the handler with the specified next
+   * handler and view controller.
    *
-   * @param nextHandler he next handler in message handling chain
+   * @param nextHandler the next handler in the chain of responsibility.
+   * @param viewController the view controller used to update the view.
    */
-  public PlayerLeftNotificationHandler(MessageHandler nextHandler, ViewController viewController) {
+  PlayerLeftNotificationHandler(MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;
     this.viewController = viewController;
   }
@@ -31,9 +33,8 @@ public class PlayerLeftNotificationHandler implements MessageHandler {
   @Override
   public void handleMessage(Message message) {
     if (message instanceof PlayerLeftNotification playerLeftNotification) {
-      System.out.println("Player " + playerLeftNotification.getPlayerId() + " left the game.");
-      System.out.println("There are " + playerLeftNotification.getNumPlayers() + " players left.");
-      viewController.removePlayerFromGame(playerLeftNotification.getPlayerId());
+      viewController.removePlayerFromSession(playerLeftNotification.getPlayerId());
+
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }

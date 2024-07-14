@@ -1,29 +1,36 @@
 package typeracer.client.view;
 
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ListProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import typeracer.client.ViewController;
 
 /**
@@ -33,54 +40,74 @@ import typeracer.client.ViewController;
 public class GameUi extends VBox {
 
   /** The controller to manage views and handle interactions. */
-  private ViewController viewController;
+  private final ViewController viewController;
 
   /** The text area where the typing text is displayed. */
-  private TextArea displayText;
+  private TextFlow displayText;
 
-  /** The text field where the user inputs their typing. */
-  private TextField inputText;
+  Text uncopiedGameText = new Text();
+  Text expectedCharacter = new Text();
+  Text copiedGameText = new Text();
 
-  /** The label displaying the current words per minute (WPM). */
-  private Label wpmLabel;
+  Color colorOfUncopiedGame = Color.BLACK;
+  Color colorOfExpectedCharacter = Color.RED;
+  Color colorOfCopiedGame = Color.WHITE;
 
-  /** The label displaying the current number of errors. */
-  private Label errorsLabel;
+  private static String TEXT_SIZE = "-fx-font-size: 16px;";
 
-  /** The label displaying the top players. */
-  private Label topPlayersLabel;
-
-  /** The label that displays the username of the current user. */
   private Label usernameLabel;
+  private final VBox playersPanel = new VBox();
+  private final Map<Integer, VBox> playerDisplayById = new HashMap<>();
 
-  private int currentCharIndex = 0;
-
-  private String gameText;
+  private GameUi(ViewController viewController) {
+    this.viewController = viewController;
+  }
 
   /**
-   * Constructs a new GameUi and initializes its user interface.
+   * Creates and initializes a new instance of GameUi.
    *
-   * @param viewController The controller to manage views and handle interactions.
+   * @param viewController the ViewController to manage views and handle interactions.
+   * @return a new instance of GameUi with its UI initialized.
    */
-  public GameUi(ViewController viewController) {
-    this.viewController = viewController;
-    initUi();
+  public static GameUi create(ViewController viewController) {
+    GameUi gameUi = new GameUi(viewController);
+    gameUi.initUi();
+    return gameUi;
   }
 
   /** Initializes the UI elements of the GameUi pane. */
   private void initUi() {
     setSpacing(10);
     setAlignment(Pos.TOP_CENTER);
+    setPadding(new Insets(10, 0, 0, 0));
     setBackground(
         new Background(
             new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
-    addHeaderImage();
     addUserLabel();
     addDisplayPanel();
     addInputPanel();
-    addStatsPanel();
-    addTopPlayersPanel();
+    addPlayersPanel();
     addButtonPanel();
+  }
+
+  /**
+   * Called when the view is shown. Updates the username label with the current username from the
+   * view controller.
+   */
+  public void onViewShown() {
+    if (usernameLabel != null) {
+      usernameLabel.setText(viewController.getUsername());
+      finaliseDisplayText();
+    }
+  }
+
+  /**
+   * Adds the players panel to the game display. This method sets the alignment of the players panel
+   * to the center and adds it to the list of children in the current layout.
+   */
+  private void addPlayersPanel() {
+    playersPanel.setAlignment(Pos.CENTER);
+    getChildren().add(playersPanel);
   }
 
   /** Adds a label to display the username. The label is styled and positioned within the UI. */
@@ -91,30 +118,21 @@ public class GameUi extends VBox {
     usernameLabel.setBackground(
         new Background(new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(5), Insets.EMPTY)));
     usernameLabel.setAlignment(Pos.CENTER);
-    getChildren().add(1, usernameLabel);
-  }
-
-  /** Adds an image to the header of the UI. The image is loaded and styled appropriately. */
-  private void addHeaderImage() {
-    VBox headerPanel = new VBox();
-    headerPanel.setAlignment(Pos.CENTER);
-    headerPanel.setPadding(new Insets(20, 0, 10, 0));
-    Image titleImage = new Image(getClass().getResourceAsStream("/images/title.png"));
-    ImageView titleImageView = new ImageView(titleImage);
-    titleImageView.setFitWidth(300);
-    titleImageView.setPreserveRatio(true);
-    headerPanel.getChildren().add(titleImageView);
-    getChildren().add(headerPanel);
+    getChildren().add(usernameLabel);
   }
 
   /** Adds a display panel that contains a non-editable TextArea for displaying typing text. */
   private void addDisplayPanel() {
-    displayText = new TextArea();
-    displayText.setEditable(false);
-    displayText.setWrapText(true);
+    uncopiedGameText.setFill(colorOfUncopiedGame);
+    expectedCharacter.setFill(colorOfExpectedCharacter);
+    copiedGameText.setFill(colorOfCopiedGame);
+    uncopiedGameText.setStyle(TEXT_SIZE);
+    expectedCharacter.setStyle(TEXT_SIZE);
+    copiedGameText.setStyle(TEXT_SIZE);
+    displayText = new TextFlow();
     displayText.setPrefHeight(150);
     displayText.setMaxWidth(Double.MAX_VALUE);
-    displayText.textProperty().bind(viewController.gameTextProperty());
+    displayText.getChildren().addAll(copiedGameText, expectedCharacter, uncopiedGameText);
     VBox panel = new VBox();
     panel.setAlignment(Pos.CENTER);
     panel.setPadding(new Insets(10, 50, 10, 50));
@@ -123,142 +141,210 @@ public class GameUi extends VBox {
   }
 
   /**
+   * Finalizes the display text by resetting the uncopied game text. Sets the uncopied game text to
+   * the game text obtained from the view controller.
+   */
+  private void finaliseDisplayText() {
+    uncopiedGameText.setText(viewController.getGameText());
+    copiedGameText.setText("");
+  }
+
+  /**
+   * Updates the display text based on whether the typed character is correct. If the typed
+   * character is correct, it moves the character from the uncopied text to the copied text. If the
+   * typed character is incorrect, it highlights the expected character in red.
+   *
+   * @param correctChar true if the typed character is correct, false otherwise.
+   */
+  public void updateDisplayText(boolean correctChar) {
+    Platform.runLater(
+        () -> {
+          String uncopiedText = uncopiedGameText.getText();
+          String copiedText = copiedGameText.getText();
+          String expectedChar = expectedCharacter.getText();
+
+          if (expectedChar.isEmpty()) {
+            expectedChar = String.valueOf(uncopiedText.charAt(0));
+          }
+
+          if (correctChar) {
+            copiedText += expectedChar;
+            uncopiedText = uncopiedText.substring(1);
+            copiedGameText.setText(copiedText);
+            uncopiedGameText.setText(uncopiedText);
+            expectedCharacter.setText("");
+            expectedCharacter.setUnderline(true);
+          }
+        });
+  }
+
+  /**
    * Adds an input panel that contains a TextField for user input. The panel is styled and
    * positioned within the UI.
    */
   private void addInputPanel() {
+    TextArea inputText = new TextArea();
+    inputText.setWrapText(true);
+    inputText.setPrefHeight(150);
+    inputText.setMaxWidth(Double.MAX_VALUE);
+    inputText.setPadding(new Insets(10));
+    inputText.setStyle("-fx-font-size: 16px; -fx-alignment: top-left;");
+
+    inputText.setOnKeyTyped(event -> handleTyping(event.getCharacter().charAt(0)));
+
     VBox panel = new VBox();
     panel.setMaxHeight(350);
     panel.setAlignment(Pos.CENTER);
     panel.setPadding(new Insets(10, 50, 10, 50));
-    inputText = new TextField();
-    inputText.setPrefHeight(150);
-    inputText.setMaxWidth(Double.MAX_VALUE);
-    inputText.setPadding(new Insets(10));
-    inputText.setStyle("-fx-alignment: top-left;");
-    inputText.setOnKeyTyped(event -> handleTyping(event.getCharacter()));
     panel.getChildren().add(inputText);
+
     getChildren().add(panel);
   }
 
-  private void handleTyping(String typedCharacter) {
-    int currentPlayerId = viewController.getCurrentPlayerId();
-    char expectedCharacter = getCurrentExpectedCharacter();
-
-    if (typedCharacter.isEmpty() || typedCharacter.charAt(0) != expectedCharacter) {
-      IntegerProperty errorsProperty = viewController.getPlayerErrorsProperty(currentPlayerId);
-      errorsProperty.set(errorsProperty.get() + 1);
+  /**
+   * Handles the event when a character is typed. This method passes the typed character to the view
+   * controller for further processing.
+   *
+   * @param typedCharacter the character that was typed.
+   */
+  private void handleTyping(char typedCharacter) {
+    if (typedCharacter != '\b') {
+      System.out.println(typedCharacter);
+      viewController.handleCharacterTyped(typedCharacter);
     }
-  }
-
-  private char getCurrentExpectedCharacter() {
-    if (gameText == null || gameText.isEmpty() || currentCharIndex >= gameText.length()) {
-      return '\0';
-    }
-    return gameText.charAt(currentCharIndex);
   }
 
   /**
-   * Adds a stats panel that displays the user's WPM and error count. The panel is styled and
-   * positioned within the UI.
+   * Adds a new player to the game display. This method creates and configures various UI components
+   * to represent a player's progress in the game, including a racetrack, player statistics, and a
+   * racer's animation. The player's progress and performance statistics are dynamically bound to
+   * properties provided by the view controller.
+   *
+   * @param playerId the ID of the player to be added.
    */
-  private void addStatsPanel() {
-    HBox statsPanel = new HBox(30);
-    statsPanel.setAlignment(Pos.CENTER);
-    statsPanel.setPadding(new Insets(10, 50, 10, 50));
-    statsPanel.setBackground(
-        new Background(new BackgroundFill(StyleManager.GREY_BOX, CornerRadii.EMPTY, Insets.EMPTY)));
-    statsPanel.setBorder(
-        new Border(
-            new BorderStroke(
-                Paint.valueOf("black"),
-                BorderStrokeStyle.SOLID,
-                CornerRadii.EMPTY,
-                new BorderWidths(1))));
+  public void addPlayer(int playerId) {
+    Rectangle raceBorder = new Rectangle(300, 60, Color.TRANSPARENT);
+    raceBorder
+        .widthProperty()
+        .bind(
+            Bindings.createDoubleBinding(
+                () -> this.widthProperty().getValue() - 100, this.widthProperty()));
+    raceBorder.setStroke(Color.WHITE);
+    raceBorder.setStrokeWidth(4);
+    raceBorder.getStrokeDashArray().addAll(8.0, 16.0);
+    raceBorder.setArcHeight(20);
+    raceBorder.setArcWidth(20);
+
+    Line line = new Line();
+    line.setStartX(0);
+    line.endXProperty()
+        .bind(
+            Bindings.createDoubleBinding(
+                () -> this.widthProperty().getValue() - 110, this.widthProperty()));
+    line.getStrokeDashArray().addAll(4.0, 8.0);
+    line.setStrokeWidth(2);
+    line.setStroke(Color.WHITE);
+    line.setFill(Color.RED);
+    line.setTranslateY(-20);
+
+    Line line2 = new Line();
+    line2.setStartX(0);
+    line2
+        .endXProperty()
+        .bind(
+            Bindings.createDoubleBinding(
+                () -> this.widthProperty().getValue() - 110, this.widthProperty()));
+    line2.getStrokeDashArray().addAll(4.0, 8.0);
+    line2.setStrokeWidth(2);
+    line2.setStroke(Color.WHITE);
+    line2.setFill(Color.RED);
+    line2.setTranslateY(20);
+
+    Rectangle racetrack = new Rectangle(300, 60, Color.RED);
+    racetrack
+        .widthProperty()
+        .bind(
+            Bindings.createDoubleBinding(
+                () -> this.widthProperty().getValue() - 100, this.widthProperty()));
+    racetrack.setFill(Color.DARKSLATEGRAY);
+    racetrack.setStroke(Color.RED);
+    racetrack.setStrokeWidth(4);
+    racetrack.setStrokeDashOffset(12);
+    racetrack.getStrokeDashArray().addAll(8.0, 16.0);
+    racetrack.setArcHeight(20);
+    racetrack.setArcWidth(20);
+
+    ImageView racer =
+        new ImageView(new Image(getClass().getResourceAsStream("/images/gooseanimation.gif")));
+    racer.setPreserveRatio(true);
+    racer.setFitWidth(50);
+
+    DoubleProperty progressProperty = viewController.getPlayerProgressProperty(playerId);
+    DoubleBinding progressBinding =
+        Bindings.createDoubleBinding(
+            () ->
+                (racetrack.getWidth() - racer.getFitWidth()) * progressProperty.getValue()
+                    + racetrack.getLayoutX(),
+            progressProperty,
+            this.widthProperty());
+    racer.xProperty().bind(progressBinding);
 
     Label wpmLabel = new Label();
-    DoubleProperty wpmProperty =
-        viewController.getPlayerWpmProperty(viewController.getCurrentPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
-    wpmLabel.setAlignment(Pos.CENTER_LEFT);
+    DoubleProperty wpmProperty = viewController.getPlayerWpmProperty(playerId);
+    StringBinding wpmBinding =
+        Bindings.createStringBinding(
+            () -> String.format("%.2f", wpmProperty.getValue()) + " WPM", wpmProperty);
+    wpmLabel.textProperty().bind(wpmBinding);
+    wpmLabel.setFont(StyleManager.BOLD_ITALIC_FONT);
+    wpmLabel.setTextFill(Color.BLACK);
 
     Label accuracyLabel = new Label();
-    accuracyLabel
-        .textProperty()
-        .bind(
-            viewController
-                .getPlayerAccuracyProperty(viewController.getCurrentPlayerId())
-                .multiply(100)
-                .asString("%.2f%% Accuracy"));
-    accuracyLabel.setAlignment(Pos.CENTER);
+    DoubleProperty accuracyProperty = viewController.getPlayerAccuracyProperty(playerId);
+    StringBinding accuracyBinding =
+        Bindings.createStringBinding(
+            () -> String.format("%.2f", accuracyProperty.getValue() * 100) + "% Accuracy",
+            accuracyProperty);
+    accuracyLabel.textProperty().bind(accuracyBinding);
+    accuracyLabel.setFont(StyleManager.BOLD_ITALIC_FONT);
+    accuracyLabel.setTextFill(Color.BLACK);
 
-    Label errorsLabel = new Label();
-    IntegerProperty errorsProperty =
-        viewController.getPlayerErrorsProperty(viewController.getCurrentPlayerId());
-    errorsLabel.textProperty().bind(Bindings.format("Errors: %d", errorsProperty));
-    errorsLabel.setAlignment(Pos.CENTER_RIGHT);
+    final Label errorsLabel = new Label();
 
-    ProgressBar progressBar = new ProgressBar();
-    progressBar
-        .progressProperty()
-        .bind(viewController.getPlayerProgressProperty(viewController.getCurrentPlayerId()));
-    progressBar.setPrefWidth(200);
+    Label usernameLabel = new Label(viewController.getUsernameById(playerId));
+    usernameLabel.setFont(StyleManager.BOLD_ITALIC_FONT);
+    usernameLabel.setTextFill(Color.BLACK);
+    usernameLabel.setPadding(new Insets(0, 10, 0, 10));
 
-    VBox wpmContainer = new VBox(wpmLabel);
-    VBox accuracyContainer = new VBox(accuracyLabel);
-    VBox progressBarContainer = new VBox(progressBar);
-    VBox errorsContainer = new VBox(errorsLabel);
+    HBox stats = new HBox(10);
+    stats.getChildren().addAll(wpmLabel, accuracyLabel, errorsLabel);
+    stats.setAlignment(Pos.CENTER);
 
-    statsPanel
-        .getChildren()
-        .addAll(wpmContainer, accuracyContainer, progressBarContainer, errorsContainer);
+    HBox banner = new HBox(20);
+    banner.getChildren().addAll(usernameLabel, stats);
+    banner.setAlignment(Pos.CENTER_LEFT);
+    // banner.setBackground(new Background(new BackgroundFill(StyleManager.GREY_BOX,
+    // CornerRadii.EMPTY, Insets.EMPTY)));
 
-    VBox.setMargin(statsPanel, new Insets(10, 50, 10, 50));
-    getChildren().add(statsPanel);
-  }
+    VBox playerDisplay =
+        new VBox(new Pane(new StackPane(racetrack, raceBorder, line, line2, banner), racer));
+    playerDisplay.setPadding(new Insets(10, 50, 10, 50));
+    playerDisplay.setAlignment(Pos.CENTER);
+    HBox.setHgrow(racetrack, Priority.ALWAYS);
 
-  /** Adds a panel to display the top players. The panel is styled and positioned within the UI. */
-  private void addTopPlayersPanel() {
-    VBox topPlayersPanel = new VBox();
-    topPlayersPanel.setAlignment(Pos.CENTER);
-    topPlayersPanel.setPadding(new Insets(10, 50, 10, 50));
-    topPlayersPanel.setBackground(
-        new Background(
-            new BackgroundFill(StyleManager.GREY_BOX, new CornerRadii(5), Insets.EMPTY)));
-    topPlayersPanel.setBorder(
-        new Border(
-            new BorderStroke(
-                Paint.valueOf("black"),
-                BorderStrokeStyle.SOLID,
-                CornerRadii.EMPTY,
-                BorderWidths.DEFAULT)));
-    topPlayersLabel = new Label();
-    topPlayersLabel.setAlignment(Pos.CENTER);
-    topPlayersLabel.setFont(StyleManager.STANDARD_FONT);
-    topPlayersPanel.getChildren().add(topPlayersLabel);
-    getChildren().add(topPlayersPanel);
-    topPlayersLabel
-        .textProperty()
-        .bind(createTopPlayersBinding(viewController.topPlayersProperty()));
-    VBox.setMargin(topPlayersPanel, new Insets(10, 50, 10, 50));
+    getChildren().add(getChildren().size() - 1, playerDisplay);
+    playerDisplayById.put(playerId, playerDisplay);
   }
 
   /**
-   * Creates a StringBinding to bind the top players list to a display label.
+   * Removes the player from the game display. This method removes the UI components associated with
+   * the specified player ID from the game display.
    *
-   * @param topPlayers The list of top players.
-   * @return A StringBinding representing the top players.
+   * @param playerId the ID of the player to be removed.
    */
-  private StringBinding createTopPlayersBinding(ListProperty<String> topPlayers) {
-    return Bindings.createStringBinding(
-        () -> {
-          if (topPlayers.isEmpty()) {
-            return "Top players: None";
-          } else {
-            return "Top players: " + topPlayers.stream().collect(Collectors.joining(", "));
-          }
-        },
-        topPlayers);
+  public void removePlayer(int playerId) {
+    VBox playerDisplay = playerDisplayById.getOrDefault(playerId, null);
+    getChildren().remove(playerDisplay);
+    playerDisplayById.remove(playerId);
   }
 
   /**
@@ -295,19 +381,8 @@ public class GameUi extends VBox {
         .ifPresent(
             response -> {
               if (response == ButtonType.YES) {
-                viewController.endGame();
-                viewController.switchToGameResultUi();
+                viewController.leaveSessionOrGame();
               }
             });
-  }
-
-  /**
-   * Called when the view is shown. Updates the username label with the current username from the
-   * view controller.
-   */
-  public void onViewShown() {
-    if (usernameLabel != null) {
-      usernameLabel.setText(viewController.getUsername());
-    }
   }
 }

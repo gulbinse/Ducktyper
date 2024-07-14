@@ -102,6 +102,21 @@ public final class Session {
     return game.typeCharacter(playerId, character);
   }
 
+  /** Closes this session and stops the game. */
+  public void close() {
+    game.stop();
+  }
+
+  /**
+   * Returns whether the specified player is ready.
+   *
+   * @param playerId the id of the player
+   * @return <code>true</code> if the player is ready, <code>false</code> otherwise
+   */
+  public boolean isPlayerReady(int playerId) {
+    return game.isPlayerReady(playerId);
+  }
+
   /**
    * Returns whether every player is ready.
    *
@@ -117,7 +132,7 @@ public final class Session {
    * @return <code>true</code> if the game has started, <code>false</code> otherwise
    */
   public boolean hasGameStarted() {
-    return game.getStatus() == GameStatus.RUNNING;
+    return game.getStatus() != GameStatus.WAITING_FOR_PLAYERS;
   }
 
   /**

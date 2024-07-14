@@ -1,8 +1,6 @@
 package typeracer.client.view;
 
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -14,7 +12,6 @@ import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import typeracer.client.ViewController;
@@ -26,7 +23,7 @@ import typeracer.client.ViewController;
  */
 public class PlayerStatsUi extends VBox {
   /** The view controller to manage views and handle interactions. */
-  private ViewController viewController;
+  private final ViewController viewController;
 
   /** Label for displaying the number of games played. */
   private Label gamesPlayedLabel;
@@ -43,14 +40,20 @@ public class PlayerStatsUi extends VBox {
   /** Label for displaying the average accuracy. */
   private Label averageAccuracyLabel;
 
-  /**
-   * Constructs a new PlayerStatsUi and initializes its user interface.
-   *
-   * @param viewController the controller to manage views and handle interactions.
-   */
-  public PlayerStatsUi(ViewController viewController) {
+  private PlayerStatsUi(ViewController viewController) {
     this.viewController = viewController;
-    initializeUi();
+  }
+
+  /**
+   * Creates and initializes a new instance of PlayerStatsUi.
+   *
+   * @param viewController the ViewController to manage views and handle interactions.
+   * @return a new instance of PlayerStatsUi with its UI initialized.
+   */
+  public static PlayerStatsUi create(ViewController viewController) {
+    PlayerStatsUi playerStatsUi = new PlayerStatsUi(viewController);
+    playerStatsUi.initializeUi();
+    return playerStatsUi;
   }
 
   /**
@@ -73,20 +76,12 @@ public class PlayerStatsUi extends VBox {
     Button backButton =
         StyleManager.createStyledButton(
             "back", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
-    backButton.setOnAction(e -> ViewController.switchToMainMenu());
+    backButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.MAIN_MENU));
 
-    Button resetButton =
-        StyleManager.createStyledButton(
-            "reset stats", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
-    resetButton.setOnAction(e -> viewController.handleResetStats());
-
-    HBox buttonBar = new HBox(10, backButton, resetButton);
-    buttonBar.setAlignment(Pos.CENTER);
-
-    this.getChildren().addAll(statsBox, buttonBar);
+    this.getChildren().addAll(statsBox, backButton);
 
     StyleManager.applyFadeInAnimation(statsBox, 1000);
-    StyleManager.applyButtonHoverAnimation(backButton, resetButton);
+    StyleManager.applyButtonHoverAnimation(backButton);
   }
 
   /**
@@ -108,28 +103,25 @@ public class PlayerStatsUi extends VBox {
                 CornerRadii.EMPTY,
                 new BorderWidths(1))));
 
+    Label roundsLabel = new Label();
+    roundsLabel.setText("Rounds played: " + viewController.getRoundsPlayed());
+    roundsLabel.setAlignment(Pos.CENTER_LEFT);
+
     Label wpmLabel = new Label();
-    Label accuracyLabel = new Label();
-
-    DoubleProperty wpmProperty =
-        viewController.getPlayerWpmProperty(viewController.getCurrentPlayerId());
-    wpmLabel.textProperty().bind(Bindings.format("%.2f WPM", wpmProperty));
-    accuracyLabel
-        .textProperty()
-        .bind(
-            viewController
-                .getPlayerAccuracyProperty(viewController.getCurrentPlayerId())
-                .multiply(100)
-                .asString("%.2f%% Accuracy"));
-
+    wpmLabel.setText(String.format("Average WPM: %.2f", viewController.getAverageWpm()));
     wpmLabel.setAlignment(Pos.CENTER_LEFT);
-    accuracyLabel.setAlignment(Pos.CENTER_RIGHT);
 
+    Label accuracyLabel = new Label();
+    accuracyLabel.setText(
+        String.format("Average accuracy: %.2f%%", viewController.getAverageAccuracy() * 100));
+    accuracyLabel.setAlignment(Pos.CENTER_LEFT);
+
+    VBox.setMargin(roundsLabel, new Insets(10, 50, 10, 50));
     VBox.setMargin(wpmLabel, new Insets(10, 50, 10, 50));
     VBox.setMargin(accuracyLabel, new Insets(10, 50, 10, 50));
-    VBox.setMargin(statsBox, new Insets(10, 200, 10, 200));
+    VBox.setMargin(statsBox, new Insets(10, 50, 10, 50));
 
-    statsBox.getChildren().addAll(wpmLabel, accuracyLabel);
+    statsBox.getChildren().addAll(roundsLabel, wpmLabel, accuracyLabel);
     return statsBox;
   }
 

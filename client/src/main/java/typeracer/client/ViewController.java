@@ -2,115 +2,35 @@ package typeracer.client;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import typeracer.client.view.GameResultsUi;
 import typeracer.client.view.GameUi;
 import typeracer.client.view.InitialPromptUi;
-import typeracer.client.view.LobbyUi;
 import typeracer.client.view.MainMenuUi;
 import typeracer.client.view.PlayerStatsUi;
-import typeracer.client.view.ProfileSettingsUi;
+import typeracer.client.view.SessionUi;
+import typeracer.communication.messages.client.CharacterRequest;
+import typeracer.communication.messages.client.CreateSessionRequest;
+import typeracer.communication.messages.client.JoinSessionRequest;
+import typeracer.communication.messages.client.LeaveSessionRequest;
+import typeracer.communication.messages.client.ReadyRequest;
 
 /** Manages the transition between different scenes and states in the TypeRacer game application. */
-public class ViewController {
-
-  /** The width of the application window. */
-  private static final int WINDOW_WIDTH = 800;
-
-  /** The height of the application window. */
-  private static final int WINDOW_HEIGHT = 600;
-
-  /** The width of the lobby window. */
-  private static final int LOBBY_WIDTH = 600;
-
-  /** The height of the lobby window. */
-  private static final int LOBBY_HEIGHT = 400;
-
-  /** A map of view names to their corresponding scenes. */
-  private static Map<ViewName, Scene> views;
-
-  /** The primary stage of the application. */
-  private static Stage stage;
-
-  /** The client handling the backend communication. */
-  private static Client client;
-
-  /** The ID of the current player. */
-  private int currentPlayerId;
-
-  /** The username of the current user. */
-  private String username;
-
-  /** A map of player IDs to their WPM properties. */
-  private Map<Integer, DoubleProperty> playerWpms = new HashMap<>();
-
-  /** A map of player IDs to their accuracy properties. */
-  private Map<Integer, DoubleProperty> playerAccuracies = new HashMap<>();
-
-  /** A map of player IDs to their progress properties. */
-  private Map<Integer, DoubleProperty> playerProgresses = new HashMap<>();
-
-  /** A map of player IDs to their error count properties. */
-  private Map<Integer, IntegerProperty> playerErrors = new HashMap<>();
-
-  /** A list property of the top players' usernames. */
-  private ListProperty<String> topPlayers =
-      new SimpleListProperty<>(FXCollections.observableArrayList());
-
-  /** The game text property. */
-  private static StringProperty gameText = new SimpleStringProperty();
-
-  /** An observable list of player usernames. */
-  private ObservableList<String> playerUsernames = FXCollections.observableArrayList();
-
-  /**
-   * Connects to the server with the given IP address and port number.
-   *
-   * @param ip The IP address of the server.
-   * @param port The port number of the server.
-   * @throws IOException If an I/O error occurs when attempting to connect to the server.
-   */
-  public void connectToServer(String ip, int port) throws IOException {
-    //client.connect(ip, port);
-    System.out.println("Connected to server at " + ip + ":" + port);
-  }
-
-  /**
-   * Constructs a ViewController with a given stage and client. Initializes the view mappings and
-   * sets up the initial views.
-   *
-   * @param stage The primary stage of the application.
-   * @param client The client handling the backend communication.
-   */
-  public ViewController(Stage stage, Client client) {
-    this.stage = stage;
-    views = new HashMap<>();
-    this.client = client;
-    initializeViews();
-    initializeTopPlayers();
-  }
-
-  /** Sends the current username to the server using the client. */
-  public void sendUsernameToServer() {
-    //client.sendUsername(username);
-  }
+public class ViewController extends Application {
 
   /** Enum representing the different views available in the TypeRacer game application. */
-  public enum ViewName {
+  public enum SceneName {
     /** The initial prompt view. */
     INITIAL_PROMPT,
 
@@ -123,23 +43,357 @@ public class ViewController {
     /** The player statistics view. */
     STATS,
 
-    /** The profile settings view. */
-    PROFILE_SETTINGS,
-
     /** The game results view. */
     GAME_RESULTS,
 
-    /** The lobby view. */
-    LOBBY
+    /** The session view. */
+    SESSION
+  }
+
+  private static final String STYLESHEET_PATH = "/styles.css";
+  private static final int DEFAULT_WINDOW_WIDTH = 1920 / 2 - 200;
+  private static final int DEFAULT_WINDOW_HEIGHT = 1080 / 2 + 30;
+
+  private static final int MINIMUM_WINDOW_WIDTH = 600;
+  private static final int MINIMUM_WINDOW_HEIGHT = 650;
+
+  private final Map<SceneName, Scene> scenes;
+
+  private final Stage stage = new Stage();
+  private SceneName currentScene;
+  private final Client client;
+  private ClientSideSessionData playerData = new ClientSideSessionData();
+  private String username;
+  private int playerId;
+  private int roundsPlayed;
+  private double averageWpm;
+  private double averageAccuracy;
+
+  /**
+   * Constructs a ViewController with a given stage and client. Initializes the view mappings and
+   * sets up the initial views.
+   */
+  public ViewController() {
+    scenes = new HashMap<>();
+    this.client = new Client(this);
   }
 
   /**
-   * Sets the username for the current session.
+   * Starts the application by setting up the primary stage.
    *
-   * @param username The username of the player.
+   * @param primaryStage The primary stage for this application.
    */
-  public void setUsername(String username) {
+  @Override
+  public void start(Stage primaryStage) {
+
+    stage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
+    stage.setMinWidth(MINIMUM_WINDOW_WIDTH);
+
+    stage.setWidth(DEFAULT_WINDOW_WIDTH);
+    stage.setHeight(DEFAULT_WINDOW_HEIGHT);
+
+    stage.setTitle("Ducktyper");
+
+    addAllScenes();
+
+    Platform.runLater(() -> showScene(SceneName.INITIAL_PROMPT));
+    stage.setResizable(true);
+    stage.setOnCloseRequest(event -> System.exit(0));
+    stage.show();
+  }
+
+  /** Helper method to add views to the map. */
+  private void addScene(SceneName sceneName, Parent ui) {
+    Scene scene = new Scene(ui, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+    try {
+      scene.getStylesheets().add(STYLESHEET_PATH);
+    } catch (Exception e) {
+      showAlert("Error loading stylesheets: " + e.getMessage());
+    }
+    scenes.put(sceneName, scene);
+  }
+
+  /**
+   * Changes the current scene to the specified view.
+   *
+   * @param sceneName The name of the view to display.
+   */
+  public void showScene(SceneName sceneName) {
+    Platform.runLater(
+        () -> {
+          Scene scene = scenes.get(sceneName);
+          currentScene = sceneName;
+          if (scene != null) {
+            stage.setScene(scene);
+            stage.show();
+            if (scene.getRoot() instanceof SessionUi sessionUi) {
+              sessionUi.onViewShown();
+            } else if (scene.getRoot() instanceof GameUi gameUi) {
+              gameUi.onViewShown();
+            } else if (scene.getRoot() instanceof MainMenuUi) {
+              scenes.clear();
+              addAllScenes();
+              playerData = new ClientSideSessionData();
+            }
+          } else {
+            showAlert("Scene not found: " + sceneName);
+          }
+        });
+  }
+
+  /** Adds all the scenes to the application. */
+  private void addAllScenes() {
+    addScene(SceneName.INITIAL_PROMPT, InitialPromptUi.create(this));
+    addScene(SceneName.MAIN_MENU, MainMenuUi.create(this));
+    addScene(SceneName.GAME, GameUi.create(this));
+    addScene(SceneName.STATS, PlayerStatsUi.create(this));
+    addScene(SceneName.GAME_RESULTS, GameResultsUi.create(this));
+    addScene(SceneName.SESSION, SessionUi.create(this));
+  }
+
+  /**
+   * Sets the player ID.
+   *
+   * @param playerId the player's unique identifier.
+   */
+  public void setPlayerId(int playerId) {
+    this.playerId = playerId;
+  }
+
+  /**
+   * Sets the session ID and updates the session UI.
+   *
+   * @param sessionId the session's unique identifier.
+   */
+  public void setSessionId(int sessionId) {
+    Platform.runLater(
+        () -> {
+          playerData.setSessionId(sessionId);
+          SessionUi sessionUi = (SessionUi) scenes.get(SceneName.SESSION).getRoot();
+          sessionUi.onViewShown();
+        });
+  }
+
+  /**
+   * Retrieves the current session ID.
+   *
+   * @return the session's unique identifier.
+   */
+  public int getSessionId() {
+    return playerData.getSessionId();
+  }
+
+  /** Cancels any changes made in the settings and returns to the main menu. */
+  public void cancelSettings() {
+    showScene(SceneName.MAIN_MENU);
+  }
+
+  /**
+   * Connects to the server using the specified IP address, port, and username. This method
+   * establishes a connection to the server and sets the username for the client.
+   *
+   * @param ip the IP address of the server.
+   * @param port the port number of the server.
+   * @param username the username to be used for the connection.
+   * @throws IOException if an I/O error occurs when attempting to connect.
+   */
+  public void connectToServer(String ip, int port, String username) throws IOException {
+    client.connect(ip, port, username);
     this.username = username;
+  }
+
+  /**
+   * Called when User tries to join a session by pressing button in GUI.
+   *
+   * @param sessionId of session the player wants to join
+   */
+  public void joinSession(int sessionId) {
+    client.sendMessage(new JoinSessionRequest(sessionId));
+    setSessionId(sessionId);
+    System.out.println("Request to join session " + sessionId);
+  }
+
+  /** Called when User tries to create a session by pressing button in GUI. */
+  public void createSession() {
+    client.sendMessage(new CreateSessionRequest());
+    System.out.println("Request to create session");
+  }
+
+  /** Requests to set the player ready. */
+  public void setPlayerReady() {
+    boolean isReady = !playerData.getPlayerReadyProperty(playerId).get();
+    client.sendMessage(new ReadyRequest(isReady));
+    System.out.println("Player wants to update his readyStatus to: " + isReady);
+  }
+
+  /**
+   * Passes the User input from the GUI to the Client.
+   *
+   * @param character which the client typed
+   */
+  public void handleCharacterTyped(char character) {
+    client.sendMessage(new CharacterRequest(character));
+    System.out.println("Character typed: " + character);
+  }
+
+  /** Signals User intention to leave the game. */
+  public void leaveSessionOrGame() {
+    client.sendMessage(new LeaveSessionRequest());
+    System.out.println("Leaving game");
+  }
+
+  /** Starts a new game by fetching the game text and updating the UI accordingly. */
+  public void startNewGame() {
+    Platform.runLater(
+        () -> {
+          GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
+          for (int playerId : playerData.getPlayerNamesById().keySet()) {
+            gameUi.addPlayer(playerId);
+          }
+          showScene(SceneName.GAME);
+        });
+  }
+
+  /**
+   * Updates the player's information and adds a player label if the player is new. This method
+   * updates the player's name and ready status. If the player is new, it schedules the addition of
+   * the player's label to the session UI on the JavaFX application thread.
+   *
+   * @param playerId the ID of the player to update.
+   * @param playerName the name of the player.
+   * @param ready the ready status of the player.
+   */
+  public void updatePlayer(int playerId, String playerName, boolean ready) {
+    boolean isNew = playerData.updatePlayer(playerId, playerName, ready);
+    if (isNew) {
+      Platform.runLater(
+          () -> {
+            SessionUi sessionUi = (SessionUi) scenes.get(SceneName.SESSION).getRoot();
+            sessionUi.addPlayerLabel(playerId);
+          });
+    }
+  }
+
+  /**
+   * Removes a player who left from the game GUI.
+   *
+   * @param playerId of the player who left
+   */
+  public void removePlayerFromSession(int playerId) {
+    playerData.removePlayer(playerId);
+    Platform.runLater(
+        () -> {
+          SessionUi sessionUi = (SessionUi) scenes.get(SceneName.SESSION).getRoot();
+          sessionUi.removePlayerLabel(playerId);
+
+          GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
+          gameUi.removePlayer(playerId);
+        });
+  }
+
+  /** Ends the current game, updates stats, and switches the UI to display game results. */
+  // == Finished
+  public void leaveSession() {
+    Platform.runLater(
+        () -> {
+          if (currentScene == SceneName.GAME) {
+            showScene(SceneName.GAME_RESULTS);
+            GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
+            gameUi.onViewShown();
+
+            // Update average stats if 100% finished
+            if (getPlayerProgressProperty(playerId).get() >= 1) {
+              double wpm = getPlayerWpmProperty(playerId).get();
+              double accuracy = getPlayerAccuracyProperty(playerId).get();
+              roundPlayed(wpm, accuracy);
+            }
+          } else {
+            showScene(SceneName.MAIN_MENU);
+          }
+        });
+  }
+
+  /**
+   * Updates the statistics after a round is played. This method increments the number of rounds
+   * played and updates the average WPM and accuracy based on the provided values.
+   *
+   * @param wpm the words per minute achieved in the round.
+   * @param accuracy the accuracy percentage achieved in the round.
+   */
+  public void roundPlayed(double wpm, double accuracy) {
+    roundsPlayed++;
+    averageWpm = ((averageWpm * (roundsPlayed - 1)) + wpm) / roundsPlayed;
+    averageAccuracy = ((averageAccuracy * (roundsPlayed - 1)) + accuracy) / roundsPlayed;
+  }
+
+  /**
+   * Gets the number of rounds played.
+   *
+   * @return the number of rounds played.
+   */
+  public int getRoundsPlayed() {
+    return roundsPlayed;
+  }
+
+  /**
+   * Gets the average words per minute (WPM) over all rounds played.
+   *
+   * @return the average WPM.
+   */
+  public double getAverageWpm() {
+    return averageWpm;
+  }
+
+  /**
+   * Gets the average accuracy over all rounds played.
+   *
+   * @return the average accuracy.
+   */
+  public double getAverageAccuracy() {
+    return averageAccuracy;
+  }
+
+  /**
+   * Passes the correctness of a typed character to the GUI.
+   *
+   * @param isCorrect boolean if the typed character is correct
+   */
+  public void handleCharacterAnswer(boolean isCorrect) {
+    GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
+    gameUi.updateDisplayText(isCorrect);
+  }
+
+  /** Sets the icon image of the Stage to a typewriter image. */
+  public void setIconImage() {
+    Image img = new Image(getClass().getResourceAsStream("/images/duck.png"));
+    stage.getIcons().add(img);
+  }
+
+  /**
+   * Updates the game text with the specified new text.
+   *
+   * @param newText The new game text to set.
+   */
+  public void setGameText(String newText) {
+    playerData.setGameText(newText);
+  }
+
+  /**
+   * Updates the player Information of a specific player.
+   *
+   * @param playerId of the player
+   * @param playerWpm of the player
+   * @param playerAccuracy of the player
+   * @param playerProgress of the player
+   */
+  public void updatePlayerStateInformation(
+      int playerId, double playerWpm, double playerAccuracy, double playerProgress) {
+    Platform.runLater(
+        () -> {
+          playerData.setPlayerWpms(playerId, playerWpm);
+          playerData.setPlayerAccuracies(playerId, playerAccuracy);
+          playerData.setPlayerProgresses(playerId, playerProgress);
+        });
   }
 
   /**
@@ -156,8 +410,17 @@ public class ViewController {
    *
    * @return The ID of the current player.
    */
-  public int getCurrentPlayerId() {
-    return currentPlayerId;
+  public int getPlayerId() {
+    return playerId;
+  }
+
+  /**
+   * Returns the current game text.
+   *
+   * @return text to be copied in game.
+   */
+  public String getGameText() {
+    return playerData.getGameText();
   }
 
   /**
@@ -166,49 +429,27 @@ public class ViewController {
    * @return An observable list containing the usernames of the players.
    */
   public ObservableList<String> getPlayerUsernames() {
-    return playerUsernames;
-  }
-
-  /** Initializes the different views used in the application. */
-  private void initializeViews() {
-    views.put(
-        ViewName.INITIAL_PROMPT,
-        new Scene(new InitialPromptUi(this, stage), WINDOW_WIDTH, WINDOW_HEIGHT));
-    views.put(ViewName.MAIN_MENU, new Scene(new MainMenuUi(this), WINDOW_WIDTH, WINDOW_HEIGHT));
-    views.put(ViewName.GAME, new Scene(new GameUi(this), WINDOW_WIDTH, WINDOW_HEIGHT));
-    views.put(ViewName.STATS, new Scene(new PlayerStatsUi(this), WINDOW_WIDTH, WINDOW_HEIGHT));
-    views.put(
-        ViewName.PROFILE_SETTINGS,
-        new Scene(new ProfileSettingsUi(this), WINDOW_WIDTH, WINDOW_HEIGHT));
-    views.put(
-        ViewName.GAME_RESULTS, new Scene(new GameResultsUi(this), WINDOW_WIDTH, WINDOW_HEIGHT));
-    views.put(ViewName.LOBBY, new Scene(new LobbyUi(this), LOBBY_WIDTH, LOBBY_HEIGHT));
-  }
-
-  /** Starts a new game by fetching the game text and updating the UI accordingly. */
-  public static void startNewGame() {
-    String gameText = client.fetchNewGameText();
-    updateGameText(gameText);
-    handleResetStats();
-    switchToGameUi();
-  }
-
-  /** Ends the current game, updates stats, and switches the UI to display game results. */
-  public void endGame() {
-    switchToGameResultUi();
-  }
-
-  public StringProperty gameTextProperty() {
-    return gameText;
+    return FXCollections.observableArrayList(playerData.getPlayerNamesById().values());
   }
 
   /**
-   * Updates the game text with the specified new text.
+   * Retrieves the username associated with a specific player ID.
    *
-   * @param newText The new game text to set.
+   * @param id the player's ID.
+   * @return the username, or null if no player is found with the provided ID.
    */
-  public static void updateGameText(String newText) {
-    gameText.set(newText);
+  public String getUsernameById(int id) {
+    return playerData.getPlayerNamesById().get(id);
+  }
+
+  /**
+   * Retrieves or creates a property to track whether a player is ready.
+   *
+   * @param playerId the ID of the player.
+   * @return a BooleanProperty reflecting the player's ready status.
+   */
+  public BooleanProperty getPlayerReadyProperty(int playerId) {
+    return playerData.getPlayerReadyProperty(playerId);
   }
 
   /**
@@ -218,7 +459,7 @@ public class ViewController {
    * @return The WPM property for the player.
    */
   public DoubleProperty getPlayerWpmProperty(int playerId) {
-    return playerWpms.computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
+    return playerData.getPlayerWpmProperty(playerId);
   }
 
   /**
@@ -228,224 +469,46 @@ public class ViewController {
    * @return The accuracy property for the player.
    */
   public DoubleProperty getPlayerAccuracyProperty(int playerId) {
-    return playerAccuracies.computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
+    return playerData.getPlayerAccuracyProperty(playerId);
   }
 
   /**
-   * Returns the progress property for the specified player ID.
+   * Gets the progress property of the player with the specified ID. If the player's progress
+   * property does not exist, it is created and initialized to 0.0.
    *
-   * @param playerId The ID of the player.
-   * @return The progress property for the player.
+   * @param playerId the ID of the player.
+   * @return the DoubleProperty representing the player's progress.
    */
   public DoubleProperty getPlayerProgressProperty(int playerId) {
-    return playerProgresses.computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
+    return playerData.getPlayerProgressProperty(playerId);
   }
 
   /**
-   * Sets the WPM value for the specified player ID.
+   * Displays an error alert with the specified message.
    *
-   * @param playerId The ID of the player.
-   * @param wpm The WPM value to set.
+   * @param message The message to display in the alert.
    */
-  public void setPlayerWpm(int playerId, double wpm) {
-    getPlayerWpmProperty(playerId).set(wpm);
-  }
-
-  /**
-   * Sets the accuracy value for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @param accuracy The accuracy value to set.
-   */
-  public void setPlayerAccuracy(int playerId, double accuracy) {
-    getPlayerAccuracyProperty(playerId).set(accuracy);
-  }
-
-  /**
-   * Sets the progress value for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @param progress The progress value to set.
-   */
-  public void setPlayerProgress(int playerId, double progress) {
-    getPlayerProgressProperty(playerId).set(progress);
-  }
-
-  /**
-   * Updates the WPM value for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @param wpm The new WPM value to set.
-   */
-  public void updatePlayerWpm(int playerId, double wpm) {
+  public void showAlert(String message) {
     Platform.runLater(
         () -> {
-          playerWpms.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(wpm);
+          Alert alert = new Alert(Alert.AlertType.ERROR, message);
+          alert.showAndWait();
         });
   }
 
   /**
-   * Updates the accuracy value for the specified player ID.
+   * Shows a server-crash push up.
    *
-   * @param playerId The ID of the player.
-   * @param accuracy The new accuracy value to set.
+   * @param message that will be displayed in the push-up window
    */
-  public void updatePlayerAccuracy(int playerId, double accuracy) {
+  public void showServerCrashMessage(String message) {
     Platform.runLater(
         () -> {
-          playerAccuracies.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(accuracy);
+          Alert alert = new Alert(Alert.AlertType.ERROR);
+          alert.setTitle("Server-Crash");
+          alert.setHeaderText(null);
+          alert.setContentText(message);
+          alert.showAndWait();
         });
-  }
-
-  /**
-   * Updates the progress value for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @param progress The new progress value to set.
-   */
-  public void updatePlayerProgress(int playerId, double progress) {
-    Platform.runLater(
-        () -> {
-          playerProgresses.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(progress);
-        });
-  }
-
-  /**
-   * Returns the error count property for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @return The error count property for the player.
-   */
-  public IntegerProperty getPlayerErrorsProperty(int playerId) {
-    return playerErrors.computeIfAbsent(playerId, k -> new SimpleIntegerProperty());
-  }
-
-  /**
-   * Updates the error count for the specified player ID.
-   *
-   * @param playerId The ID of the player.
-   * @param errors The new error count to set.
-   */
-  public void updatePlayerErrors(int playerId, int errors) {
-    Platform.runLater(
-        () -> {
-          playerErrors.computeIfAbsent(playerId, k -> new SimpleIntegerProperty()).set(errors);
-        });
-  }
-
-  /** Initializes the list of top players. */
-  private void initializeTopPlayers() {
-    List<String> players = client.getTopPlayers();
-    topPlayers.set(FXCollections.observableArrayList(players));
-  }
-
-  public ListProperty<String> topPlayersProperty() {
-    return topPlayers;
-  }
-
-  /**
-   * Changes the current scene to the specified view.
-   *
-   * @param viewName The name of the view to display.
-   */
-  public static void showView(ViewName viewName) {
-    Scene scene = views.get(viewName);
-    if (scene != null) {
-      stage.setScene(scene);
-      stage.show();
-      if (scene.getRoot() instanceof LobbyUi) {
-        ((LobbyUi) scene.getRoot()).onViewShown();
-      } else if (scene.getRoot() instanceof GameUi) {
-        ((GameUi) scene.getRoot()).onViewShown();
-      }
-    } else {
-      System.err.println("View not found: " + viewName);
-    }
-  }
-
-  /**
-   * Adds a scene to the views map with a specified name.
-   *
-   * @param name The name to assign to the scene.
-   * @param scene The scene to add.
-   */
-  public void addScene(ViewName name, Scene scene) {
-    views.put(name, scene);
-  }
-
-  /** Displays the lobby view. */
-  public void startGame() {
-    showView(ViewName.LOBBY);
-  }
-
-  /** Displays the statistics view. */
-  public void viewStats() {
-    showView(ViewName.STATS);
-  }
-
-  /** Displays the profile settings view. */
-  public void editProfile() {
-    showView(ViewName.PROFILE_SETTINGS);
-  }
-
-  /** Switches the current scene to the main menu. */
-  public static void switchToMainMenu() {
-    showView(ViewName.MAIN_MENU);
-  }
-
-  /** Switches the current scene to the lobby UI. */
-  public static void switchToLobbyUi() {
-    showView(ViewName.LOBBY);
-    LobbyUi lobbyUi = (LobbyUi) views.get(ViewName.LOBBY).getRoot();
-    if (lobbyUi != null) {
-      lobbyUi.onViewShown();
-    }
-  }
-
-  /** Switches the current scene to the game UI. */
-  public static void switchToGameUi() {
-    showView(ViewName.GAME);
-    GameUi gameUi = (GameUi) views.get(ViewName.GAME).getRoot();
-    if (gameUi != null) {
-      gameUi.onViewShown();
-    }
-  }
-
-  /** Switches the current scene to the game results UI. */
-  public static void switchToGameResultUi() {
-    showView(ViewName.GAME_RESULTS);
-  }
-
-  /**
-   * Saves user settings and switches back to the main menu.
-   *
-   * @param username The username to save.
-   * @param wpmGoal The words per minute goal.
-   * @param favoriteText The favorite text of the user.
-   */
-  public void saveUserSettings(String username, int wpmGoal, String favoriteText) {
-    client.saveSettings(username, wpmGoal, favoriteText);
-    showView(ViewName.MAIN_MENU);
-  }
-
-  /** Cancels any changes made in the settings and returns to the main menu. */
-  public void cancelSettings() {
-    showView(ViewName.MAIN_MENU);
-  }
-
-  /** Resets the user's game statistics. */
-  public static void handleResetStats() {
-    client.resetStats();
-    PlayerStatsUi statsUi = getPlayerStatsUi();
-    statsUi.clearDisplayedStats();
-  }
-
-  /**
-   * Gets the PlayerStatsUi from the views map.
-   *
-   * @return PlayerStatsUi instance if available.
-   */
-  private static PlayerStatsUi getPlayerStatsUi() {
-    return (PlayerStatsUi) views.get(ViewName.STATS).getRoot();
   }
 }

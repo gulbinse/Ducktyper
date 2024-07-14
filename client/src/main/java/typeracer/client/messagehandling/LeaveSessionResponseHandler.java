@@ -5,8 +5,8 @@ import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.LeaveSessionResponse;
 
 /**
- * Handles LeaveSessionResponse messages in a chain of responsibility pattern. If the message is not of
- * the specified type, it will be passed to the next handler in the chain, if any.
+ * Handles LeaveSessionResponse messages in a chain of responsibility pattern. If the message is not
+ * of the specified type, it will be passed to the next handler in the chain, if any.
  */
 public class LeaveSessionResponseHandler implements MessageHandler {
 
@@ -14,11 +14,13 @@ public class LeaveSessionResponseHandler implements MessageHandler {
   private final ViewController viewController;
 
   /**
-   * Constructor with the next handler in chain.
+   * Constructs a LeaveSessionResponseHandler. Initializes the handler with the specified next
+   * handler and view controller.
    *
-   * @param nextHandler the next handler in message handling chain
+   * @param nextHandler the next handler in the chain of responsibility.
+   * @param viewController the view controller used to update the view.
    */
-  public LeaveSessionResponseHandler(MessageHandler nextHandler, ViewController viewController) {
+  LeaveSessionResponseHandler(MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;
     this.viewController = viewController;
   }
@@ -30,16 +32,19 @@ public class LeaveSessionResponseHandler implements MessageHandler {
    */
   @Override
   public void handleMessage(Message message) {
+    // ACCEPT response
     if (message instanceof LeaveSessionResponse leaveSessionResponse) {
       switch (leaveSessionResponse.getLeaveStatus()) {
         case ACCEPTED:
-          System.out.println("Player can leave the session.");
-          viewController.switchToLobbyUi();
-        case DENIED:
-          System.out.println("Player can not leave the session.");
+          viewController.leaveSession();
+          break;
+          // DENIED response
         default:
-          nextHandler.handleMessage(message);
+          viewController.showAlert(leaveSessionResponse.getReason().getString());
+          break;
       }
+    } else if (nextHandler != null) {
+      nextHandler.handleMessage(message);
     }
   }
 }

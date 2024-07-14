@@ -13,16 +13,19 @@ import typeracer.communication.statuscodes.Reason;
 public final class HandshakeResponse implements Message {
 
   private final PermissionStatus connectionStatus;
+  private final int playerId;
   private final Reason reason;
 
   /**
    * Constructs a new HandshakeResponse with the specified arguments.
    *
    * @param connectionStatus the status of the request, indicating whether connecting is allowed
+   * @param playerId the id of the player
    * @param reason the reason for a denied connection, null otherwise
    */
-  public HandshakeResponse(PermissionStatus connectionStatus, Reason reason) {
+  public HandshakeResponse(PermissionStatus connectionStatus, int playerId, Reason reason) {
     this.connectionStatus = connectionStatus;
+    this.playerId = playerId;
     this.reason = reason;
   }
 
@@ -33,6 +36,15 @@ public final class HandshakeResponse implements Message {
    */
   public PermissionStatus getConnectionStatus() {
     return connectionStatus;
+  }
+
+  /**
+   * Returns the id of the player.
+   *
+   * @return the player's id
+   */
+  public int getPlayerId() {
+    return playerId;
   }
 
   /**

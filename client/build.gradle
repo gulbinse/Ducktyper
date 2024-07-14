@@ -20,7 +20,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'typeracer.client.Client'
+    mainClass = 'typeracer.client.ViewController'
 }
 
 repositories {
@@ -36,6 +36,7 @@ dependencies {
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
 }
 
 javafx {

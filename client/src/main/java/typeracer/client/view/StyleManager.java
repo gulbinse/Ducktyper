@@ -4,6 +4,9 @@ import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -17,14 +20,14 @@ import javafx.util.Duration;
  */
 public class StyleManager {
 
-  /**
-   * The color used for the start screen background. This color is defined as a web color with the
-   * hex code "#2374AB".
-   */
+  /** Color used for the start screen background. */
   public static final Color START_SCREEN = Color.web("#2374AB");
 
-  /** Color for green buttons. */
+  /** Color used for green buttons. */
   public static final Color GREEN_BUTTON = Color.web("#009900");
+
+  /** Color for green buttons. */
+  public static final Color STANDARD_BUTTON = Color.web("#08415C");
 
   /** Color for blue buttons. */
   public static final Color BLUE_BUTTON = Color.web("#007FFF");
@@ -47,6 +50,10 @@ public class StyleManager {
   /** Italic font for UI text. */
   public static final Font ITALIC_FONT = Font.font("Arial", FontPosture.ITALIC, 16);
 
+  /** Bold italic font for emphasized UI text. */
+  public static final Font BOLD_ITALIC_FONT =
+      Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 18);
+
   /** Default constructor for the StyleManager class. Initializes a new instance of StyleManager. */
   public StyleManager() {}
 
@@ -66,18 +73,12 @@ public class StyleManager {
         "-fx-background-color: "
             + hexColor
             + "; -fx-text-fill: white; -fx-border-width: "
-            + "0; -fx-border-color: transparent;";
-    String hoverStyle =
-        "-fx-background-color: "
-            + hexColor
-            + "; -fx-text-fill: white; -fx-border-color: "
-            + "white; -fx-border-width: 2px;";
+            + "2; -fx-border-color: #52CCC1";
 
     button.setStyle(defaultStyle);
     button.setFont(font);
     button.setOnMouseEntered(
         e -> {
-          button.setStyle(hoverStyle);
           ScaleTransition scaleUp = new ScaleTransition(Duration.millis(200), button);
           scaleUp.setToX(1.1);
           scaleUp.setToY(1.1);
@@ -100,10 +101,51 @@ public class StyleManager {
           clickScale.setAutoReverse(true);
           clickScale.play();
         });
-    button.setMinSize(120, 40);
-    button.setMaxSize(120, 40);
-    button.setPrefSize(120, 40);
+    //    button.setMinSize(120, 40);
+    //    button.setMaxSize(120, 40);
+    button.setPrefSize(160, 40);
     return button;
+  }
+
+  /**
+   * Creates a button for the Main Menu.
+   *
+   * @param image of what the button should look like
+   * @return an ImageView that acts like a button
+   */
+  public static ImageView createMainMenueButton(Image image) {
+    ImageView submitImage = new ImageView(image);
+    submitImage.setFitHeight(50);
+    submitImage.setPreserveRatio(true);
+
+    submitImage.setOnMouseEntered(
+        e -> {
+          submitImage.setScaleX(1.1);
+          submitImage.setScaleY(1.1);
+        });
+    submitImage.setOnMouseExited(
+        e -> {
+          submitImage.setScaleX(1.0);
+          submitImage.setScaleY(1.0);
+        });
+    submitImage.setOnMouseReleased(
+        e -> {
+          submitImage.setScaleX(1.0);
+          submitImage.setScaleY(1.0);
+        });
+    return submitImage;
+  }
+
+  /**
+   * Creates a Region that acts like a spacer.
+   *
+   * @return Region as spacer
+   */
+  public static Region createBulletListSpacer() {
+    Region spacerBulltepoints = new Region();
+    spacerBulltepoints.setMinWidth(20);
+    spacerBulltepoints.setPrefWidth(20);
+    return spacerBulltepoints;
   }
 
   /**

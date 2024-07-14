@@ -4,10 +4,9 @@ import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.PlayerStateNotification;
 
-
 /**
- * Handles PlayerStateNotification messages in a chain of responsibility pattern. If the message is not of
- * the specified type, it will be passed to the next handler in the chain, if any.
+ * Handles PlayerStateNotification messages in a chain of responsibility pattern. If the message is
+ * not of the specified type, it will be passed to the next handler in the chain, if any.
  */
 public class PlayerStateNotificationHandler implements MessageHandler {
 
@@ -15,11 +14,13 @@ public class PlayerStateNotificationHandler implements MessageHandler {
   private final ViewController viewController;
 
   /**
-   * Constructor with the next handler in chain.
+   * Constructs a PlayerStateNotificationHandler. Initializes the handler with the specified next
+   * handler and view controller.
    *
-   * @param nextHandler the next handler in message handling chain
+   * @param nextHandler the next handler in the chain of responsibility.
+   * @param viewController the view controller used to update the view.
    */
-  public PlayerStateNotificationHandler(MessageHandler nextHandler, ViewController viewController) {
+  PlayerStateNotificationHandler(MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;
     this.viewController = viewController;
   }
@@ -32,8 +33,11 @@ public class PlayerStateNotificationHandler implements MessageHandler {
   @Override
   public void handleMessage(Message message) {
     if (message instanceof PlayerStateNotification playerStateNotification) {
-      viewController.updatePlayerStateInformation(playerStateNotification.getPlayerId(), playerStateNotification.getAccuracy(),
-          playerStateNotification.getProgress(), playerStateNotification.getWpm());
+      viewController.updatePlayerStateInformation(
+          playerStateNotification.getPlayerId(),
+          playerStateNotification.getWpm(),
+          playerStateNotification.getAccuracy(),
+          playerStateNotification.getProgress());
 
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);

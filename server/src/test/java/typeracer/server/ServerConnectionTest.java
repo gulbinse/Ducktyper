@@ -51,8 +51,9 @@ public class ServerConnectionTest {
     for (String message : jsonMessages) {
       if (message.matches(".*\"messageType\":\"HandshakeResponse\".*")) {
         assertThat(message.matches(".*\"connectionStatus\":\"(ACCEPTED|DENIED)\".*"));
+        assertThat(message.matches(".*\"playerId\":(0|[1-9][0-9]*).*"));
         assertThat(message.matches(".*\"reason\":\".*\".*"));
-        assertThatContainsNKeyValuePairs(message, 3);
+        assertThatContainsNKeyValuePairs(message, 4);
         return;
       }
     }
@@ -91,7 +92,7 @@ public class ServerConnectionTest {
   }
 
   @Test
-  public void testServer_receivesJoinSessionRequest_sendsResponseAndPlayerJoin()
+  public void testServer_receivesJoinSessionRequest_sendsResponseAndPlayerUpdate()
       throws IOException, InterruptedException {
     final int sessionId = 69;
     String handshakeRequest1 =
@@ -121,7 +122,7 @@ public class ServerConnectionTest {
     String sent = networkOut1.toString(StandardCharsets.UTF_8);
     String[] jsonMessages = sent.split(System.lineSeparator());
     boolean joinSessionResponse = false;
-    boolean playerJoinedNotification = false;
+    boolean playerUpdateNotification = false;
     for (String message : jsonMessages) {
       if (message.matches(".*\"messageType\":\"JoinSessionResponse\".*")) {
         assertThat(message.matches(".*\"joinStatus\":\"(ACCEPTED|DENIED)\".*"));
@@ -129,15 +130,16 @@ public class ServerConnectionTest {
         assertThatContainsNKeyValuePairs(message, 3);
         joinSessionResponse = true;
       }
-      if (message.matches(".*\"messageType\":\"PlayerJoinedNotification\".*")
+      if (message.matches(".*\"messageType\":\"PlayerUpdateNotification\".*")
           && message.matches(".*\"playerName\":\"" + USER2 + "\".*")) {
         assertThat(message.matches(".*\"numPlayers\":2"));
         assertThat(message.matches(".*\"playerId\":(0|[1-9][0-9]*).*"));
         assertThat(message.matches(".*\"playerName\":\"" + USER2 + "\".*"));
-        assertThatContainsNKeyValuePairs(message, 4);
-        playerJoinedNotification = true;
+        assertThat(message.matches(".*\"ready\":false"));
+        assertThatContainsNKeyValuePairs(message, 5);
+        playerUpdateNotification = true;
       }
-      if (joinSessionResponse && playerJoinedNotification) {
+      if (joinSessionResponse && playerUpdateNotification) {
         return;
       }
     }
@@ -349,7 +351,7 @@ public class ServerConnectionTest {
     String sent2 = networkOut2.toString(StandardCharsets.UTF_8);
     String[] jsonMessages2 = sent2.split(System.lineSeparator());
     for (String message : jsonMessages2) {
-      if (message.matches(".*\"messageType\":\"PlayerJoinedNotification\".*")
+      if (message.matches(".*\"messageType\":\"PlayerUpdateNotification\".*")
           && message.matches(".*\"playerName\":\"" + USER3 + "\".*")) {
         test2 = true;
         break;
@@ -395,19 +397,20 @@ public class ServerConnectionTest {
       String sent = outputs.get(i - 1).toString(StandardCharsets.UTF_8);
       String[] jsonMessages = sent.split(System.lineSeparator());
       for (String message : jsonMessages) {
-        if (message.matches(".*\"messageType\":\"PlayerJoinedNotification\".*")
+        if (message.matches(".*\"messageType\":\"PlayerUpdateNotification\".*")
             && message.matches(".*\"playerName\":\"U" + outputs.size() + "\".*")) {
           assertThat(message.matches(".*\"numPlayers\":([1-9]|1[0-9]|20).*"));
           assertThat(message.matches(".*\"playerId\":(0|[1-9][0-9]*).*"));
           assertThat(message.matches(".*\"playerName\":\"" + USER2 + "\".*"));
-          assertThatContainsNKeyValuePairs(message, 4);
+          assertThat(message.matches(".*\"ready\":false"));
+          assertThatContainsNKeyValuePairs(message, 5);
           found = true;
           break;
         }
       }
       Assertions.assertTrue(
           found,
-          "User U" + i + " did not receive PlayerJoinedNotification for user U" + outputs.size());
+          "User U" + i + " did not receive PlayerUpdateNotification for user U" + outputs.size());
     }
   }
 }
