@@ -154,6 +154,7 @@ public class StyleManager {
      */
   public static Region createBulletListSpacer(){
       Region spacerBulltepoints = new Region();
+      spacerBulltepoints.setMinWidth(20);
       spacerBulltepoints.setPrefWidth(20);
       return spacerBulltepoints;
   }
