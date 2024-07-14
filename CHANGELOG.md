@@ -42,6 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The players ID added to the `HandshakeResponse` (Adrian)
 - Check whether player is ready (Adrian)
 - Missing Javadocs (Alina)
+- Push-Up message if Server crashes
 
 ### Changed
 - Cleaned up client and GUI: (Tobi, Eric)
@@ -50,10 +51,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Handle `GameStateNotification`s with `GameState`s instead of `String`s (Eric)
 - Renamed "Lobby" to "Session" for consistency (Eric)
 - `PlayerJoinedNotification` to `PlayerUpdateNotification` (Adrian)
+- Initial Screen button order (Tobi)
+- Main Menu screen button design (Tobi)
+- increased Text Size of displayed Text in game (Tobi)
 
 ### Removed
 - unused methods in `ViewController` (Tobi, Eric)
 - "Play again" button (Adrian, Eric)
+- removed started animation (Tobi)
 
 ### Fixed
 - Race Condition closing the Socket preemptively (Alina, Adrian)
@@ -66,6 +71,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Remove left players from UI (Adrian)
 - Show initial prompt on connection loss (Adrian)
 - Reset scenes when switching to main menu (Eric)
+- Decreasing accuracy if you delete in Game (Tobi)
 
 ## [0.2.0] - 2024-06-30
 

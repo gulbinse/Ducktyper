@@ -72,36 +72,25 @@ public class MainMenuUi extends VBox {
     spacer.setPrefHeight(30);
     this.getChildren().add(spacer);
 
-    startGameButton =
-        StyleManager.createStyledButton(
-            "New Session", StyleManager.STANDARD_BUTTON, StyleManager.STANDARD_FONT);
-    joinSessionButton =
-        StyleManager.createStyledButton(
-            "Join Session", StyleManager.STANDARD_BUTTON, StyleManager.STANDARD_FONT);
-    statsButton =
-        StyleManager.createStyledButton(
-            "Stats", StyleManager.STANDARD_BUTTON, StyleManager.STANDARD_FONT);
-    exitButton =
-        StyleManager.createStyledButton(
-            "Exit", StyleManager.STANDARD_BUTTON, StyleManager.STANDARD_FONT);
+    Image newGameButtonGraphic = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/startGameButton.png")));
+    Image joinSessionButtonGraphic = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/joinGameButton.png")));
+    Image statsButtonGraphic = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/statsButton.png")));
+    Image exitButtonGraphic = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/leaveGameButton.png")));
 
-    double buttonWidth = 150;
-    startGameButton.setMinWidth(buttonWidth);
-    joinSessionButton.setMinWidth(buttonWidth);
-    statsButton.setMinWidth(buttonWidth);
-    exitButton.setMinWidth(buttonWidth);
+    ImageView startGameButton = StyleManager.createMainMenueButton(newGameButtonGraphic);
+    ImageView statsButton = StyleManager.createMainMenueButton(statsButtonGraphic);
+    ImageView exitButton = StyleManager.createMainMenueButton(exitButtonGraphic);
+    ImageView joinSessionButton = StyleManager.createMainMenueButton(joinSessionButtonGraphic);
 
-    startGameButton.setOnAction(e -> viewController.createSession());
+    startGameButton.setOnMouseClicked(event -> viewController.createSession());
+
     sessionIdField = new TextField();
     sessionIdField.setPromptText("Enter Session ID");
     sessionIdField.setMaxWidth(200);
     sessionIdField.setStyle("-fx-alignment: center;");
     sessionIdField.getStyleClass().add("startScreen-input-field");
 
-    Region spacerBetweenButtons = new Region();
-    spacerBetweenButtons.setPrefHeight(50);
-
-    joinSessionButton.setOnAction(
+    joinSessionButton.setOnMouseClicked(
         event -> {
           try {
             viewController.joinSession(Integer.parseInt(sessionIdField.getText()));
@@ -109,23 +98,27 @@ public class MainMenuUi extends VBox {
             viewController.showAlert("Please enter a valid session number.");
           }
         });
-    VBox sessionBox = new VBox(10, sessionIdField, joinSessionButton);
-    sessionBox.setAlignment(Pos.CENTER);
 
-    statsButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.STATS));
-    exitButton.setOnAction(e -> exitApplication());
+    statsButton.setOnMouseClicked(e -> viewController.showScene(ViewController.SceneName.STATS));
+    exitButton.setOnMouseClicked(e -> exitApplication());
 
     StyleManager.applyFadeInAnimation(startGameButton, 1500);
     StyleManager.applyFadeInAnimation(joinSessionButton, 1500);
     StyleManager.applyFadeInAnimation(statsButton, 1500);
     StyleManager.applyFadeInAnimation(exitButton, 1500);
 
-    StyleManager.applyButtonHoverAnimation(
-        startGameButton,joinSessionButton, statsButton, exitButton);
+    HBox startGameBox = new HBox(10, StyleManager.createBulletListSpacer(),  startGameButton);
+    HBox sessionBox = new HBox(10, StyleManager.createBulletListSpacer(),  joinSessionButton, sessionIdField);
+    HBox statsBox = new HBox(10, StyleManager.createBulletListSpacer(),  statsButton);
+    HBox exitBox = new HBox(10, StyleManager.createBulletListSpacer(),  exitButton);
+
+    startGameBox.setAlignment(Pos.TOP_LEFT);
+    sessionBox.setAlignment(Pos.TOP_LEFT);
+    statsBox.setAlignment(Pos.TOP_LEFT);
+    exitBox.setAlignment(Pos.TOP_LEFT);
 
     this.getChildren()
-        .addAll(startGameButton, spacerBetweenButtons, sessionBox,
-                statsButton, exitButton);
+        .addAll(startGameBox, sessionBox, statsBox, exitBox);
   }
 
   /** Creates and returns a title panel with an image. */
@@ -134,7 +127,7 @@ public class MainMenuUi extends VBox {
     imagePanel.setAlignment(Pos.TOP_CENTER);
     Image image = new Image(getClass().getResourceAsStream("/images/title.png"));
     ImageView imageView = new ImageView(image);
-    imageView.setFitWidth(350);
+    imageView.setFitWidth(400);
     imageView.setPreserveRatio(true);
     imagePanel.getChildren().add(imageView);
     return imagePanel;

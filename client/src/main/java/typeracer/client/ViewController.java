@@ -56,8 +56,8 @@ public class ViewController extends Application {
   private static final int DEFAULT_WINDOW_WIDTH = 1920 / 2 - 200;
   private static final int DEFAULT_WINDOW_HEIGHT = 1080 / 2 + 30;
 
-  private static final int MINIMUM_WINDOW_WIDTH = 400;
-  private static final int MINIMUM_WINDOW_HEIGHT = 600;
+  private static final int MINIMUM_WINDOW_WIDTH = 600;
+  private static final int MINIMUM_WINDOW_HEIGHT = 650;
 
   private final Map<SceneName, Scene> scenes;
 
@@ -203,7 +203,6 @@ public class ViewController extends Application {
    */
   public void connectToServer(String ip, int port, String username) throws IOException {
     client.connect(ip, port, username);
-    System.out.println("Connected to server at " + ip + ":" + port);
     this.username = username;
   }
 
