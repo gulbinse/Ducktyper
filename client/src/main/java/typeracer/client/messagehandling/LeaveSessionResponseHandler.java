@@ -34,15 +34,17 @@ public class LeaveSessionResponseHandler implements MessageHandler {
   @Override
   public void handleMessage(Message message) {
     // ACCEPT response
-    if (message instanceof LeaveSessionResponse leaveSessionResponse &&
-        leaveSessionResponse.getLeaveStatus() == PermissionStatus.ACCEPTED) {
-      System.out.println("Player can leave the session.");
-      viewController.leaveSession();
+    if (message instanceof LeaveSessionResponse leaveSessionResponse)
+    switch (leaveSessionResponse.getLeaveStatus()) {
+      case ACCEPTED:
+        System.out.println("Player can leave the session.");
+        viewController.leaveSession();
+        break;
       // DENIED response
-    } else if (message instanceof LeaveSessionResponse leaveSessionResponse &&
-      leaveSessionResponse.getLeaveStatus() == PermissionStatus.DENIED) {
-      System.out.println("Player cannot leave the session.");
-      viewController.showAlert("Error: Player cannot leave the session.");
+      default:
+        System.out.println("Player cannot leave the session.");
+        viewController.showAlert("Error: Player cannot leave the session.");
+        break;
 
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);

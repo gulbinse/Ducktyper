@@ -39,6 +39,7 @@ public class CreateSessionResponseHandler implements MessageHandler {
       viewController.setSessionId(createSessionResponse.getSessionId());
       viewController.showScene(ViewController.SceneName.SESSION);
       viewController.updatePlayer(viewController.getPlayerId(), viewController.getUsername(), viewController.getPlayerReadyProperty(viewController.getPlayerId()).getValue());
+
     } else if (message instanceof CreateSessionResponse createSessionResponse
         && createSessionResponse.getReason() != null) {
       // reason why the session couldn't be created
@@ -47,6 +48,7 @@ public class CreateSessionResponseHandler implements MessageHandler {
               + createSessionResponse.getReason().getString()
               + ".");
       viewController.showAlert("Player can't create session because: " + createSessionResponse.getReason().getString());
+
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }

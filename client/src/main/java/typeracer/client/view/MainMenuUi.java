@@ -43,6 +43,7 @@ public class MainMenuUi extends VBox {
    * Creates a new MainMenuUi and initializes its user interface.
    *
    * @param viewController The controller to manage views and handle interactions.
+   * @return a new instance of MainMenuUi with its UI initialized.
    */
   public static MainMenuUi create(ViewController viewController) {
     MainMenuUi mainMenuUi = new MainMenuUi(viewController);

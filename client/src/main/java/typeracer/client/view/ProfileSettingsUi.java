@@ -42,14 +42,20 @@ public class ProfileSettingsUi extends VBox {
   /** The button to cancel the profile settings changes. */
   private Button cancelButton;
 
+  /**
+   * Constructs a ProfileSettingsUi with the specified ViewController.
+   *
+   * @param viewController the ViewController to manage views and handle interactions.
+   */
   private ProfileSettingsUi(ViewController viewController) {
     this.viewController = viewController;
   }
 
   /**
-   * Creates a new ProfileSettingsUi and initializes its user interface components.
+   * Creates and initializes a new instance of ProfileSettingsUi.
    *
-   * @param viewController The controller to manage views and handle interactions.
+   * @param viewController the ViewController to manage views and handle interactions.
+   * @return a new instance of ProfileSettingsUi with its UI initialized.
    */
   public static ProfileSettingsUi create(ViewController viewController) {
     ProfileSettingsUi profileSettingsUi = new ProfileSettingsUi(viewController);

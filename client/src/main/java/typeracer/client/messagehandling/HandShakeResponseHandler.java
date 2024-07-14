@@ -40,12 +40,11 @@ public class HandShakeResponseHandler implements MessageHandler {
             viewController.setPlayerId(handShakeResponse.getPlayerId());
             viewController.showScene(ViewController.SceneName.MAIN_MENU);
             break;
-          case DENIED:
+            // if response contains DENIED
+          default:
             System.out.println(
                 "Denied connection because: " + handShakeResponse.getReason().getString());
             viewController.showAlert("Denied connection because: " + handShakeResponse.getReason().getString());
-            break;
-          default:
             break;
         }
       } else if (nextHandler != null) {

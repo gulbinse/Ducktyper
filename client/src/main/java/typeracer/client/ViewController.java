@@ -3,15 +3,11 @@ package typeracer.client;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -339,20 +335,43 @@ public class ViewController extends Application {
         });
   }
 
+  /**
+   * Updates the statistics after a round is played.
+   * This method increments the number of rounds played and updates the average WPM
+   * and accuracy based on the provided values.
+   *
+   * @param wpm the words per minute achieved in the round.
+   * @param accuracy the accuracy percentage achieved in the round.
+   */
   public void roundPlayed(double wpm, double accuracy) {
     roundsPlayed++;
     averageWPM = ((averageWPM * (roundsPlayed - 1)) + wpm) / roundsPlayed;
     averageAccuracy = ((averageAccuracy * (roundsPlayed - 1)) + accuracy) / roundsPlayed;
   }
 
+  /**
+   * Gets the number of rounds played.
+   *
+   * @return the number of rounds played.
+   */
   public int getRoundsPlayed() {
     return roundsPlayed;
   }
 
+  /**
+   * Gets the average words per minute (WPM) over all rounds played.
+   *
+   * @return the average WPM.
+   */
   public double getAverageWPM() {
     return averageWPM;
   }
 
+  /**
+   * Gets the average accuracy over all rounds played.
+   *
+   * @return the average accuracy.
+   */
   public double getAverageAccuracy() {
     return averageAccuracy;
   }

@@ -22,9 +22,14 @@ public class StyleManager {
    * hex code "#2374AB".
    */
 
+  /**
+   * Color used for the start screen background.
+   */
 
   public static final Color START_SCREEN = Color.web("#2374AB");
-
+  /**
+   * Color used for green buttons.
+   */
   public static final Color GREEN_BUTTON = Color.web("#009900");
 
   /** Color for green buttons. */
