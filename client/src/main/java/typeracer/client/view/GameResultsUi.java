@@ -78,16 +78,8 @@ public class GameResultsUi extends VBox {
   }
 
   /**
-   * Creates a VBox containing all the stat labels. Sets up the layout and styling for displaying
-   * player statistics.
-   *
-   * @return A VBox containing the "Your Stats" label, WPM label, and Errors label.
+   * Should be executed when this screen is switched to.
    */
-//  private VBox createStatsBox() {
-//
-//    return statsBox;
-//  }
-
   public void onViewShown(){
     VBox statsBox = new VBox(10);
 

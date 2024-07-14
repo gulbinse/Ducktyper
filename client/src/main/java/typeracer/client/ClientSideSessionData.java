@@ -127,27 +127,6 @@ public class ClientSideSessionData {
     playerProgresses.computeIfAbsent(playerId, k -> new SimpleDoubleProperty()).set(playerProgress);
   }
 
-  public Map<Integer, IntegerProperty> getPlayerErrors() {
-    return Map.copyOf(playerErrors);
-  }
-
-  public void setPlayerErrors(Map<Integer, IntegerProperty> playerErrors) {
-    this.playerErrors = Map.copyOf(playerErrors);
-  }
-
-  /**
-   * Gets an unmodifiable list of the top players.
-   *
-   * @return an unmodifiable observable list of top players.
-   */
-  public ObservableList<String> getTopPlayers() {
-    return FXCollections.unmodifiableObservableList(topPlayers.get());
-  }
-
-  public void setTopPlayers(ObservableList<String> topPlayers) {
-    this.topPlayers.set(topPlayers);
-  }
-
   /**
    * Gets the game text.
    *
