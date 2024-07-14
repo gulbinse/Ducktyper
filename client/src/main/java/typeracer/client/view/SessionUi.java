@@ -87,6 +87,8 @@ public class SessionUi extends VBox {
     Button copySessionIdButton =
         StyleManager.createStyledButton(
             "Copy Session ID", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
+    copySessionIdButton.setPrefWidth(150);
+    copySessionIdButton.setMaxWidth(150);
     copySessionIdButton.setOnAction(
         e -> {
           Clipboard clipboard = Clipboard.getSystemClipboard();

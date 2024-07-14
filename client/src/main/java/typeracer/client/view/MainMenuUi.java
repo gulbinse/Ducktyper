@@ -51,11 +51,13 @@ public class MainMenuUi extends VBox {
    */
   private void initializeUi() {
     Background background = new Background(new BackgroundImage(
-            new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/Menu_screen_noText.png"))),
+            new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/"
+                    + "Menu_screen_noText.png"))),
             BackgroundRepeat.NO_REPEAT,
             BackgroundRepeat.NO_REPEAT,
             BackgroundPosition.CENTER,
-            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true)));
+            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false,
+                    false, true)));
     this.setBackground(background);
     this.setAlignment(Pos.CENTER);
     this.setSpacing(15);
@@ -72,7 +74,7 @@ public class MainMenuUi extends VBox {
             "start new game", StyleManager.GREEN_BUTTON, StyleManager.STANDARD_FONT);
     joinSessionButton =
         StyleManager.createStyledButton(
-            "Join Session", StyleManager.ORANGE_BUTTON, StyleManager.STANDARD_FONT);
+            "join session", StyleManager.ORANGE_BUTTON, StyleManager.STANDARD_FONT);
     profileSettingButton =
         StyleManager.createStyledButton(
             "profile settings", StyleManager.BLUE_BUTTON, StyleManager.STANDARD_FONT);
@@ -82,6 +84,13 @@ public class MainMenuUi extends VBox {
     exitButton =
         StyleManager.createStyledButton(
             "exit", StyleManager.RED_BUTTON, StyleManager.STANDARD_FONT);
+
+    double buttonWidth = 150;
+    startGameButton.setMinWidth(buttonWidth);
+    joinSessionButton.setMinWidth(buttonWidth);
+    profileSettingButton.setMinWidth(buttonWidth);
+    statsButton.setMinWidth(buttonWidth);
+    exitButton.setMinWidth(buttonWidth);
 
     startGameButton.setOnAction(e -> viewController.createSession());
     sessionIdField = new TextField();
