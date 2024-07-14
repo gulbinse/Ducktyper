@@ -99,6 +99,11 @@ public class TextSource {
     }
   }
 
+  /**
+   * Sets a text randomly chosen from one of the default files in {@value TEXT_SOURCE_FOLDER}.
+   *
+   * @throws IOException when exceptions with reading the file occur
+   */
   public void setRandomTextFromDefaultFiles() throws IOException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     URL corpusFolderUrl = classLoader.getResource(TEXT_SOURCE_FOLDER);
