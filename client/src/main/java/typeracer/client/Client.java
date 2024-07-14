@@ -40,7 +40,11 @@ final class Client {
   private final ViewController viewController;
   private BufferedReader reader;
 
-  /** Constructor for the client. */
+  /**
+   * Constructor for the client.
+   *
+   * @param viewController the view controller used to update the view
+   */
   public Client(ViewController viewController) {
     this.viewController = viewController;
     // ViewController.launch();
