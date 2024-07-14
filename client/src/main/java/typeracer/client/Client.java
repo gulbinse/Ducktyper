@@ -37,7 +37,6 @@ final class Client {
     String username = DEFAULT_USERNAME;
     String serverAddress = DEFAULT_ADDRESS;
     int port = DEFAULT_PORT;
-
     // check validity
     if (!isValidName(username)) {
       printErrorMessage("Invalid username: " + username);
@@ -134,8 +133,8 @@ final class Client {
   }
 
   /**
-   * Creates a connection to the server using the given IP adress and port,
-   * starts the session with the given username.
+   * Creates a connection to the server using the given IP adress and port, starts the session with
+   * the given username.
    *
    * @param ip ip address of the server
    * @param port port number of the server
@@ -181,10 +180,10 @@ final class Client {
   }
 
   /**
-   * Handles incoming messages by passing them to the chain of message handlers.
+   * Handles the incoming message by passing it to the message handler chain.
    *
-   * @param message
-   * @throws IOException
+   * @param message the message to be handled.
+   * @throws IOException if an I/O error occurs during message handling.
    */
   public void handleMessage(Message message) throws IOException {
     messageHandlerChain.handleMessage(message);

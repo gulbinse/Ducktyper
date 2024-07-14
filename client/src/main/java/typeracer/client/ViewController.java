@@ -24,7 +24,11 @@ import typeracer.client.view.MainMenuUi;
 import typeracer.client.view.PlayerStatsUi;
 import typeracer.client.view.ProfileSettingsUi;
 import typeracer.client.view.SessionUi;
-import typeracer.communication.messages.client.*;
+import typeracer.communication.messages.client.CharacterRequest;
+import typeracer.communication.messages.client.CreateSessionRequest;
+import typeracer.communication.messages.client.JoinSessionRequest;
+import typeracer.communication.messages.client.LeaveSessionRequest;
+import typeracer.communication.messages.client.ReadyRequest;
 
 /** Manages the transition between different scenes and states in the TypeRacer game application. */
 public class ViewController extends Application {
@@ -68,7 +72,6 @@ public class ViewController extends Application {
   private ClientSideSessionData playerData = new ClientSideSessionData();
   private String username;
   private int playerId;
-
 
   /**
    * Constructs a ViewController with a given stage and client. Initializes the view mappings and
@@ -143,6 +146,9 @@ public class ViewController extends Application {
         });
   }
 
+  /**
+   * Adds all the scenes to the application.
+   */
   private void addAllScenes() {
     addScene(SceneName.INITIAL_PROMPT, new InitialPromptUi(this, primaryStage));
     addScene(SceneName.MAIN_MENU, new MainMenuUi(this));
@@ -153,10 +159,20 @@ public class ViewController extends Application {
     addScene(SceneName.SESSION, new SessionUi(this));
   }
 
+  /**
+   * Sets the player ID.
+   *
+   * @param playerId the player's unique identifier.
+   */
   public void setPlayerId(int playerId) {
     this.playerId = playerId;
   }
 
+  /**
+   * Sets the session ID and updates the session UI.
+   *
+   * @param sessionId the session's unique identifier.
+   */
   public void setSessionId(int sessionId) {
     Platform.runLater(
         () -> {
@@ -166,6 +182,11 @@ public class ViewController extends Application {
         });
   }
 
+  /**
+   * Retrieves the current session ID.
+   *
+   * @return the session's unique identifier.
+   */
   public int getSessionId() {
     return playerData.getSessionId();
   }
@@ -250,7 +271,6 @@ public class ViewController extends Application {
           }
           showScene(SceneName.GAME);
         });
-
   }
 
   /**
@@ -267,7 +287,6 @@ public class ViewController extends Application {
             SessionUi sessionUi = (SessionUi) scenes.get(SceneName.SESSION).getRoot();
             sessionUi.addPlayerLabel(playerId);
           });
-
     }
   }
 
@@ -291,17 +310,17 @@ public class ViewController extends Application {
   /** Ends the current game, updates stats, and switches the UI to display game results. */
   // == Finished
   public void leaveSession() {
-    Platform.runLater(() -> {
-      switch (currentScene) {
-        case GAME -> {
-          showScene(SceneName.GAME_RESULTS);
-          GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
-          gameUi.onViewShown();
-        }
-        case SESSION -> showScene(SceneName.MAIN_MENU);
-      }
-
-    });
+    Platform.runLater(
+        () -> {
+          switch (currentScene) {
+            case GAME -> {
+              showScene(SceneName.GAME_RESULTS);
+              GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
+              gameUi.onViewShown();
+            }
+            case SESSION -> showScene(SceneName.MAIN_MENU);
+          }
+        });
   }
 
   /**
@@ -333,11 +352,12 @@ public class ViewController extends Application {
    */
   public void updatePlayerStateInformation(
       int playerId, double playerWpm, double playerAccuracy, double playerProgress) {
-    Platform.runLater(() -> {
-      playerData.setPlayerWpms(playerId, playerWpm);
-      playerData.setPlayerAccuracies(playerId, playerAccuracy);
-      playerData.setPlayerProgresses(playerId, playerProgress);
-    });
+    Platform.runLater(
+        () -> {
+          playerData.setPlayerWpms(playerId, playerWpm);
+          playerData.setPlayerAccuracies(playerId, playerAccuracy);
+          playerData.setPlayerProgresses(playerId, playerProgress);
+        });
   }
 
   /**
@@ -376,10 +396,22 @@ public class ViewController extends Application {
     return FXCollections.observableArrayList(playerData.getPlayerNamesById().values());
   }
 
+  /**
+   * Retrieves the username associated with a specific player ID.
+   *
+   * @param id the player's ID.
+   * @return the username, or null if no player is found with the provided ID.
+   */
   public String getUsernameById(int id) {
     return playerData.getPlayerNamesById().get(id);
   }
 
+  /**
+   * Retrieves or creates a property to track whether a player is ready.
+   *
+   * @param playerId the ID of the player.
+   * @return a BooleanProperty reflecting the player's ready status.
+   */
   public BooleanProperty getPlayerReadyProperty(int playerId) {
     return playerData.getPlayerReady().computeIfAbsent(playerId, k -> new SimpleBooleanProperty());
   }
@@ -437,10 +469,10 @@ public class ViewController extends Application {
    * @param message The message to display in the alert.
    */
   public void showAlert(String message) {
-    Platform.runLater(() -> {
-      Alert alert = new Alert(Alert.AlertType.ERROR, message);
-      alert.showAndWait();
-    });
-
+    Platform.runLater(
+        () -> {
+          Alert alert = new Alert(Alert.AlertType.ERROR, message);
+          alert.showAndWait();
+        });
   }
 }

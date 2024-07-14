@@ -42,6 +42,7 @@ public class GameStateNotificationHandler implements MessageHandler {
           break;
         case WAITING_FOR_PLAYERS:
           System.out.println("Game is waiting for players.");
+          break;
         default:
           break;
       }
