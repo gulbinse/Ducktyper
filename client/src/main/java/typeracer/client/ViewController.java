@@ -16,6 +16,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import typeracer.client.view.GameResultsUi;
 import typeracer.client.view.GameUi;
@@ -64,9 +65,9 @@ public class ViewController extends Application {
   private static final int MINIMUM_WINDOW_WIDTH = 400;
   private static final int MINIMUM_WINDOW_HEIGHT = 600;
 
-  private Map<SceneName, Scene> scenes;
+  private final Map<SceneName, Scene> scenes;
 
-  private Stage primaryStage;
+  private final Stage stage = new Stage();
   private SceneName currentScene;
   private final Client client;
   private ClientSideSessionData playerData = new ClientSideSessionData();
@@ -89,22 +90,21 @@ public class ViewController extends Application {
    */
   @Override
   public void start(Stage primaryStage) {
-    this.primaryStage = primaryStage;
 
-    primaryStage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
-    primaryStage.setMinWidth(MINIMUM_WINDOW_WIDTH);
+    stage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
+    stage.setMinWidth(MINIMUM_WINDOW_WIDTH);
 
-    primaryStage.setWidth(DEFAULT_WINDOW_WIDTH);
-    primaryStage.setHeight(DEFAULT_WINDOW_HEIGHT);
+    stage.setWidth(DEFAULT_WINDOW_WIDTH);
+    stage.setHeight(DEFAULT_WINDOW_HEIGHT);
 
-    primaryStage.setTitle("Ducktyper");
+    stage.setTitle("Ducktyper");
 
     addAllScenes();
 
     Platform.runLater(() -> showScene(SceneName.INITIAL_PROMPT));
-    primaryStage.setResizable(true);
-    primaryStage.setOnCloseRequest(event -> System.exit(0));
-    primaryStage.show();
+    stage.setResizable(true);
+    stage.setOnCloseRequest(event -> System.exit(0));
+    stage.show();
   }
 
   /** Helper method to add views to the map. */
@@ -129,8 +129,8 @@ public class ViewController extends Application {
           Scene scene = scenes.get(sceneName);
           currentScene = sceneName;
           if (scene != null) {
-            primaryStage.setScene(scene);
-            primaryStage.show();
+            stage.setScene(scene);
+            stage.show();
             if (scene.getRoot() instanceof SessionUi sessionUi) {
               sessionUi.onViewShown();
             } else if (scene.getRoot() instanceof GameUi gameUi) {
@@ -150,7 +150,7 @@ public class ViewController extends Application {
    * Adds all the scenes to the application.
    */
   private void addAllScenes() {
-    addScene(SceneName.INITIAL_PROMPT, new InitialPromptUi(this, primaryStage));
+    addScene(SceneName.INITIAL_PROMPT, new InitialPromptUi(this));
     addScene(SceneName.MAIN_MENU, new MainMenuUi(this));
     addScene(SceneName.GAME, new GameUi(this));
     addScene(SceneName.STATS, new PlayerStatsUi(this));
@@ -336,6 +336,12 @@ public class ViewController extends Application {
   public void handleCharacterAnswer(boolean isCorrect) {
     GameUi gameUi = (GameUi) scenes.get(SceneName.GAME).getRoot();
     gameUi.updateDisplayText(isCorrect);
+  }
+
+  /** Sets the icon image of the Stage to a typewriter image. */
+  public void setIconImage() {
+    Image img = new Image(getClass().getResourceAsStream("/images/duck.png"));
+    stage.getIcons().add(img);
   }
 
   /**

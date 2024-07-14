@@ -40,18 +40,14 @@ public class InitialPromptUi extends VBox {
   /** The controller to manage views and handle interactions. */
   private final ViewController viewController;
 
-  /** The primary stage of the application. */
-  private Stage stage;
-
   /**
    * Constructs a new InitialPromptUi and initializes its user interface components.
    *
    * @param viewController The controller to manage views and handle interactions.
    * @param stage The primary stage of the application.
    */
-  public InitialPromptUi(ViewController viewController, Stage stage) {
+  public InitialPromptUi(ViewController viewController) {
     this.viewController = viewController;
-    this.stage = stage;
     initializeUi();
   }
 
@@ -67,7 +63,7 @@ public class InitialPromptUi extends VBox {
         new Background(
             new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
-    setIconImage(stage);
+    viewController.setIconImage();
     VBox titlePanel = createImagePanel();
     VBox inputPanel = createInputPanel();
 
@@ -154,16 +150,6 @@ public class InitialPromptUi extends VBox {
     submitImage.setOnMouseClicked(e -> submitAction());
 
     return submitImage;
-  }
-
-  /**
-   * Sets the icon image of the Stage to a typewriter image.
-   *
-   * @param stage The Stage whose icon will be set.
-   */
-  private void setIconImage(Stage stage) {
-    Image img = new Image(getClass().getResourceAsStream("/images/duck.png"));
-    stage.getIcons().add(img);
   }
 
   /**
