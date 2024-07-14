@@ -123,10 +123,10 @@ public class InitialPromptUi extends VBox {
     inputPanel
         .getChildren()
         .addAll(
-            submitImage,
             usernameField,
             ipField,
-            portField);
+            portField,
+            submitImage);
 
     return inputPanel;
   }
