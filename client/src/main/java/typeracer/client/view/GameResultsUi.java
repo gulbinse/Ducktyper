@@ -28,8 +28,6 @@ public class GameResultsUi extends VBox {
   /** The controller managing views and handling interactions. */
   private final ViewController viewController;
 
-  private VBox gameResults;
-
   private GameResultsUi(ViewController viewController) {
     super(10);
     this.viewController = viewController;
