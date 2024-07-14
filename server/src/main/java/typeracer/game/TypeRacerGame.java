@@ -115,8 +115,7 @@ public final class TypeRacerGame { // made final to prevent finalizer attacks in
    * @param character the character that is typed
    * @return The result of the typing attempt
    */
-  public TypingResult typeCharacter(
-      int id, char character) { // TODO: Does this have to be synchronized?
+  public TypingResult typeCharacter(int id, char character) {
     if (getIds().contains(id)) {
       TypingResult typingResult = TypingResult.PLAYER_FINISHED_ALREADY;
       if (!isGameFinished()) {
