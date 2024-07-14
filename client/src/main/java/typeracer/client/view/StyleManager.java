@@ -20,11 +20,6 @@ import javafx.util.Duration;
  */
 public class StyleManager {
 
-  /**
-   * The color used for the start screen background. This color is defined as a web color with the
-   * hex code "#2374AB".
-   */
-
   /** Color used for the start screen background. */
   public static final Color START_SCREEN = Color.web("#2374AB");
 

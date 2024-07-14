@@ -66,7 +66,7 @@ public class ViewController extends Application {
   private String username;
   private int playerId;
   private int roundsPlayed;
-  private double averageWPM;
+  private double averageWpm;
   private double averageAccuracy;
 
   /**
@@ -322,7 +322,7 @@ public class ViewController extends Application {
    */
   public void roundPlayed(double wpm, double accuracy) {
     roundsPlayed++;
-    averageWPM = ((averageWPM * (roundsPlayed - 1)) + wpm) / roundsPlayed;
+    averageWpm = ((averageWpm * (roundsPlayed - 1)) + wpm) / roundsPlayed;
     averageAccuracy = ((averageAccuracy * (roundsPlayed - 1)) + accuracy) / roundsPlayed;
   }
 
@@ -340,8 +340,8 @@ public class ViewController extends Application {
    *
    * @return the average WPM.
    */
-  public double getAverageWPM() {
-    return averageWPM;
+  public double getAverageWpm() {
+    return averageWpm;
   }
 
   /**

@@ -33,7 +33,7 @@ public class LeaveSessionResponseHandler implements MessageHandler {
   @Override
   public void handleMessage(Message message) {
     // ACCEPT response
-    if (message instanceof LeaveSessionResponse leaveSessionResponse)
+    if (message instanceof LeaveSessionResponse leaveSessionResponse) {
       switch (leaveSessionResponse.getLeaveStatus()) {
         case ACCEPTED:
           viewController.leaveSession();
@@ -43,7 +43,7 @@ public class LeaveSessionResponseHandler implements MessageHandler {
           viewController.showAlert(leaveSessionResponse.getReason().getString());
           break;
       }
-    else if (nextHandler != null) {
+    } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }
   }

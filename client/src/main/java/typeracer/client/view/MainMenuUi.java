@@ -2,11 +2,17 @@ package typeracer.client.view;
 
 import java.util.Objects;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import typeracer.client.ViewController;
 
 /**
@@ -17,17 +23,6 @@ import typeracer.client.ViewController;
 public class MainMenuUi extends VBox {
 
   private ViewController viewController;
-
-  /** Button to start a new game. */
-  private Button startGameButton;
-
-  /** Button to view player statistics. */
-  private Button statsButton;
-
-  /** Button to exit the game. */
-  private Button exitButton;
-
-  private Button joinSessionButton;
 
   private TextField sessionIdField;
 
@@ -74,23 +69,24 @@ public class MainMenuUi extends VBox {
     spacer.setPrefHeight(30);
     this.getChildren().add(spacer);
 
-    Image newGameButtonGraphic =
+    final Image newGameButtonGraphic =
         new Image(
             Objects.requireNonNull(getClass().getResourceAsStream("/images/startGameButton.png")));
-    Image joinSessionButtonGraphic =
+    final Image joinSessionButtonGraphic =
         new Image(
             Objects.requireNonNull(getClass().getResourceAsStream("/images/joinGameButton.png")));
-    Image statsButtonGraphic =
+    final Image statsButtonGraphic =
         new Image(
             Objects.requireNonNull(getClass().getResourceAsStream("/images/statsButton.png")));
-    Image exitButtonGraphic =
+    final Image exitButtonGraphic =
         new Image(
             Objects.requireNonNull(getClass().getResourceAsStream("/images/leaveGameButton.png")));
 
-    ImageView startGameButton = StyleManager.createMainMenueButton(newGameButtonGraphic);
-    ImageView statsButton = StyleManager.createMainMenueButton(statsButtonGraphic);
-    ImageView exitButton = StyleManager.createMainMenueButton(exitButtonGraphic);
-    ImageView joinSessionButton = StyleManager.createMainMenueButton(joinSessionButtonGraphic);
+    final ImageView startGameButton = StyleManager.createMainMenueButton(newGameButtonGraphic);
+    final ImageView statsButton = StyleManager.createMainMenueButton(statsButtonGraphic);
+    final ImageView exitButton = StyleManager.createMainMenueButton(exitButtonGraphic);
+    final ImageView joinSessionButton =
+        StyleManager.createMainMenueButton(joinSessionButtonGraphic);
 
     startGameButton.setOnMouseClicked(event -> viewController.createSession());
 
@@ -117,11 +113,11 @@ public class MainMenuUi extends VBox {
     StyleManager.applyFadeInAnimation(statsButton, 1500);
     StyleManager.applyFadeInAnimation(exitButton, 1500);
 
-    HBox startGameBox = new HBox(10, StyleManager.createBulletListSpacer(), startGameButton);
-    HBox sessionBox =
+    final HBox startGameBox = new HBox(10, StyleManager.createBulletListSpacer(), startGameButton);
+    final HBox sessionBox =
         new HBox(10, StyleManager.createBulletListSpacer(), joinSessionButton, sessionIdField);
-    HBox statsBox = new HBox(10, StyleManager.createBulletListSpacer(), statsButton);
-    HBox exitBox = new HBox(10, StyleManager.createBulletListSpacer(), exitButton);
+    final HBox statsBox = new HBox(10, StyleManager.createBulletListSpacer(), statsButton);
+    final HBox exitBox = new HBox(10, StyleManager.createBulletListSpacer(), exitButton);
 
     startGameBox.setAlignment(Pos.TOP_LEFT);
     sessionBox.setAlignment(Pos.TOP_LEFT);

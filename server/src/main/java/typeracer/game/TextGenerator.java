@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -167,13 +168,13 @@ public class TextGenerator {
   private String sampleFromDistribution(HashMap<String, Integer> distribution) {
     int index = random.nextInt(distribution.values().stream().reduce(0, Integer::sum));
     int accumulator = 0;
-    for (String word : distribution.keySet()) {
+    for (Map.Entry<String, Integer> entry : distribution.entrySet()) {
       if (accumulator >= index) {
-        return word;
+        return entry.getKey();
       }
-      accumulator += distribution.get(word);
+      accumulator += distribution.get(entry.getKey());
       if (accumulator >= index) {
-        return word;
+        return entry.getKey();
       }
     }
     return "";
