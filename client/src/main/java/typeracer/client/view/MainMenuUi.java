@@ -22,9 +22,6 @@ public class MainMenuUi extends VBox {
   /** Button to start a new game. */
   private Button startGameButton;
 
-  /** Button to access profile settings. */
-  private Button profileSettingButton;
-
   /** Button to view player statistics. */
   private Button statsButton;
 
@@ -81,9 +78,6 @@ public class MainMenuUi extends VBox {
     joinSessionButton =
         StyleManager.createStyledButton(
             "Join Session", StyleManager.STANDARD_BUTTON, StyleManager.STANDARD_FONT);
-    profileSettingButton =
-        StyleManager.createStyledButton(
-            "Profile", StyleManager.STANDARD_BUTTON, StyleManager.STANDARD_FONT);
     statsButton =
         StyleManager.createStyledButton(
             "Stats", StyleManager.STANDARD_BUTTON, StyleManager.STANDARD_FONT);
@@ -94,7 +88,6 @@ public class MainMenuUi extends VBox {
     double buttonWidth = 150;
     startGameButton.setMinWidth(buttonWidth);
     joinSessionButton.setMinWidth(buttonWidth);
-    profileSettingButton.setMinWidth(buttonWidth);
     statsButton.setMinWidth(buttonWidth);
     exitButton.setMinWidth(buttonWidth);
 
@@ -119,22 +112,19 @@ public class MainMenuUi extends VBox {
     VBox sessionBox = new VBox(10, sessionIdField, joinSessionButton);
     sessionBox.setAlignment(Pos.CENTER);
 
-    profileSettingButton.setOnAction(
-        e -> viewController.showScene(ViewController.SceneName.PROFILE_SETTINGS));
     statsButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.STATS));
     exitButton.setOnAction(e -> exitApplication());
 
     StyleManager.applyFadeInAnimation(startGameButton, 1500);
     StyleManager.applyFadeInAnimation(joinSessionButton, 1500);
-    StyleManager.applyFadeInAnimation(profileSettingButton, 1500);
     StyleManager.applyFadeInAnimation(statsButton, 1500);
     StyleManager.applyFadeInAnimation(exitButton, 1500);
 
     StyleManager.applyButtonHoverAnimation(
-        startGameButton,joinSessionButton, profileSettingButton, statsButton, exitButton);
+        startGameButton,joinSessionButton, statsButton, exitButton);
 
     this.getChildren()
-        .addAll(startGameButton, spacerBetweenButtons, sessionBox, profileSettingButton,
+        .addAll(startGameButton, spacerBetweenButtons, sessionBox,
                 statsButton, exitButton);
   }
 

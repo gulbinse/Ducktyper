@@ -21,7 +21,6 @@ import typeracer.client.view.GameUi;
 import typeracer.client.view.InitialPromptUi;
 import typeracer.client.view.MainMenuUi;
 import typeracer.client.view.PlayerStatsUi;
-import typeracer.client.view.ProfileSettingsUi;
 import typeracer.client.view.SessionUi;
 import typeracer.communication.messages.client.CharacterRequest;
 import typeracer.communication.messages.client.CreateSessionRequest;
@@ -45,9 +44,6 @@ public class ViewController extends Application {
 
     /** The player statistics view. */
     STATS,
-
-    /** The profile settings view. */
-    PROFILE_SETTINGS,
 
     /** The game results view. */
     GAME_RESULTS,
@@ -155,7 +151,6 @@ public class ViewController extends Application {
     addScene(SceneName.MAIN_MENU, MainMenuUi.create(this));
     addScene(SceneName.GAME, GameUi.create(this));
     addScene(SceneName.STATS, PlayerStatsUi.create(this));
-    addScene(SceneName.PROFILE_SETTINGS, ProfileSettingsUi.create(this));
     addScene(SceneName.GAME_RESULTS, GameResultsUi.create(this));
     addScene(SceneName.SESSION, SessionUi.create(this));
   }
@@ -190,18 +185,6 @@ public class ViewController extends Application {
    */
   public int getSessionId() {
     return playerData.getSessionId();
-  }
-
-  /**
-   * Saves user settings and switches back to the main menu.
-   *
-   * @param username The username to save.
-   * @param wpmGoal The words per minute goal.
-   * @param favoriteText The favorite text of the user.
-   */
-  public void saveUserSettings(String username, int wpmGoal, String favoriteText) {
-    // client.saveSettings(username, wpmGoal, favoriteText);
-    showScene(SceneName.MAIN_MENU);
   }
 
   /** Cancels any changes made in the settings and returns to the main menu. */
@@ -504,19 +487,6 @@ public class ViewController extends Application {
    */
   public DoubleProperty getPlayerProgressProperty(int playerId) {
     return playerData.getPlayerProgressProperty(playerId);
-  }
-
-  public ListProperty<String> getTopPlayersProperty() {
-    return new SimpleListProperty<>(playerData.getTopPlayers());
-  }
-
-  /**
-   * Gets the PlayerStatsUi from the views map.
-   *
-   * @return PlayerStatsUi instance if available.
-   */
-  private PlayerStatsUi getPlayerStatsUi() {
-    return (PlayerStatsUi) scenes.get(SceneName.STATS).getRoot();
   }
 
   /**
