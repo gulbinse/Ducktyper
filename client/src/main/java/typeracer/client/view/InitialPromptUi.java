@@ -44,7 +44,6 @@ public class InitialPromptUi extends VBox {
    * Constructs a new InitialPromptUi and initializes its user interface components.
    *
    * @param viewController The controller to manage views and handle interactions.
-   * @param stage The primary stage of the application.
    */
   public InitialPromptUi(ViewController viewController) {
     this.viewController = viewController;

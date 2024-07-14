@@ -1,7 +1,14 @@
 package typeracer.game;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * A class to generate a text using a markov chain with probability transitions trained on a given corpus.
@@ -13,27 +20,48 @@ public class TextGenerator {
   private Map<String, Integer> startingProbabilities = new HashMap<>();
   private final Random random = new Random();
 
+  /**
+   * Constructs a TextGenerator with the specified corpus.
+   *
+   * @param corpus the corpus of text to be used for generating text.
+   */
   public TextGenerator(String corpus) {
     this.corpus = corpus;
   }
 
+  /**
+   * Preprocesses the corpus by converting it to lowercase, removing punctuation and
+   * non-ASCII characters, and splitting it into words.
+   *
+   * @return the preprocessed corpus as an array of words.
+   */
   private String[] preprocessCorpus() {
     System.out.println("Preprocessing corpus...");
-    preprocessedCorpus = corpus.toLowerCase().trim().replaceAll("\\p{Punct}|[^\\p{ASCII}]", "").split("\\s+");
+    preprocessedCorpus = corpus.toLowerCase().trim().replaceAll("\\p{Punct}|[^\\p{ASCII}]",
+            "").split("\\s+");
     System.out.println("Corpus preprocessed.");
     return preprocessedCorpus;
   }
 
+  /**
+   * Trains a model based on the provided corpus and saves it with a unique model name. If a model
+   * with the same name already exists, it loads the existing model instead of training a new one.
+   *
+   * @param uniqueModelName the unique name for the model file.
+   */
   public void trainModel(String uniqueModelName) {
     File modelFile = new File(uniqueModelName + ".model");
     if (modelFile.exists()) {
       try {
-        ObjectInputStream modelInputStream = new ObjectInputStream(new FileInputStream(modelFile));
+        ObjectInputStream modelInputStream = new ObjectInputStream(new FileInputStream(
+                modelFile));
         model = (HashMap<String, Map<String, Integer>>) modelInputStream.readObject();
         modelInputStream.close();
 
-        ObjectInputStream startingProbabilitiesInputStream = new ObjectInputStream(new FileInputStream(uniqueModelName + ".sProbs"));
-        startingProbabilities = (HashMap<String, Integer>) startingProbabilitiesInputStream.readObject();
+        ObjectInputStream startingProbabilitiesInputStream = new ObjectInputStream(new
+                FileInputStream(uniqueModelName + ".sProbs"));
+        startingProbabilities = (HashMap<String, Integer>) startingProbabilitiesInputStream.
+                readObject();
         startingProbabilitiesInputStream.close();
       } catch (IOException | ClassNotFoundException e) {
         throw new RuntimeException(e);
@@ -61,12 +89,14 @@ public class TextGenerator {
       //normalizeDistribution(startingProbabilities);
 
       try {
-        ObjectOutputStream modelOutputStream = new ObjectOutputStream(new FileOutputStream(uniqueModelName + ".model"));
+        ObjectOutputStream modelOutputStream = new ObjectOutputStream(new FileOutputStream(
+                uniqueModelName + ".model"));
         modelOutputStream.writeObject(model);
         modelOutputStream.flush();
         modelOutputStream.close();
 
-        ObjectOutputStream startingProbabilitiesOutputStream = new ObjectOutputStream(new FileOutputStream(uniqueModelName +  ".sProbs"));
+        ObjectOutputStream startingProbabilitiesOutputStream = new ObjectOutputStream(new
+                FileOutputStream(uniqueModelName +  ".sProbs"));
         startingProbabilitiesOutputStream.writeObject(startingProbabilities);
         startingProbabilitiesOutputStream.flush();
         startingProbabilitiesOutputStream.close();
@@ -78,11 +108,19 @@ public class TextGenerator {
     }
   }
 
-  private void normalizeDistribution(Map<String, Double> distribution) {
+  /**private void normalizeDistribution(Map<String, Double> distribution) {
     double sum = distribution.values().stream().reduce(0.0, Double::sum);
     distribution.replaceAll((w, frequency) -> frequency / sum);
-  }
+  }**/
 
+  /**
+   * Generates a sequence of text based on the trained model.
+   * This method generates a specified number of words by sampling from the
+   * starting probabilities and the trained model.
+   *
+   * @param words the number of words to generate.
+   * @return the generated text as a string.
+   */
   public String generateText(int words) {
     System.out.println("Generating text...");
     StringBuilder output = new StringBuilder();
@@ -103,6 +141,13 @@ public class TextGenerator {
     return output.toString();
   }
 
+  /**
+   * Samples a word from a given frequency distribution.
+   * This method randomly selects a word from the distribution based on their frequencies.
+   *
+   * @param distribution the frequency distribution of words.
+   * @return a randomly selected word from the distribution.
+   */
   private String sampleFromDistribution(Map<String, Integer> distribution) {
     int index = random.nextInt(distribution.values().stream().reduce(0, Integer::sum));
     int accumulator = 0;
