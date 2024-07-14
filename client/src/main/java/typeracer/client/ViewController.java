@@ -3,6 +3,8 @@ package typeracer.client;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -317,13 +319,12 @@ public class ViewController extends Application {
   public void leaveSession() {
     Platform.runLater(
         () -> {
-          switch (currentScene) {
-            case GAME -> {
-              showScene(SceneName.GAME_RESULTS);
-              GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
-              gameUi.onViewShown();
-            }
-            case SESSION -> showScene(SceneName.MAIN_MENU);
+          if (currentScene == SceneName.GAME) {
+            showScene(SceneName.GAME_RESULTS);
+            GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
+            gameUi.onViewShown();
+          } else {
+            showScene(SceneName.MAIN_MENU);
           }
         });
   }
