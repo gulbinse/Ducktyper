@@ -79,6 +79,7 @@ public class GameUi extends VBox {
   private void initUi() {
     setSpacing(10);
     setAlignment(Pos.TOP_CENTER);
+    setPadding(new Insets(10, 0, 0, 0));
     setBackground(
         new Background(
             new BackgroundFill(StyleManager.START_SCREEN, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -294,7 +295,7 @@ public class GameUi extends VBox {
             () -> String.format("%.2f", wpmProperty.getValue()) + " WPM", wpmProperty);
     wpmLabel.textProperty().bind(wpmBinding);
     wpmLabel.setFont(StyleManager.BOLD_ITALIC_FONT);
-    wpmLabel.setTextFill(StyleManager.GREY_BOX);
+    wpmLabel.setTextFill(Color.BLACK);
 
     Label accuracyLabel = new Label();
     DoubleProperty accuracyProperty = viewController.getPlayerAccuracyProperty(playerId);
@@ -304,13 +305,13 @@ public class GameUi extends VBox {
             accuracyProperty);
     accuracyLabel.textProperty().bind(accuracyBinding);
     accuracyLabel.setFont(StyleManager.BOLD_ITALIC_FONT);
-    accuracyLabel.setTextFill(StyleManager.GREY_BOX);
+    accuracyLabel.setTextFill(Color.BLACK);
 
     Label errorsLabel = new Label();
 
     Label usernameLabel = new Label(viewController.getUsernameById(playerId));
     usernameLabel.setFont(StyleManager.BOLD_ITALIC_FONT);
-    usernameLabel.setTextFill(StyleManager.GREY_BOX);
+    usernameLabel.setTextFill(Color.BLACK);
     usernameLabel.setPadding(new Insets(0, 10, 0, 10));
 
     HBox stats = new HBox(10);
