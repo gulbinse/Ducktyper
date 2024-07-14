@@ -39,7 +39,7 @@ public final class TypeRacerGame { // made final to prevent finalizer attacks in
   public TypeRacerGame(Session session) {
     TextSource textSource = new TextSource();
     try {
-      textSource.setRandomTextFromAllCorpora();
+      textSource.setTextGeneratedFromDefaultCorpus();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

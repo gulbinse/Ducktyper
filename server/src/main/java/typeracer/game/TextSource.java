@@ -158,12 +158,12 @@ public class TextSource {
   }
 
   public void setTextGeneratedFromCorpus(File file) throws IOException {
-    setTextGeneratedFromString(getTextFromFile(file));
+    TextGenerator textGenerator = new TextGenerator(getTextFromFile(file));
+    textGenerator.trainModel(file.getName());
+    setTextGeneratedFromTextGenerator(textGenerator);
   }
 
-  private void setTextGeneratedFromString(String corpus)  {
-    TextGenerator textGenerator = new TextGenerator(corpus);
-    textGenerator.trainModel();
+  public void setTextGeneratedFromTextGenerator(TextGenerator textGenerator)  {
     currentText = textGenerator.generateText(100);
   }
 

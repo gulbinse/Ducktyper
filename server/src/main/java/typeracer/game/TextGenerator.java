@@ -1,5 +1,6 @@
 package typeracer.game;
 
+import java.io.*;
 import java.util.*;
 
 /**
@@ -8,8 +9,8 @@ import java.util.*;
 public class TextGenerator {
   private final String corpus;
   private String[] preprocessedCorpus;
-  private final Map<String, Map<String, Integer>> model = new HashMap<>();
-  private final Map<String, Integer> startingProbabilities = new HashMap<>();
+  private Map<String, Map<String, Integer>> model = new HashMap<>();
+  private Map<String, Integer> startingProbabilities = new HashMap<>();
   private final Random random = new Random();
 
   public TextGenerator(String corpus) {
@@ -23,28 +24,58 @@ public class TextGenerator {
     return preprocessedCorpus;
   }
 
-  public void trainModel() {
-    System.out.println("Training model...");
-    preprocessCorpus();
-    for (int i = 0; i < preprocessedCorpus.length - 1; i++) {
-      String currentWord = preprocessedCorpus[i];
-      model.putIfAbsent(currentWord, new HashMap<>());
-      startingProbabilities.putIfAbsent(currentWord, 1);
-      Map<String, Integer> frequencyDistribution = model.get(currentWord);
-      for (String word : preprocessedCorpus) {
-        if (currentWord.equals(word)) {
-          startingProbabilities.put(word, startingProbabilities.get(word) + 1);
-          String followingWord = preprocessedCorpus[i+1];
-          frequencyDistribution.putIfAbsent(followingWord, 0);
-          frequencyDistribution.put(followingWord, frequencyDistribution.get(followingWord) + 1);
+  public void trainModel(String uniqueModelName) {
+    File modelFile = new File(uniqueModelName + ".model");
+    if (modelFile.exists()) {
+      try {
+        ObjectInputStream modelInputStream = new ObjectInputStream(new FileInputStream(modelFile));
+        model = (HashMap<String, Map<String, Integer>>) modelInputStream.readObject();
+        modelInputStream.close();
+
+        ObjectInputStream startingProbabilitiesInputStream = new ObjectInputStream(new FileInputStream(uniqueModelName + ".sProbs"));
+        startingProbabilities = (HashMap<String, Integer>) startingProbabilitiesInputStream.readObject();
+        startingProbabilitiesInputStream.close();
+      } catch (IOException | ClassNotFoundException e) {
+        throw new RuntimeException(e);
+      }
+    } else {
+      System.out.println("Training model...");
+      preprocessCorpus();
+      for (int i = 0; i < preprocessedCorpus.length - 1; i++) {
+        String currentWord = preprocessedCorpus[i];
+        model.putIfAbsent(currentWord, new HashMap<>());
+        startingProbabilities.putIfAbsent(currentWord, 1);
+        Map<String, Integer> frequencyDistribution = model.get(currentWord);
+        for (String word : preprocessedCorpus) {
+          if (currentWord.equals(word)) {
+            startingProbabilities.put(word, startingProbabilities.get(word) + 1);
+            String followingWord = preprocessedCorpus[i+1];
+            frequencyDistribution.putIfAbsent(followingWord, 0);
+            frequencyDistribution.put(followingWord, frequencyDistribution.get(followingWord) + 1);
+          }
         }
       }
+      for (String word : preprocessedCorpus) {
+        //normalizeDistribution(model.get(word));
+      }
+      //normalizeDistribution(startingProbabilities);
+
+      try {
+        ObjectOutputStream modelOutputStream = new ObjectOutputStream(new FileOutputStream(uniqueModelName + ".model"));
+        modelOutputStream.writeObject(model);
+        modelOutputStream.flush();
+        modelOutputStream.close();
+
+        ObjectOutputStream startingProbabilitiesOutputStream = new ObjectOutputStream(new FileOutputStream(uniqueModelName +  ".sProbs"));
+        startingProbabilitiesOutputStream.writeObject(startingProbabilities);
+        startingProbabilitiesOutputStream.flush();
+        startingProbabilitiesOutputStream.close();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+
+      System.out.println("Model trained.");
     }
-    for (String word : preprocessedCorpus) {
-      //normalizeDistribution(model.get(word));
-    }
-    //normalizeDistribution(startingProbabilities);
-    System.out.println("Model trained.");
   }
 
   private void normalizeDistribution(Map<String, Double> distribution) {
