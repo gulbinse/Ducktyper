@@ -168,26 +168,26 @@ final class Client {
    * @return the first handler in the chain of message handlers
    */
   private MessageHandler createMessageHandlerChain() {
-    MessageHandler characterResponseHandler = new CharacterResponseHandler(null, viewController);
+    MessageHandler characterResponseHandler = MessageHandler.create(CharacterResponseHandler.class, null, viewController);
     MessageHandler handShakeResponseHandler =
-        new HandShakeResponseHandler(characterResponseHandler, viewController);
+        MessageHandler.create(HandShakeResponseHandler.class, characterResponseHandler, viewController);
     MessageHandler createSessionResponseHandler =
-        new CreateSessionResponseHandler(handShakeResponseHandler, viewController);
+        MessageHandler.create(CreateSessionResponseHandler.class, handShakeResponseHandler, viewController);
     MessageHandler readyResponseHandler =
-        new ReadyResponseHandler(createSessionResponseHandler, viewController);
+        MessageHandler.create(ReadyResponseHandler.class, createSessionResponseHandler, viewController);
     MessageHandler textNotificationHandler =
-        new TextNotificationHandler(readyResponseHandler, viewController);
+        MessageHandler.create(TextNotificationHandler.class, readyResponseHandler, viewController);
     MessageHandler playerStateNotificationHandler =
-        new PlayerStateNotificationHandler(textNotificationHandler, viewController);
+        MessageHandler.create(PlayerStateNotificationHandler.class, textNotificationHandler, viewController);
     MessageHandler gameStateNotificationHandler =
-        new GameStateNotificationHandler(playerStateNotificationHandler, viewController);
+        MessageHandler.create(GameStateNotificationHandler.class, playerStateNotificationHandler, viewController);
     MessageHandler playerLeftNotificationHandler =
-        new PlayerLeftNotificationHandler(gameStateNotificationHandler, viewController);
+        MessageHandler.create(PlayerLeftNotificationHandler.class, gameStateNotificationHandler, viewController);
     MessageHandler playerJoinedNotificationHandler =
-        new PlayerUpdateNotificationHandler(playerLeftNotificationHandler, viewController);
+        MessageHandler.create(PlayerUpdateNotificationHandler.class, playerLeftNotificationHandler, viewController);
     MessageHandler joinSessionResponseHandler =
-        new JoinSessionResponseHandler(playerJoinedNotificationHandler, viewController);
-    return new LeaveSessionResponseHandler(joinSessionResponseHandler, viewController);
+        MessageHandler.create(JoinSessionResponseHandler.class, playerJoinedNotificationHandler, viewController);
+    return MessageHandler.create(LeaveSessionResponseHandler.class, joinSessionResponseHandler, viewController);
   }
 
   /**

@@ -20,7 +20,7 @@ public class CharacterResponseHandler implements MessageHandler {
    * @param nextHandler the next handler in the chain of responsibility.
    * @param viewController the view controller used to update the view.
    */
-  public CharacterResponseHandler(MessageHandler nextHandler, ViewController viewController) {
+  CharacterResponseHandler(MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;
     this.viewController = viewController;
   }
