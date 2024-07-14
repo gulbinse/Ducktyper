@@ -38,15 +38,20 @@ public class SessionUi extends VBox {
   private Label usernameLabel;
   private Label sessionIdLabel;
 
+  private SessionUi(ViewController viewController) {
+    this.viewController = viewController;
+  }
+
   /**
-   * Constructor to initialize the Session UI.
+   * Creates and initializes the Session UI.
    *
    * @param viewController the controller to manage views.
    */
-  public SessionUi(ViewController viewController) {
-    this.viewController = viewController;
-    initializeUi();
-    updateUsernameLabel();
+  public static SessionUi create(ViewController viewController) {
+    SessionUi sessionUi = new SessionUi(viewController);
+    sessionUi.initializeUi();
+    sessionUi.updateUsernameLabel();
+    return sessionUi;
   }
 
   /**

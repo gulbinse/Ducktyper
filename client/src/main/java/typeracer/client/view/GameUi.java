@@ -57,14 +57,19 @@ public class GameUi extends VBox {
   private final VBox playersPanel = new VBox();
   private final Map<Integer, VBox> playerDisplayById = new HashMap<>();
 
+  private GameUi(ViewController viewController) {
+    this.viewController = viewController;
+  }
+
   /**
-   * Constructs a new GameUi and initializes its user interface.
+   * Creates a new GameUi and initializes its user interface.
    *
    * @param viewController The controller to manage views and handle interactions.
    */
-  public GameUi(ViewController viewController) {
-    this.viewController = viewController;
-    initUi();
+  public static GameUi create(ViewController viewController) {
+    GameUi gameUi = new GameUi(viewController);
+    gameUi.initUi();
+    return gameUi;
   }
 
   /** Initializes the UI elements of the GameUi pane. */
