@@ -292,15 +292,9 @@ public class ViewController extends Application {
   // == Finished
   public void leaveSession() {
     Platform.runLater(() -> {
-      switch (currentScene) {
-        case GAME -> {
           showScene(SceneName.GAME_RESULTS);
-          GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
-          gameUi.onViewShown();
-        }
-        default -> showScene(SceneName.MAIN_MENU);
-      }
-
+          GameResultsUi gameResultsUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
+          gameResultsUi.onViewShown();
     });
   }
 

@@ -63,7 +63,7 @@ public class GameResultsUi extends VBox {
 
     this.getChildren().addAll(titleLabel, mainMenuButton);
 
-    mainMenuButton.setOnAction(e -> viewController.leaveSessionOrGame());
+    mainMenuButton.setOnAction(e -> viewController.showScene(ViewController.SceneName.MAIN_MENU));
 
     StyleManager.applyFadeInAnimation(titleLabel, 1000);
     // StyleManager.applyFadeInAnimation(leaderboardPanel, 1400);
