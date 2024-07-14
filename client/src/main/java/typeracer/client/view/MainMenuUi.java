@@ -1,5 +1,6 @@
 package typeracer.client.view;
 
+import java.util.Objects;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -7,8 +8,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import typeracer.client.ViewController;
-
-import java.util.Objects;
 
 /**
  * Represents the main menu user interface for the TypeRacer game. This class sets up the GUI
@@ -53,14 +52,17 @@ public class MainMenuUi extends VBox {
    * button actions.
    */
   private void initializeUi() {
-    Background background = new Background(new BackgroundImage(
-            new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/"
-                    + "Menu_screen_noText.png"))),
-            BackgroundRepeat.NO_REPEAT,
-            BackgroundRepeat.NO_REPEAT,
-            BackgroundPosition.CENTER,
-            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false,
-                    false, true)));
+    Background background =
+        new Background(
+            new BackgroundImage(
+                new Image(
+                    Objects.requireNonNull(
+                        getClass().getResourceAsStream("/images/" + "Menu_screen_noText.png"))),
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                new BackgroundSize(
+                    BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true)));
     this.setBackground(background);
     this.setAlignment(Pos.CENTER);
     this.setSpacing(15);
@@ -72,10 +74,18 @@ public class MainMenuUi extends VBox {
     spacer.setPrefHeight(30);
     this.getChildren().add(spacer);
 
-    Image newGameButtonGraphic = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/startGameButton.png")));
-    Image joinSessionButtonGraphic = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/joinGameButton.png")));
-    Image statsButtonGraphic = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/statsButton.png")));
-    Image exitButtonGraphic = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/leaveGameButton.png")));
+    Image newGameButtonGraphic =
+        new Image(
+            Objects.requireNonNull(getClass().getResourceAsStream("/images/startGameButton.png")));
+    Image joinSessionButtonGraphic =
+        new Image(
+            Objects.requireNonNull(getClass().getResourceAsStream("/images/joinGameButton.png")));
+    Image statsButtonGraphic =
+        new Image(
+            Objects.requireNonNull(getClass().getResourceAsStream("/images/statsButton.png")));
+    Image exitButtonGraphic =
+        new Image(
+            Objects.requireNonNull(getClass().getResourceAsStream("/images/leaveGameButton.png")));
 
     ImageView startGameButton = StyleManager.createMainMenueButton(newGameButtonGraphic);
     ImageView statsButton = StyleManager.createMainMenueButton(statsButtonGraphic);
@@ -107,18 +117,18 @@ public class MainMenuUi extends VBox {
     StyleManager.applyFadeInAnimation(statsButton, 1500);
     StyleManager.applyFadeInAnimation(exitButton, 1500);
 
-    HBox startGameBox = new HBox(10, StyleManager.createBulletListSpacer(),  startGameButton);
-    HBox sessionBox = new HBox(10, StyleManager.createBulletListSpacer(),  joinSessionButton, sessionIdField);
-    HBox statsBox = new HBox(10, StyleManager.createBulletListSpacer(),  statsButton);
-    HBox exitBox = new HBox(10, StyleManager.createBulletListSpacer(),  exitButton);
+    HBox startGameBox = new HBox(10, StyleManager.createBulletListSpacer(), startGameButton);
+    HBox sessionBox =
+        new HBox(10, StyleManager.createBulletListSpacer(), joinSessionButton, sessionIdField);
+    HBox statsBox = new HBox(10, StyleManager.createBulletListSpacer(), statsButton);
+    HBox exitBox = new HBox(10, StyleManager.createBulletListSpacer(), exitButton);
 
     startGameBox.setAlignment(Pos.TOP_LEFT);
     sessionBox.setAlignment(Pos.TOP_LEFT);
     statsBox.setAlignment(Pos.TOP_LEFT);
     exitBox.setAlignment(Pos.TOP_LEFT);
 
-    this.getChildren()
-        .addAll(startGameBox, sessionBox, statsBox, exitBox);
+    this.getChildren().addAll(startGameBox, sessionBox, statsBox, exitBox);
   }
 
   /** Creates and returns a title panel with an image. */

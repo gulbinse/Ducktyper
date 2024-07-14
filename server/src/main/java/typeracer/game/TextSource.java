@@ -20,7 +20,8 @@ public class TextSource {
   private static final String DEFAULT_CORPUS_FILE = "alice_in_wonderland.txt";
   private static final String DEFAULT_TEXT_FILE_PATH =
       TEXT_SOURCE_FOLDER + File.separator + DEFAULT_TEXT_FILE;
-  private static final String DEFAULT_CORPUS_FILE_PATH = CORPUS_SOURCE_FOLDER + File.separator + DEFAULT_CORPUS_FILE;
+  private static final String DEFAULT_CORPUS_FILE_PATH =
+      CORPUS_SOURCE_FOLDER + File.separator + DEFAULT_CORPUS_FILE;
   private static final String DEFAULT_TEXT =
       """
           According to all known laws of aviation, there is no way a bee should be able to fly.
@@ -62,9 +63,8 @@ public class TextSource {
   }
 
   /**
-   * Sets the text generated from the default corpus file.
-   * This method loads the default corpus file from the classpath,
-   * converts its URL to a URI, and generates text from it.
+   * Sets the text generated from the default corpus file. This method loads the default corpus file
+   * from the classpath, converts its URL to a URI, and generates text from it.
    *
    * @throws IOException if an I/O error occurs.
    */
@@ -80,8 +80,7 @@ public class TextSource {
   }
 
   /**
-   * Sets a text randomly from one of the files in the default folder {@value
-   * TEXT_SOURCE_FOLDER}.
+   * Sets a text randomly from one of the files in the default folder {@value TEXT_SOURCE_FOLDER}.
    *
    * @throws IOException when exceptions with reading the file occur
    */
@@ -129,9 +128,8 @@ public class TextSource {
   }
 
   /**
-   * Reads the content of a file and returns it as a single string.
-   * This method reads the file line by line, concatenates the lines into a single string,
-   * and skips any empty lines.
+   * Reads the content of a file and returns it as a single string. This method reads the file line
+   * by line, concatenates the lines into a single string, and skips any empty lines.
    *
    * @param file the file to read from.
    * @return the content of the file as a single string.
@@ -202,7 +200,7 @@ public class TextSource {
    *
    * @param textGenerator the TextGenerator to use for generating text.
    */
-  public void setTextGeneratedFromTextGenerator(TextGenerator textGenerator)  {
+  public void setTextGeneratedFromTextGenerator(TextGenerator textGenerator) {
     currentText = textGenerator.generateText(100).replaceAll(" +", " ");
   }
 

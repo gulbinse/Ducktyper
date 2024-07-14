@@ -3,7 +3,6 @@ package typeracer.client;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -13,14 +12,12 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 /** Stores the Data of all known users for the Client. */
 public class ClientSideSessionData {
 
   /**
-   * Constructs a new ClientSideSessionData instance.
-   * Initializes the session data for the client.
+   * Constructs a new ClientSideSessionData instance. Initializes the session data for the client.
    */
   public ClientSideSessionData() {
     // Constructor implementation
@@ -107,8 +104,8 @@ public class ClientSideSessionData {
   }
 
   /**
-   * Gets the progress property of the player with the specified ID.
-   * If the player's progress property does not exist, it is created and initialized to 0.0.
+   * Gets the progress property of the player with the specified ID. If the player's progress
+   * property does not exist, it is created and initialized to 0.0.
    *
    * @param playerId the ID of the player.
    * @return the DoubleProperty representing the player's progress.
@@ -149,8 +146,8 @@ public class ClientSideSessionData {
 
   /**
    * Updates the player's information or adds a new player if the player ID is not already present.
-   * This method updates the player's name and ready status, and initializes the player's
-   * statistics properties (WPM, accuracy, progress, and errors).
+   * This method updates the player's name and ready status, and initializes the player's statistics
+   * properties (WPM, accuracy, progress, and errors).
    *
    * @param playerId the ID of the player to update.
    * @param playerName the name of the player.

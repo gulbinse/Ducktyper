@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * A class to generate a text using a markov chain with probability transitions trained on a given corpus.
+ * A class to generate a text using a markov chain with probability transitions trained on a given
+ * corpus.
  */
 public class TextGenerator {
   private final String corpus;
@@ -31,16 +32,22 @@ public class TextGenerator {
   }
 
   /**
-   * Preprocesses the corpus by converting it to lowercase, removing punctuation and
-   * non-ASCII characters, and splitting it into words.
+   * Preprocesses the corpus by converting it to lowercase, removing punctuation and non-ASCII
+   * characters, and splitting it into words.
    *
    * @return the preprocessed corpus as an array of words.
    */
   private List<String> preprocessCorpus() {
     System.out.println("Preprocessing corpus...");
-    preprocessedCorpus = List.of(corpus.toLowerCase().trim().replaceAll("\\p{Punct}|[^\\p{ASCII}]",
-        "").split("[\\s \\t\\p{Cntrl}\\p{javaWhitespace}]+", 0));
-    preprocessedCorpus = preprocessedCorpus.stream().filter(word -> !word.isEmpty() && !word.isBlank()).toList();
+    preprocessedCorpus =
+        List.of(
+            corpus
+                .toLowerCase()
+                .trim()
+                .replaceAll("\\p{Punct}|[^\\p{ASCII}]", "")
+                .split("[\\s \\t\\p{Cntrl}\\p{javaWhitespace}]+", 0));
+    preprocessedCorpus =
+        preprocessedCorpus.stream().filter(word -> !word.isEmpty() && !word.isBlank()).toList();
     System.out.println("Corpus preprocessed.");
     return preprocessedCorpus;
   }
@@ -62,19 +69,23 @@ public class TextGenerator {
       for (int i = 0; i < preprocessedCorpus.size() - 1; i++) {
         String currentWord = preprocessedCorpus.get(i);
         int currentPosition = i;
-        model.computeIfAbsent(currentWord, k -> {
-          startingProbabilities.put(currentWord, 0);
-          HashMap<String, Integer> frequencyDistribution = new HashMap<>();
-          for (int j = currentPosition; j < preprocessedCorpus.size() - 1; j++) {
-            if (currentWord.equals(preprocessedCorpus.get(j))) {
-              startingProbabilities.put(currentWord, startingProbabilities.get(currentWord) + 1);
-              String followingWord = preprocessedCorpus.get(j + 1);
-              frequencyDistribution.putIfAbsent(followingWord, 0);
-              frequencyDistribution.put(followingWord, frequencyDistribution.get(followingWord) + 1);
-            }
-          }
-          return frequencyDistribution;
-        });
+        model.computeIfAbsent(
+            currentWord,
+            k -> {
+              startingProbabilities.put(currentWord, 0);
+              HashMap<String, Integer> frequencyDistribution = new HashMap<>();
+              for (int j = currentPosition; j < preprocessedCorpus.size() - 1; j++) {
+                if (currentWord.equals(preprocessedCorpus.get(j))) {
+                  startingProbabilities.put(
+                      currentWord, startingProbabilities.get(currentWord) + 1);
+                  String followingWord = preprocessedCorpus.get(j + 1);
+                  frequencyDistribution.putIfAbsent(followingWord, 0);
+                  frequencyDistribution.put(
+                      followingWord, frequencyDistribution.get(followingWord) + 1);
+                }
+              }
+              return frequencyDistribution;
+            });
       }
       writeModelToFile(uniqueModelName);
       System.out.println("Model trained.");
@@ -83,14 +94,14 @@ public class TextGenerator {
 
   private void writeModelToFile(String uniqueModelName) {
     try {
-      ObjectOutputStream modelOutputStream = new ObjectOutputStream(new FileOutputStream(
-              uniqueModelName + ".model"));
+      ObjectOutputStream modelOutputStream =
+          new ObjectOutputStream(new FileOutputStream(uniqueModelName + ".model"));
       modelOutputStream.writeObject(model);
       modelOutputStream.flush();
       modelOutputStream.close();
 
-      ObjectOutputStream startingProbabilitiesOutputStream = new ObjectOutputStream(new
-              FileOutputStream(uniqueModelName +  ".sProbs"));
+      ObjectOutputStream startingProbabilitiesOutputStream =
+          new ObjectOutputStream(new FileOutputStream(uniqueModelName + ".sProbs"));
       startingProbabilitiesOutputStream.writeObject(startingProbabilities);
       startingProbabilitiesOutputStream.flush();
       startingProbabilitiesOutputStream.close();
@@ -105,8 +116,10 @@ public class TextGenerator {
       model = (HashMap<String, HashMap<String, Integer>>) modelInputStream.readObject();
       modelInputStream.close();
 
-      ObjectInputStream startingProbabilitiesInputStream = new ObjectInputStream(new FileInputStream(startingProbabilitiesFile));
-      startingProbabilities = (HashMap<String, Integer>) startingProbabilitiesInputStream.readObject();
+      ObjectInputStream startingProbabilitiesInputStream =
+          new ObjectInputStream(new FileInputStream(startingProbabilitiesFile));
+      startingProbabilities =
+          (HashMap<String, Integer>) startingProbabilitiesInputStream.readObject();
       startingProbabilitiesInputStream.close();
     } catch (IOException | ClassNotFoundException e) {
       throw new RuntimeException(e);
@@ -114,9 +127,8 @@ public class TextGenerator {
   }
 
   /**
-   * Generates a sequence of text based on the trained model.
-   * This method generates a specified number of words by sampling from the
-   * starting probabilities and the trained model.
+   * Generates a sequence of text based on the trained model. This method generates a specified
+   * number of words by sampling from the starting probabilities and the trained model.
    *
    * @param words the number of words to generate.
    * @return the generated text as a string.
@@ -146,8 +158,8 @@ public class TextGenerator {
   }
 
   /**
-   * Samples a word from a given frequency distribution.
-   * This method randomly selects a word from the distribution based on their frequencies.
+   * Samples a word from a given frequency distribution. This method randomly selects a word from
+   * the distribution based on their frequencies.
    *
    * @param distribution the frequency distribution of words.
    * @return a randomly selected word from the distribution.
@@ -160,8 +172,10 @@ public class TextGenerator {
         return word;
       }
       accumulator += distribution.get(word);
+      if (accumulator >= index) {
+        return word;
+      }
     }
-    assert false;
     return "";
   }
 }

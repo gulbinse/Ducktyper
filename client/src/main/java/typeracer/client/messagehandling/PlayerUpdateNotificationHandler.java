@@ -14,14 +14,13 @@ public class PlayerUpdateNotificationHandler implements MessageHandler {
   private final ViewController viewController;
 
   /**
-   * Constructs a PlayerUpdateNotificationHandler.
-   * Initializes the handler with the specified next handler and view controller.
+   * Constructs a PlayerUpdateNotificationHandler. Initializes the handler with the specified next
+   * handler and view controller.
    *
    * @param nextHandler the next handler in the chain of responsibility.
    * @param viewController the view controller used to update the view.
    */
-  PlayerUpdateNotificationHandler(
-      MessageHandler nextHandler, ViewController viewController) {
+  PlayerUpdateNotificationHandler(MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;
     this.viewController = viewController;
   }
@@ -35,7 +34,9 @@ public class PlayerUpdateNotificationHandler implements MessageHandler {
   public void handleMessage(Message message) {
     if (message instanceof PlayerUpdateNotification playerUpdateNotification) {
       viewController.updatePlayer(
-          playerUpdateNotification.getPlayerId(), playerUpdateNotification.getPlayerName(), playerUpdateNotification.isReady());
+          playerUpdateNotification.getPlayerId(),
+          playerUpdateNotification.getPlayerName(),
+          playerUpdateNotification.isReady());
 
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);

@@ -14,7 +14,6 @@ import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import typeracer.client.ViewController;
@@ -57,8 +56,8 @@ public class GameResultsUi extends VBox {
     titleLabel.setFont(StyleManager.BOLD_FONT);
     titleLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: black;");
 
-//    VBox statsBox = createStatsBox();
-//    gameResults = statsBox;
+    //    VBox statsBox = createStatsBox();
+    //    gameResults = statsBox;
     // VBox leaderboardPanel = createLeaderboard();
     // leaderboardPanel.setPadding(new Insets(20, 0, 20, 0));
 
@@ -77,23 +76,21 @@ public class GameResultsUi extends VBox {
     StyleManager.applyButtonHoverAnimation(mainMenuButton);
   }
 
-  /**
-   * Should be executed when this screen is switched to.
-   */
-  public void onViewShown(){
+  /** Should be executed when this screen is switched to. */
+  public void onViewShown() {
     VBox statsBox = new VBox(10);
 
     statsBox.setAlignment(Pos.CENTER);
     statsBox.setBackground(
-            new Background(new BackgroundFill(StyleManager.GREY_BOX, CornerRadii.EMPTY, Insets.EMPTY)));
+        new Background(new BackgroundFill(StyleManager.GREY_BOX, CornerRadii.EMPTY, Insets.EMPTY)));
     statsBox.setPadding(new Insets(15));
     statsBox.setBorder(
-            new Border(
-                    new BorderStroke(
-                            Paint.valueOf("black"),
-                            BorderStrokeStyle.SOLID,
-                            CornerRadii.EMPTY,
-                            new BorderWidths(1))));
+        new Border(
+            new BorderStroke(
+                Paint.valueOf("black"),
+                BorderStrokeStyle.SOLID,
+                CornerRadii.EMPTY,
+                new BorderWidths(1))));
 
     Label statsLabel = new Label("Your Stats:");
     statsLabel.setFont(StyleManager.ITALIC_FONT);
@@ -103,13 +100,18 @@ public class GameResultsUi extends VBox {
 
     Label wpmLabel = new Label();
     DoubleProperty wpmProperty = viewController.getPlayerWpmProperty(playerId);
-    StringBinding wpmBinding = Bindings.createStringBinding(() -> String.format("%.2f", wpmProperty.getValue()) + " WPM", wpmProperty);
+    StringBinding wpmBinding =
+        Bindings.createStringBinding(
+            () -> String.format("%.2f", wpmProperty.getValue()) + " WPM", wpmProperty);
     wpmLabel.textProperty().bind(wpmBinding);
     wpmLabel.setFont(StyleManager.STANDARD_FONT);
 
     Label accuracyLabel = new Label();
     DoubleProperty accuracyProperty = viewController.getPlayerAccuracyProperty(playerId);
-    StringBinding accuracyBinding = Bindings.createStringBinding(() -> String.format("%.2f", accuracyProperty.getValue() * 100) + "% Accuracy", accuracyProperty);
+    StringBinding accuracyBinding =
+        Bindings.createStringBinding(
+            () -> String.format("%.2f", accuracyProperty.getValue() * 100) + "% Accuracy",
+            accuracyProperty);
     accuracyLabel.textProperty().bind(accuracyBinding);
     accuracyLabel.setFont(StyleManager.STANDARD_FONT);
 

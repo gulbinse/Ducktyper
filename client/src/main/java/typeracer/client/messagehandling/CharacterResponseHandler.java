@@ -14,8 +14,8 @@ public class CharacterResponseHandler implements MessageHandler {
   private final ViewController viewController;
 
   /**
-   * Constructs a CharacterResponseHandler.
-   * Initializes the handler with the specified next handler and view controller.
+   * Constructs a CharacterResponseHandler. Initializes the handler with the specified next handler
+   * and view controller.
    *
    * @param nextHandler the next handler in the chain of responsibility.
    * @param viewController the view controller used to update the view.

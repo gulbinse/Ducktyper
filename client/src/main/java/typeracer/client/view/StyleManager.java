@@ -4,7 +4,6 @@ import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
@@ -26,14 +25,10 @@ public class StyleManager {
    * hex code "#2374AB".
    */
 
-  /**
-   * Color used for the start screen background.
-   */
-
+  /** Color used for the start screen background. */
   public static final Color START_SCREEN = Color.web("#2374AB");
-  /**
-   * Color used for green buttons.
-   */
+
+  /** Color used for green buttons. */
   public static final Color GREEN_BUTTON = Color.web("#009900");
 
   /** Color for green buttons. */
@@ -61,7 +56,8 @@ public class StyleManager {
   public static final Font ITALIC_FONT = Font.font("Arial", FontPosture.ITALIC, 16);
 
   /** Bold italic font for emphasized UI text. */
-  public static final Font BOLD_ITALIC_FONT = Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 18);
+  public static final Font BOLD_ITALIC_FONT =
+      Font.font("Arial", FontWeight.BOLD, FontPosture.ITALIC, 18);
 
   /** Default constructor for the StyleManager class. Initializes a new instance of StyleManager. */
   public StyleManager() {}
@@ -110,53 +106,51 @@ public class StyleManager {
           clickScale.setAutoReverse(true);
           clickScale.play();
         });
-//    button.setMinSize(120, 40);
-//    button.setMaxSize(120, 40);
+    //    button.setMinSize(120, 40);
+    //    button.setMaxSize(120, 40);
     button.setPrefSize(160, 40);
     return button;
   }
 
-    /**
-     * Creates a button for the Main Menu.
-     *
-     * @param image of what the button should look like
-     * @return an ImageView that acts like a button
-     */
+  /**
+   * Creates a button for the Main Menu.
+   *
+   * @param image of what the button should look like
+   * @return an ImageView that acts like a button
+   */
   public static ImageView createMainMenueButton(Image image) {
-      ImageView submitImage =
-              new ImageView(image);
-      submitImage.setFitHeight(50);
-      submitImage.setPreserveRatio(true);
+    ImageView submitImage = new ImageView(image);
+    submitImage.setFitHeight(50);
+    submitImage.setPreserveRatio(true);
 
-      submitImage.setOnMouseEntered(
-              e -> {
-                  submitImage.setScaleX(1.1);
-                  submitImage.setScaleY(1.1);
-              });
-      submitImage.setOnMouseExited(
-              e -> {
-                  submitImage.setScaleX(1.0);
-                  submitImage.setScaleY(1.0);
-              }
-      );
-      submitImage.setOnMouseReleased(
-              e -> {
-                  submitImage.setScaleX(1.0);
-                  submitImage.setScaleY(1.0);
-              });
-      return submitImage;
+    submitImage.setOnMouseEntered(
+        e -> {
+          submitImage.setScaleX(1.1);
+          submitImage.setScaleY(1.1);
+        });
+    submitImage.setOnMouseExited(
+        e -> {
+          submitImage.setScaleX(1.0);
+          submitImage.setScaleY(1.0);
+        });
+    submitImage.setOnMouseReleased(
+        e -> {
+          submitImage.setScaleX(1.0);
+          submitImage.setScaleY(1.0);
+        });
+    return submitImage;
   }
 
-    /**
-     * Creates a Region that acts like a spacer.
-     *
-     * @return Region as spacer
-     */
-  public static Region createBulletListSpacer(){
-      Region spacerBulltepoints = new Region();
-      spacerBulltepoints.setMinWidth(20);
-      spacerBulltepoints.setPrefWidth(20);
-      return spacerBulltepoints;
+  /**
+   * Creates a Region that acts like a spacer.
+   *
+   * @return Region as spacer
+   */
+  public static Region createBulletListSpacer() {
+    Region spacerBulltepoints = new Region();
+    spacerBulltepoints.setMinWidth(20);
+    spacerBulltepoints.setPrefWidth(20);
+    return spacerBulltepoints;
   }
 
   /**

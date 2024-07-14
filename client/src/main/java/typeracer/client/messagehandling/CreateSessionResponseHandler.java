@@ -15,8 +15,8 @@ public class CreateSessionResponseHandler implements MessageHandler {
 
   /**
    * Constructs a CreateSessionResponseHandler.
-   * <p>
-   * Initializes the handler with the specified next handler and view controller.
+   *
+   * <p>Initializes the handler with the specified next handler and view controller.
    *
    * @param nextHandler the next handler in the chain of responsibility.
    * @param viewController the view controller used to update the view.
@@ -38,7 +38,10 @@ public class CreateSessionResponseHandler implements MessageHandler {
       // switches to the session scene if the message contains an ID for the session
       viewController.setSessionId(createSessionResponse.getSessionId());
       viewController.showScene(ViewController.SceneName.SESSION);
-      viewController.updatePlayer(viewController.getPlayerId(), viewController.getUsername(), viewController.getPlayerReadyProperty(viewController.getPlayerId()).getValue());
+      viewController.updatePlayer(
+          viewController.getPlayerId(),
+          viewController.getUsername(),
+          viewController.getPlayerReadyProperty(viewController.getPlayerId()).getValue());
 
     } else if (message instanceof CreateSessionResponse createSessionResponse
         && createSessionResponse.getReason() != null) {

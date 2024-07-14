@@ -1,12 +1,9 @@
 package typeracer.client.view;
 
+import java.util.Objects;
 import javafx.animation.FadeTransition;
-import javafx.animation.RotateTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -15,15 +12,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import typeracer.client.ViewController;
-
-import java.util.Objects;
 
 /**
  * Represents the initial prompt user interface for the TypeRacer game. This class sets up the GUI
@@ -120,13 +111,7 @@ public class InitialPromptUi extends VBox {
 
     ImageView submitImage = createSubmitImage();
 
-    inputPanel
-        .getChildren()
-        .addAll(
-            usernameField,
-            ipField,
-            portField,
-            submitImage);
+    inputPanel.getChildren().addAll(usernameField, ipField, portField, submitImage);
 
     return inputPanel;
   }
@@ -138,7 +123,9 @@ public class InitialPromptUi extends VBox {
    */
   private ImageView createSubmitImage() {
     ImageView submitImage =
-        new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/button.png"))));
+        new ImageView(
+            new Image(
+                Objects.requireNonNull(getClass().getResourceAsStream("/images/button.png"))));
     submitImage.setFitHeight(50);
     submitImage.setFitWidth(50);
     submitImage.setEffect(new DropShadow());

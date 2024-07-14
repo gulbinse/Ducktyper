@@ -16,11 +16,12 @@ public interface MessageHandler {
    * @return a new instance of the specified MessageHandler class.
    * @throws RuntimeException if the handler instance cannot be created.
    */
-  static <T extends MessageHandler> T create(Class<T> handler, MessageHandler nextHandler,
-                                             ViewController viewController) {
+  static <T extends MessageHandler> T create(
+      Class<T> handler, MessageHandler nextHandler, ViewController viewController) {
     try {
-      return handler.getDeclaredConstructor(MessageHandler.class, ViewController.class)
-              .newInstance(nextHandler, viewController);
+      return handler
+          .getDeclaredConstructor(MessageHandler.class, ViewController.class)
+          .newInstance(nextHandler, viewController);
     } catch (Exception e) {
       throw new RuntimeException("Cannot create instance of " + handler.getName(), e);
     }

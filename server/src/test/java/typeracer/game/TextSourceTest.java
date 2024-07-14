@@ -29,6 +29,7 @@ class TextSourceTest {
               System.lineSeparator(),
               System.lineSeparator());
 
+  @Deprecated
   @Test
   void testDefaultTextFromFile() throws IOException {
     textSource.setTextFromDefaultFile();
@@ -36,6 +37,7 @@ class TextSourceTest {
     assertEquals(expectedDefaultText, textSource.getCurrentText());
   }
 
+  @Deprecated
   @Test
   void testTextFromFile() throws IOException, URISyntaxException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();

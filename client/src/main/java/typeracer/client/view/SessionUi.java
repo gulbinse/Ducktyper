@@ -44,9 +44,9 @@ public class SessionUi extends VBox {
   }
 
   /**
-   * Creates and initializes a new SessionUi instance.
-   * This method constructs a new SessionUi, initializes its UI components,
-   * updates the username label, and returns the initialized instance.
+   * Creates and initializes a new SessionUi instance. This method constructs a new SessionUi,
+   * initializes its UI components, updates the username label, and returns the initialized
+   * instance.
    *
    * @param viewController the controller to manage views and handle interactions.
    * @return the initialized SessionUi instance.

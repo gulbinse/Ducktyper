@@ -168,26 +168,36 @@ final class Client {
    * @return the first handler in the chain of message handlers
    */
   private MessageHandler createMessageHandlerChain() {
-    MessageHandler characterResponseHandler = MessageHandler.create(CharacterResponseHandler.class, null, viewController);
+    MessageHandler characterResponseHandler =
+        MessageHandler.create(CharacterResponseHandler.class, null, viewController);
     MessageHandler handShakeResponseHandler =
-        MessageHandler.create(HandShakeResponseHandler.class, characterResponseHandler, viewController);
+        MessageHandler.create(
+            HandShakeResponseHandler.class, characterResponseHandler, viewController);
     MessageHandler createSessionResponseHandler =
-        MessageHandler.create(CreateSessionResponseHandler.class, handShakeResponseHandler, viewController);
+        MessageHandler.create(
+            CreateSessionResponseHandler.class, handShakeResponseHandler, viewController);
     MessageHandler readyResponseHandler =
-        MessageHandler.create(ReadyResponseHandler.class, createSessionResponseHandler, viewController);
+        MessageHandler.create(
+            ReadyResponseHandler.class, createSessionResponseHandler, viewController);
     MessageHandler textNotificationHandler =
         MessageHandler.create(TextNotificationHandler.class, readyResponseHandler, viewController);
     MessageHandler playerStateNotificationHandler =
-        MessageHandler.create(PlayerStateNotificationHandler.class, textNotificationHandler, viewController);
+        MessageHandler.create(
+            PlayerStateNotificationHandler.class, textNotificationHandler, viewController);
     MessageHandler gameStateNotificationHandler =
-        MessageHandler.create(GameStateNotificationHandler.class, playerStateNotificationHandler, viewController);
+        MessageHandler.create(
+            GameStateNotificationHandler.class, playerStateNotificationHandler, viewController);
     MessageHandler playerLeftNotificationHandler =
-        MessageHandler.create(PlayerLeftNotificationHandler.class, gameStateNotificationHandler, viewController);
+        MessageHandler.create(
+            PlayerLeftNotificationHandler.class, gameStateNotificationHandler, viewController);
     MessageHandler playerJoinedNotificationHandler =
-        MessageHandler.create(PlayerUpdateNotificationHandler.class, playerLeftNotificationHandler, viewController);
+        MessageHandler.create(
+            PlayerUpdateNotificationHandler.class, playerLeftNotificationHandler, viewController);
     MessageHandler joinSessionResponseHandler =
-        MessageHandler.create(JoinSessionResponseHandler.class, playerJoinedNotificationHandler, viewController);
-    return MessageHandler.create(LeaveSessionResponseHandler.class, joinSessionResponseHandler, viewController);
+        MessageHandler.create(
+            JoinSessionResponseHandler.class, playerJoinedNotificationHandler, viewController);
+    return MessageHandler.create(
+        LeaveSessionResponseHandler.class, joinSessionResponseHandler, viewController);
   }
 
   /**
@@ -230,8 +240,9 @@ final class Client {
     } catch (IOException e) {
       throw new RuntimeException(e);
     } finally {
-      viewController.showServerCrashMessage("Server got bonked by a goose. " +
-              "We already called NASA and FBI for help. Please try again later");
+      viewController.showServerCrashMessage(
+          "Server got bonked by a goose. "
+              + "We already called NASA and FBI for help. Please try again later");
       viewController.showScene(ViewController.SceneName.INITIAL_PROMPT);
     }
   }

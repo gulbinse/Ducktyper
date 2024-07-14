@@ -107,8 +107,6 @@ public class Player {
    */
   synchronized TypingResult typeCharacter(
       char typedCharacter, String textToType, long gameStartTime) {
-    TypingResult typingResult = TypingResult.INCORRECT;
-
     this.gameStartTime = gameStartTime;
     typingAttempts++;
     int currentTextIndex = state.getCurrentTextIndex();
@@ -117,13 +115,13 @@ public class Player {
     // Update typing speeds in every case, since it might change with a wrong character as well
     updateAllTypingSpeeds();
 
+    TypingResult typingResult = TypingResult.INCORRECT;
     if (typedCharacter == correctCharacter) {
       state.incrementCurrentTextIndex();
       int newTextIndex = state.getCurrentTextIndex(); // Should be incremented by one
       assert newTextIndex == currentTextIndex + 1;
 
       // Update progress only if typing was successful, to avoid unnecessary updates
-
 
       if (Character.isSpaceChar(correctCharacter)) {
         state.incrementNumTypedWords();
@@ -146,13 +144,13 @@ public class Player {
 
   /** Updates the typing speeds (e.g. words per minute) of this player. */
   public void updateAllTypingSpeeds() {
-      updateWordsPerMinute();
-      updateCharactersPerMinute();
+    updateWordsPerMinute();
+    updateCharactersPerMinute();
   }
 
   private synchronized void updateWordsPerMinute() {
     if (!isFinished()) {
-        double wordsPerMinute =
+      double wordsPerMinute =
           getGeneralTypingSpeed(state.getNumTypedWords(), MINUTES_TO_NANO_SECONDS_FACTOR);
       state.setWordsPerMinute(wordsPerMinute);
     }

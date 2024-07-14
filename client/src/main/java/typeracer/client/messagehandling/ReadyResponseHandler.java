@@ -14,8 +14,8 @@ public class ReadyResponseHandler implements MessageHandler {
   private final ViewController viewController;
 
   /**
-   * Constructs a ReadyResponseHandler.
-   * Initializes the handler with the specified next handler and view controller.
+   * Constructs a ReadyResponseHandler. Initializes the handler with the specified next handler and
+   * view controller.
    *
    * @param nextHandler the next handler in the chain of responsibility.
    * @param viewController the view controller used to update the view.
@@ -32,7 +32,8 @@ public class ReadyResponseHandler implements MessageHandler {
    */
   @Override
   public void handleMessage(Message message) {
-    if (message instanceof ReadyResponse readyResponse && readyResponse.getReadyStatus() == PermissionStatus.DENIED) {
+    if (message instanceof ReadyResponse readyResponse
+        && readyResponse.getReadyStatus() == PermissionStatus.DENIED) {
       System.out.println(readyResponse.getReason().getString());
 
     } else if (nextHandler != null) {

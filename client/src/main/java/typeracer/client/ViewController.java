@@ -7,8 +7,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Parent;
@@ -143,9 +141,7 @@ public class ViewController extends Application {
         });
   }
 
-  /**
-   * Adds all the scenes to the application.
-   */
+  /** Adds all the scenes to the application. */
   private void addAllScenes() {
     addScene(SceneName.INITIAL_PROMPT, InitialPromptUi.create(this));
     addScene(SceneName.MAIN_MENU, MainMenuUi.create(this));
@@ -193,8 +189,8 @@ public class ViewController extends Application {
   }
 
   /**
-   * Connects to the server using the specified IP address, port, and username.
-   * This method establishes a connection to the server and sets the username for the client.
+   * Connects to the server using the specified IP address, port, and username. This method
+   * establishes a connection to the server and sets the username for the client.
    *
    * @param ip the IP address of the server.
    * @param port the port number of the server.
@@ -259,9 +255,9 @@ public class ViewController extends Application {
   }
 
   /**
-   * Updates the player's information and adds a player label if the player is new.
-   * This method updates the player's name and ready status. If the player is new, it schedules
-   * the addition of the player's label to the session UI on the JavaFX application thread.
+   * Updates the player's information and adds a player label if the player is new. This method
+   * updates the player's name and ready status. If the player is new, it schedules the addition of
+   * the player's label to the session UI on the JavaFX application thread.
    *
    * @param playerId the ID of the player to update.
    * @param playerName the name of the player.
@@ -318,9 +314,8 @@ public class ViewController extends Application {
   }
 
   /**
-   * Updates the statistics after a round is played.
-   * This method increments the number of rounds played and updates the average WPM
-   * and accuracy based on the provided values.
+   * Updates the statistics after a round is played. This method increments the number of rounds
+   * played and updates the average WPM and accuracy based on the provided values.
    *
    * @param wpm the words per minute achieved in the round.
    * @param accuracy the accuracy percentage achieved in the round.
@@ -478,8 +473,8 @@ public class ViewController extends Application {
   }
 
   /**
-   * Gets the progress property of the player with the specified ID.
-   * If the player's progress property does not exist, it is created and initialized to 0.0.
+   * Gets the progress property of the player with the specified ID. If the player's progress
+   * property does not exist, it is created and initialized to 0.0.
    *
    * @param playerId the ID of the player.
    * @return the DoubleProperty representing the player's progress.
@@ -507,12 +502,13 @@ public class ViewController extends Application {
    * @param message that will be displayed in the push-up window
    */
   public void showServerCrashMessage(String message) {
-    Platform.runLater(() -> {
-      Alert alert = new Alert(Alert.AlertType.ERROR);
-      alert.setTitle("Server-Crash");
-      alert.setHeaderText(null);
-      alert.setContentText(message);
-      alert.showAndWait();
-    });
+    Platform.runLater(
+        () -> {
+          Alert alert = new Alert(Alert.AlertType.ERROR);
+          alert.setTitle("Server-Crash");
+          alert.setHeaderText(null);
+          alert.setContentText(message);
+          alert.showAndWait();
+        });
   }
 }

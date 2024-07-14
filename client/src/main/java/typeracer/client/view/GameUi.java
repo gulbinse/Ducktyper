@@ -102,9 +102,8 @@ public class GameUi extends VBox {
   }
 
   /**
-   * Adds the players panel to the game display.
-   * This method sets the alignment of the players panel to the center and adds it to the
-   * list of children in the current layout.
+   * Adds the players panel to the game display. This method sets the alignment of the players panel
+   * to the center and adds it to the list of children in the current layout.
    */
   private void addPlayersPanel() {
     playersPanel.setAlignment(Pos.CENTER);
@@ -127,7 +126,10 @@ public class GameUi extends VBox {
     uncopiedGameText.setFill(colorOfUncopiedGame);
     expectedCharacter.setFill(colorOfExpectedCharacter);
     copiedGameText.setFill(colorOfCopiedGame);
-    uncopiedGameText.setStyle(TEXT_SIZE);expectedCharacter.setStyle(TEXT_SIZE);copiedGameText.setStyle(TEXT_SIZE);displayText = new TextFlow();
+    uncopiedGameText.setStyle(TEXT_SIZE);
+    expectedCharacter.setStyle(TEXT_SIZE);
+    copiedGameText.setStyle(TEXT_SIZE);
+    displayText = new TextFlow();
     displayText.setPrefHeight(150);
     displayText.setMaxWidth(Double.MAX_VALUE);
     displayText.getChildren().addAll(copiedGameText, expectedCharacter, uncopiedGameText);
@@ -139,8 +141,8 @@ public class GameUi extends VBox {
   }
 
   /**
-   * Finalizes the display text by resetting the uncopied game text.
-   * Sets the uncopied game text to the game text obtained from the view controller.
+   * Finalizes the display text by resetting the uncopied game text. Sets the uncopied game text to
+   * the game text obtained from the view controller.
    */
   private void finaliseDisplayText() {
     uncopiedGameText.setText(viewController.getGameText());
@@ -148,9 +150,9 @@ public class GameUi extends VBox {
   }
 
   /**
-   * Updates the display text based on whether the typed character is correct.
-   * If the typed character is correct, it moves the character from the uncopied text to the
-   * copied text. If the typed character is incorrect, it highlights the expected character in red.
+   * Updates the display text based on whether the typed character is correct. If the typed
+   * character is correct, it moves the character from the uncopied text to the copied text. If the
+   * typed character is incorrect, it highlights the expected character in red.
    *
    * @param correctChar true if the typed character is correct, false otherwise.
    */
@@ -200,8 +202,8 @@ public class GameUi extends VBox {
   }
 
   /**
-   * Handles the event when a character is typed.
-   * This method passes the typed character to the view controller for further processing.
+   * Handles the event when a character is typed. This method passes the typed character to the view
+   * controller for further processing.
    *
    * @param typedCharacter the character that was typed.
    */
@@ -213,11 +215,10 @@ public class GameUi extends VBox {
   }
 
   /**
-   * Adds a new player to the game display.
-   * This method creates and configures various UI components to represent a player's progress in
-   * the game, including a racetrack, player statistics, and a racer's animation. The player's
-   * progress and performance statistics are dynamically bound to properties provided by the view
-   * controller.
+   * Adds a new player to the game display. This method creates and configures various UI components
+   * to represent a player's progress in the game, including a racetrack, player statistics, and a
+   * racer's animation. The player's progress and performance statistics are dynamically bound to
+   * properties provided by the view controller.
    *
    * @param playerId the ID of the player to be added.
    */
@@ -335,9 +336,8 @@ public class GameUi extends VBox {
   }
 
   /**
-   * Removes the player from the game display.
-   * This method removes the UI components associated with the specified player ID from the game
-   * display.
+   * Removes the player from the game display. This method removes the UI components associated with
+   * the specified player ID from the game display.
    *
    * @param playerId the ID of the player to be removed.
    */

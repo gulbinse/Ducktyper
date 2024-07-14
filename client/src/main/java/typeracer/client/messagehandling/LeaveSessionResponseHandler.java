@@ -3,7 +3,6 @@ package typeracer.client.messagehandling;
 import typeracer.client.ViewController;
 import typeracer.communication.messages.Message;
 import typeracer.communication.messages.server.LeaveSessionResponse;
-import typeracer.communication.statuscodes.PermissionStatus;
 
 /**
  * Handles LeaveSessionResponse messages in a chain of responsibility pattern. If the message is not
@@ -15,8 +14,8 @@ public class LeaveSessionResponseHandler implements MessageHandler {
   private final ViewController viewController;
 
   /**
-   * Constructs a LeaveSessionResponseHandler.
-   * Initializes the handler with the specified next handler and view controller.
+   * Constructs a LeaveSessionResponseHandler. Initializes the handler with the specified next
+   * handler and view controller.
    *
    * @param nextHandler the next handler in the chain of responsibility.
    * @param viewController the view controller used to update the view.
@@ -35,16 +34,16 @@ public class LeaveSessionResponseHandler implements MessageHandler {
   public void handleMessage(Message message) {
     // ACCEPT response
     if (message instanceof LeaveSessionResponse leaveSessionResponse)
-    switch (leaveSessionResponse.getLeaveStatus()) {
-      case ACCEPTED:
-        viewController.leaveSession();
-        break;
-      // DENIED response
-      default:
-        viewController.showAlert(leaveSessionResponse.getReason().getString());
-        break;
-
-    } else if (nextHandler != null) {
+      switch (leaveSessionResponse.getLeaveStatus()) {
+        case ACCEPTED:
+          viewController.leaveSession();
+          break;
+          // DENIED response
+        default:
+          viewController.showAlert(leaveSessionResponse.getReason().getString());
+          break;
+      }
+    else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }
   }
