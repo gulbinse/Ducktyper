@@ -64,9 +64,10 @@ public class GameUi extends VBox {
   }
 
   /**
-   * Creates a new GameUi and initializes its user interface.
+   * Creates and initializes a new instance of GameUi.
    *
-   * @param viewController The controller to manage views and handle interactions.
+   * @param viewController the ViewController to manage views and handle interactions.
+   * @return a new instance of GameUi with its UI initialized.
    */
   public static GameUi create(ViewController viewController) {
     GameUi gameUi = new GameUi(viewController);

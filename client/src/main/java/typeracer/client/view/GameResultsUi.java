@@ -34,9 +34,10 @@ public class GameResultsUi extends VBox {
   }
 
   /**
-   * Creates a new GameResultsUi and initializes its user interface.
+   * Creates and initializes a new instance of GameResultsUi.
    *
-   * @param viewController The controller to manage views and handle interactions.
+   * @param viewController the ViewController to manage views and handle interactions.
+   * @return a new instance of GameResultsUi with its UI initialized.
    */
   public static GameResultsUi create(ViewController viewController) {
     GameResultsUi gameResultsUi = new GameResultsUi(viewController);

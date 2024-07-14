@@ -1,8 +1,6 @@
 package typeracer.client.view;
 
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -47,9 +45,10 @@ public class PlayerStatsUi extends VBox {
   }
 
   /**
-   * Creates a new PlayerStatsUi and initializes its user interface.
+   * Creates and initializes a new instance of PlayerStatsUi.
    *
-   * @param viewController the controller to manage views and handle interactions.
+   * @param viewController the ViewController to manage views and handle interactions.
+   * @return a new instance of PlayerStatsUi with its UI initialized.
    */
   public static PlayerStatsUi create(ViewController viewController) {
     PlayerStatsUi playerStatsUi = new PlayerStatsUi(viewController);
