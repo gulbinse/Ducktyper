@@ -298,7 +298,7 @@ public class ViewController extends Application {
           GameResultsUi gameUi = (GameResultsUi) scenes.get(SceneName.GAME_RESULTS).getRoot();
           gameUi.onViewShown();
         }
-        case SESSION -> showScene(SceneName.MAIN_MENU);
+        default -> showScene(SceneName.MAIN_MENU);
       }
 
     });
