@@ -14,9 +14,11 @@ public class PlayerLeftNotificationHandler implements MessageHandler {
   private final ViewController viewController;
 
   /**
-   * Constructor with the next handler in chain.
+   * Constructs a PlayerLeftNotificationHandler.
+   * Initializes the handler with the specified next handler and view controller.
    *
-   * @param nextHandler he next handler in message handling chain
+   * @param nextHandler the next handler in the chain of responsibility.
+   * @param viewController the view controller used to update the view.
    */
   public PlayerLeftNotificationHandler(MessageHandler nextHandler, ViewController viewController) {
     this.nextHandler = nextHandler;

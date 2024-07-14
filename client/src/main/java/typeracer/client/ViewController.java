@@ -209,11 +209,13 @@ public class ViewController extends Application {
   }
 
   /**
-   * Connects to the server with the given IP address and port number.
+   * Connects to the server using the specified IP address, port, and username.
+   * This method establishes a connection to the server and sets the username for the client.
    *
-   * @param ip The IP address of the server.
-   * @param port The port number of the server.
-   * @throws IOException If an I/O error occurs when attempting to connect to the server.
+   * @param ip the IP address of the server.
+   * @param port the port number of the server.
+   * @param username the username to be used for the connection.
+   * @throws IOException if an I/O error occurs when attempting to connect.
    */
   public void connectToServer(String ip, int port, String username) throws IOException {
     client.connect(ip, port, username);
@@ -274,10 +276,13 @@ public class ViewController extends Application {
   }
 
   /**
-   * Adds a player to the game on client side.
+   * Updates the player's information and adds a player label if the player is new.
+   * This method updates the player's name and ready status. If the player is new, it schedules
+   * the addition of the player's label to the session UI on the JavaFX application thread.
    *
-   * @param playerId of joined player
-   * @param playerName of joined player
+   * @param playerId the ID of the player to update.
+   * @param playerName the name of the player.
+   * @param ready the ready status of the player.
    */
   public void updatePlayer(int playerId, String playerName, boolean ready) {
     boolean isNew = playerData.updatePlayer(playerId, playerName, ready);
@@ -439,10 +444,11 @@ public class ViewController extends Application {
   }
 
   /**
-   * Returns the progress property for the specified player ID.
+   * Gets the progress property of the player with the specified ID.
+   * If the player's progress property does not exist, it is created and initialized to 0.0.
    *
-   * @param playerId The ID of the player.
-   * @return The progress property for the player.
+   * @param playerId the ID of the player.
+   * @return the DoubleProperty representing the player's progress.
    */
   public DoubleProperty getPlayerProgressProperty(int playerId) {
     return playerData
