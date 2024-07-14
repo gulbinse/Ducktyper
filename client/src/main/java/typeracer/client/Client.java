@@ -158,7 +158,7 @@ final class Client {
       this.socket = socket;
       start(username);
     } catch (IOException e) {
-      System.out.println("Connection lost. Shutting down: " + e.getMessage());
+      viewController.showAlert("Connection refused: Unable to connect to server");
     }
   }
 

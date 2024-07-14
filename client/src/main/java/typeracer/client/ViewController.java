@@ -203,7 +203,6 @@ public class ViewController extends Application {
    */
   public void connectToServer(String ip, int port, String username) throws IOException {
     client.connect(ip, port, username);
-    System.out.println("Connected to server at " + ip + ":" + port);
     this.username = username;
   }
 
