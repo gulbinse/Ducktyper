@@ -150,13 +150,13 @@ public class ViewController extends Application {
    * Adds all the scenes to the application.
    */
   private void addAllScenes() {
-    addScene(SceneName.INITIAL_PROMPT, new InitialPromptUi(this));
-    addScene(SceneName.MAIN_MENU, new MainMenuUi(this));
-    addScene(SceneName.GAME, new GameUi(this));
-    addScene(SceneName.STATS, new PlayerStatsUi(this));
-    addScene(SceneName.PROFILE_SETTINGS, new ProfileSettingsUi(this));
-    addScene(SceneName.GAME_RESULTS, new GameResultsUi(this));
-    addScene(SceneName.SESSION, new SessionUi(this));
+    addScene(SceneName.INITIAL_PROMPT, InitialPromptUi.create(this));
+    addScene(SceneName.MAIN_MENU, MainMenuUi.create(this));
+    addScene(SceneName.GAME, GameUi.create(this));
+    addScene(SceneName.STATS, PlayerStatsUi.create(this));
+    addScene(SceneName.PROFILE_SETTINGS, ProfileSettingsUi.create(this));
+    addScene(SceneName.GAME_RESULTS, GameResultsUi.create(this));
+    addScene(SceneName.SESSION, SessionUi.create(this));
   }
 
   /**

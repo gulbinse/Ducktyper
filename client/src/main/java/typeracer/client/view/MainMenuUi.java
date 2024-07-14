@@ -35,14 +35,19 @@ public class MainMenuUi extends VBox {
 
   private TextField sessionIdField;
 
+  private MainMenuUi(ViewController viewController) {
+    this.viewController = viewController;
+  }
+
   /**
-   * Constructs a new MainMenuUi and initializes its user interface.
+   * Creates a new MainMenuUi and initializes its user interface.
    *
    * @param viewController The controller to manage views and handle interactions.
    */
-  public MainMenuUi(ViewController viewController) {
-    this.viewController = viewController;
-    initializeUi();
+  public static MainMenuUi create(ViewController viewController) {
+    MainMenuUi mainMenuUi = new MainMenuUi(viewController);
+    mainMenuUi.initializeUi();
+    return mainMenuUi;
   }
 
   /**
