@@ -3,6 +3,8 @@ package typeracer.client;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
@@ -45,12 +47,13 @@ public class ClientSideSessionData {
   }
 
   /**
-   * Gets the map of player readiness properties.
+   * Retrieves or creates a property to track whether a player is ready.
    *
-   * @return a map of player IDs to their readiness properties.
+   * @param playerId the ID of the player.
+   * @return a BooleanProperty reflecting the player's ready status.
    */
-  public Map<Integer, SimpleBooleanProperty> getPlayerReady() {
-    return playerReady;
+  public BooleanProperty getPlayerReadyProperty(int playerId) {
+    return playerReady.computeIfAbsent(playerId, k -> new SimpleBooleanProperty());
   }
 
   /**
@@ -64,12 +67,13 @@ public class ClientSideSessionData {
   }
 
   /**
-   * Gets the map of player WPM (words per minute) properties.
+   * Returns the WPM property for the specified player ID.
    *
-   * @return a map of player IDs to their WPM properties.
+   * @param playerId The ID of the player.
+   * @return The WPM property for the player.
    */
-  public Map<Integer, DoubleProperty> getPlayerWpms() {
-    return playerWpms;
+  public DoubleProperty getPlayerWpmProperty(int playerId) {
+    return playerWpms.computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
   }
 
   /**
@@ -83,12 +87,13 @@ public class ClientSideSessionData {
   }
 
   /**
-   * Gets the map of player accuracy properties.
+   * Returns the accuracy property for the specified player ID.
    *
-   * @return a map of player IDs to their accuracy properties.
+   * @param playerId The ID of the player.
+   * @return The accuracy property for the player.
    */
-  public Map<Integer, DoubleProperty> getPlayerAccuracies() {
-    return playerAccuracies;
+  public DoubleProperty getPlayerAccuracyProperty(int playerId) {
+    return playerAccuracies.computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
   }
 
   /**
@@ -102,12 +107,14 @@ public class ClientSideSessionData {
   }
 
   /**
-   * Gets the map of player progress properties.
+   * Gets the progress property of the player with the specified ID.
+   * If the player's progress property does not exist, it is created and initialized to 0.0.
    *
-   * @return a map of player IDs to their progress properties.
+   * @param playerId the ID of the player.
+   * @return the DoubleProperty representing the player's progress.
    */
-  public Map<Integer, DoubleProperty> getPlayerProgresses() {
-    return playerProgresses;
+  public DoubleProperty getPlayerProgressProperty(int playerId) {
+    return playerProgresses.computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
   }
 
   /**

@@ -242,7 +242,7 @@ public class ViewController extends Application {
 
   /** Requests to set the player ready. */
   public void setPlayerReady() {
-    boolean isReady = !playerData.getPlayerReady().get(playerId).get();
+    boolean isReady = !playerData.getPlayerReadyProperty(playerId).get();
     client.sendMessage(new ReadyRequest(isReady));
     System.out.println("Player wants to update his readyStatus to: " + isReady);
   }
@@ -424,7 +424,7 @@ public class ViewController extends Application {
    * @return a BooleanProperty reflecting the player's ready status.
    */
   public BooleanProperty getPlayerReadyProperty(int playerId) {
-    return playerData.getPlayerReady().computeIfAbsent(playerId, k -> new SimpleBooleanProperty());
+    return playerData.getPlayerReadyProperty(playerId);
   }
 
   /**
@@ -434,7 +434,7 @@ public class ViewController extends Application {
    * @return The WPM property for the player.
    */
   public DoubleProperty getPlayerWpmProperty(int playerId) {
-    return playerData.getPlayerWpms().computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
+    return playerData.getPlayerWpmProperty(playerId);
   }
 
   /**
@@ -444,9 +444,7 @@ public class ViewController extends Application {
    * @return The accuracy property for the player.
    */
   public DoubleProperty getPlayerAccuracyProperty(int playerId) {
-    return playerData
-        .getPlayerAccuracies()
-        .computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
+    return playerData.getPlayerAccuracyProperty(playerId);
   }
 
   /**
@@ -457,9 +455,7 @@ public class ViewController extends Application {
    * @return the DoubleProperty representing the player's progress.
    */
   public DoubleProperty getPlayerProgressProperty(int playerId) {
-    return playerData
-        .getPlayerProgresses()
-        .computeIfAbsent(playerId, k -> new SimpleDoubleProperty());
+    return playerData.getPlayerProgressProperty(playerId);
   }
 
   public ListProperty<String> getTopPlayersProperty() {
