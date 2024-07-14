@@ -484,4 +484,19 @@ public class ViewController extends Application {
           alert.showAndWait();
         });
   }
+
+  /**
+   * Shows a server-crash push up.
+   *
+   * @param message that will be displayed in the push-up window
+   */
+  public void showServerCrashMessage(String message) {
+    Platform.runLater(() -> {
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setTitle("Server-Crash");
+      alert.setHeaderText(null);
+      alert.setContentText(message);
+      alert.showAndWait();
+    });
+  }
 }

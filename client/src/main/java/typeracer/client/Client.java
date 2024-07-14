@@ -230,6 +230,8 @@ final class Client {
     } catch (IOException e) {
       throw new RuntimeException(e);
     } finally {
+      viewController.showServerCrashMessage("Server got bonked by a goose. " +
+              "We already called NASA and FBI for help. Please try again later");
       viewController.showScene(ViewController.SceneName.INITIAL_PROMPT);
     }
   }

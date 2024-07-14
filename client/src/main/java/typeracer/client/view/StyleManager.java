@@ -74,17 +74,11 @@ public class StyleManager {
             + hexColor
             + "; -fx-text-fill: white; -fx-border-width: "
             + "2; -fx-border-color: #52CCC1";
-//    String hoverStyle =
-//        "-fx-background-color: "
-//            + hexColor
-//            + "; -fx-text-fill: white; -fx-border-color: "
-//            + "#52CCC1; -fx-border-width: 2px;";
 
     button.setStyle(defaultStyle);
     button.setFont(font);
     button.setOnMouseEntered(
         e -> {
-//          button.setStyle(hoverStyle);
           ScaleTransition scaleUp = new ScaleTransition(Duration.millis(200), button);
           scaleUp.setToX(1.1);
           scaleUp.setToY(1.1);
