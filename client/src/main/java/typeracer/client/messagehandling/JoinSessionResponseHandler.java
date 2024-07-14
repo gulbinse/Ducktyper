@@ -35,13 +35,11 @@ public class JoinSessionResponseHandler implements MessageHandler {
     if (message instanceof JoinSessionResponse joinSessionResponse) {
       switch ((joinSessionResponse.getJoinStatus())) {
         case ACCEPTED:
-          System.out.println("Player can join.");
           viewController.showScene(ViewController.SceneName.SESSION);
           break;
+          // response contains DENIED
         default:
-          System.out.println(
-              "Player can't join because: " + joinSessionResponse.getReason().getString());
-          viewController.showAlert("Player can't join because: " + joinSessionResponse.getReason().getString());
+          viewController.showAlert(joinSessionResponse.getReason().getString());
           break;
       }
 

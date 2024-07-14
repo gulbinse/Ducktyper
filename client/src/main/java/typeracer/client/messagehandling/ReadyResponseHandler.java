@@ -3,6 +3,7 @@ package typeracer.client.messagehandling;
 import typeracer.client.ViewController;
 import typeracer.communication.messages.*;
 import typeracer.communication.messages.server.ReadyResponse;
+import typeracer.communication.statuscodes.PermissionStatus;
 
 /**
  * Handles ReadyResponse messages in a chain of responsibility pattern. If the message is not of the
@@ -31,16 +32,9 @@ public class ReadyResponseHandler implements MessageHandler {
    */
   @Override
   public void handleMessage(Message message) {
-    if (message instanceof ReadyResponse readyResponse) {
+    if (message instanceof ReadyResponse readyResponse && readyResponse.getReadyStatus() == PermissionStatus.DENIED) {
+      System.out.println(readyResponse.getReason().getString());
 
-      switch (readyResponse.getReadyStatus()) {
-        case ACCEPTED:
-          System.out.println("Player is ready.");
-          break;
-        default:
-          System.out.println("ReadyRequest has been denied.");
-          break;
-      }
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message);
     }
