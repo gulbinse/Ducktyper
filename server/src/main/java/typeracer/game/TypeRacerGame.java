@@ -76,8 +76,9 @@ public final class TypeRacerGame { // made final to prevent finalizer attacks in
   public void stop() {
     GameStatus finished = GameStatus.FINISHED;
     state.setGameStatus(finished);
-    session.broadcastMessage(new GameStateNotification(finished));
     notifier.stop();
+    broadcastPlayerStates();
+    session.broadcastMessage(new GameStateNotification(finished));
   }
 
   /**
