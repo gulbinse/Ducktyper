@@ -53,29 +53,33 @@ public class JoinSessionRequestHandler implements MessageHandler {
       ConnectionManager.getInstance().sendMessage(response, clientId);
 
       if (status == SessionManager.OperationStatus.SUCCESS) {
-        Session session = SessionManager.getInstance().getSessionByClientId(clientId);
-        if (session != null) {
-          // Send PlayerUpdateNotification to all players to notify them about the connected client
-          int numPlayers = session.numberOfConnectedClients();
-          String playerName = ConnectionManager.getInstance().getPlayerName(clientId);
-          boolean playerReady = session.isPlayerReady(clientId);
-          session.broadcastMessage(
-              new PlayerUpdateNotification(numPlayers, clientId, playerName, playerReady));
-
-          // Send PlayerUpdateNotifications to the connected client for every player in the session
-          for (int playerId : session.getPlayerIds()) {
-            if (playerId != clientId) {
-              String name = ConnectionManager.getInstance().getPlayerName(playerId);
-              boolean ready = session.isPlayerReady(playerId);
-              ConnectionManager.getInstance()
-                  .sendMessage(
-                      new PlayerUpdateNotification(numPlayers, playerId, name, ready), clientId);
-            }
-          }
-        }
+        updatePlayers(clientId);
       }
     } else if (nextHandler != null) {
       nextHandler.handleMessage(message, clientId);
+    }
+  }
+
+  private void updatePlayers(int clientId) {
+    Session session = SessionManager.getInstance().getSessionByClientId(clientId);
+    if (session != null) {
+      // Send PlayerUpdateNotification to all players to notify them about the connected client
+      int numPlayers = session.numberOfConnectedClients();
+      String playerName = ConnectionManager.getInstance().getPlayerName(clientId);
+      boolean playerReady = session.isPlayerReady(clientId);
+      session.broadcastMessage(
+          new PlayerUpdateNotification(numPlayers, clientId, playerName, playerReady));
+
+      // Send PlayerUpdateNotifications to the connected client for every player in the session
+      for (int playerId : session.getPlayerIds()) {
+        if (playerId != clientId) {
+          String name = ConnectionManager.getInstance().getPlayerName(playerId);
+          boolean ready = session.isPlayerReady(playerId);
+          ConnectionManager.getInstance()
+              .sendMessage(
+                  new PlayerUpdateNotification(numPlayers, playerId, name, ready), clientId);
+        }
+      }
     }
   }
 
