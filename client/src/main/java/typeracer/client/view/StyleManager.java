@@ -147,6 +147,11 @@ public class StyleManager {
       return submitImage;
   }
 
+    /**
+     * Creates a Region that acts like a spacer.
+     *
+     * @return Region as spacer
+     */
   public static Region createBulletListSpacer(){
       Region spacerBulltepoints = new Region();
       spacerBulltepoints.setPrefWidth(20);
